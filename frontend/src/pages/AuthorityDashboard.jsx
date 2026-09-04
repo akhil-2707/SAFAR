@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import MapView from '../components/MapView';
 import MiniMap from '../components/MiniMap';
 import CreateDangerAreaModal from '../components/CreateDangerAreaModal';
@@ -6,9 +7,29 @@ import SafarLogo from '../components/SafarLogo';
 import { 
   ShieldCheck, AlertTriangle, Users, AlertOctagon, CheckCircle2, 
   Radio, BarChart3, Settings, MapPin, Plus, Trash2, Power, Eye, 
-  Sparkles, Compass, ShieldAlert, Zap, Clock, ChevronRight
+  Sparkles, Compass, ShieldAlert, Zap, Clock, ChevronRight, Activity, Radar
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
+  }
+};
 
 export default function AuthorityDashboard({
   tourists = [],
@@ -22,7 +43,7 @@ export default function AuthorityDashboard({
   const [selectedTourist, setSelectedTourist] = useState(null);
   const [filterRisk, setFilterRisk] = useState('ALL');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('incidents'); // 'incidents' | 'danger_areas' | 'tourists'
+  const [activeTab, setActiveTab] = useState('incidents');
   const [actionSuccessMessage, setActionSuccessMessage] = useState(null);
 
   // Statistics
@@ -78,16 +99,25 @@ export default function AuthorityDashboard({
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+    >
       
-      {/* 1. Clear, Simplified Top Header with Primary Action */}
-      <div className="bg-safar-navy-900 border border-safar-shield-500/30 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <div className="flex items-center space-x-4">
+      {/* 1. Ultra-Frosted Tactical Command Header */}
+      <motion.div 
+        variants={itemVariants}
+        className="pro-glass-card rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 w-96 h-96 bg-red-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-center space-x-4 relative z-10">
           <SafarLogo size="sm" showText={false} animated={true} />
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-2xl text-white">S.A.F.A.R. Authority Command Desk</span>
-              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/40 uppercase tracking-wider">
+              <span className="font-extrabold text-2xl text-white tracking-tight">S.A.F.A.R. Authority Command Desk</span>
+              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/40 uppercase tracking-wider glow-green">
                 Live Sentinel Active
               </span>
             </div>
@@ -98,41 +128,52 @@ export default function AuthorityDashboard({
         </div>
 
         {/* Highlighted Primary Action: Set New Danger Area & Radius */}
-        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-          <button
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto relative z-10">
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => setShowCreateModal(true)}
-            className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-xl glow-red flex items-center justify-center space-x-2 transition-all transform hover:-translate-y-0.5"
+            className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-xl glow-red flex items-center justify-center space-x-2 transition-all"
           >
             <ShieldAlert className="w-4 h-4 text-amber-300 animate-pulse" />
             <span>+ Set New Danger Area & Threat Radius</span>
-          </button>
+          </motion.button>
 
           <Link
             to="/incidents"
-            className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition-colors flex items-center space-x-1.5"
+            className="px-4 py-3 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold text-xs rounded-2xl border border-slate-700/80 transition-colors flex items-center space-x-2 shadow-md"
           >
             <AlertOctagon className="w-4 h-4 text-red-400" />
             <span>Incidents ({activeIncidents.length})</span>
           </Link>
         </div>
-      </div>
+      </motion.div>
 
       {/* Success Toast Notification */}
-      {actionSuccessMessage && (
-        <div className="p-3 bg-emerald-950/80 border border-emerald-500/50 rounded-2xl text-emerald-200 text-xs font-semibold flex items-center space-x-2 shadow-xl animate-in fade-in duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{actionSuccessMessage}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {actionSuccessMessage && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="p-3.5 bg-emerald-950/90 border border-emerald-500/50 rounded-2xl text-emerald-200 text-xs font-semibold flex items-center space-x-2 shadow-xl glow-green"
+          >
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{actionSuccessMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* 2. Simplified 4 Key Metric Cards (Easy & Clear at a Glance) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 2. Simplified 4 Key Metric Cards with Pro-Glass HUD styling */}
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Card 1: Active Tourists */}
-        <div className="p-4 rounded-2xl bg-navy-900 border border-slate-800 space-y-1 shadow-lg">
+        <motion.div whileHover={{ y: -3 }} className="pro-glass-card p-4 rounded-2xl space-y-1 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-slate-400 uppercase font-extrabold">Active Tourists</span>
-            <Users className="w-4 h-4 text-blue-400" />
+            <span className="text-[11px] text-slate-400 uppercase font-extrabold tracking-wider">Active Tourists</span>
+            <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+              <Users className="w-3.5 h-3.5" />
+            </div>
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-3xl font-black text-white">{totalTourists}</span>
@@ -141,13 +182,15 @@ export default function AuthorityDashboard({
           <div className="text-[10px] text-amber-400 font-medium">
             {touristsAtRisk} tourists approaching warning buffers
           </div>
-        </div>
+        </motion.div>
 
         {/* Card 2: Active Incidents & SOS */}
-        <div className="p-4 rounded-2xl bg-navy-900 border border-red-500/30 space-y-1 shadow-lg">
+        <motion.div whileHover={{ y: -3 }} className="pro-glass-card p-4 rounded-2xl border-red-500/30 space-y-1 shadow-lg relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-red-400 uppercase font-extrabold">Emergency Incidents</span>
-            <AlertOctagon className="w-4 h-4 text-red-400 animate-pulse" />
+            <span className="text-[11px] text-red-400 uppercase font-extrabold tracking-wider">Emergency Incidents</span>
+            <div className="w-7 h-7 rounded-lg bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400">
+              <AlertOctagon className="w-3.5 h-3.5 animate-pulse" />
+            </div>
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-3xl font-black text-red-400">{activeIncidents.length}</span>
@@ -158,13 +201,15 @@ export default function AuthorityDashboard({
           <div className="text-[10px] text-slate-400">
             Immediate dispatch response team assigned
           </div>
-        </div>
+        </motion.div>
 
         {/* Card 3: Danger Zones & Threat Radii */}
-        <div className="p-4 rounded-2xl bg-navy-900 border border-amber-500/30 space-y-1 shadow-lg">
+        <motion.div whileHover={{ y: -3 }} className="pro-glass-card p-4 rounded-2xl border-amber-500/30 space-y-1 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-amber-400 uppercase font-extrabold">Danger Zones & Radii</span>
-            <ShieldAlert className="w-4 h-4 text-amber-400" />
+            <span className="text-[11px] text-amber-400 uppercase font-extrabold tracking-wider">Danger Zones & Radii</span>
+            <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <ShieldAlert className="w-3.5 h-3.5" />
+            </div>
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-3xl font-black text-amber-300">{geofences.length}</span>
@@ -173,13 +218,15 @@ export default function AuthorityDashboard({
           <div className="text-[10px] text-emerald-400 font-medium">
             Real-time proximity alarms armed
           </div>
-        </div>
+        </motion.div>
 
         {/* Card 4: Response Latency / AI Defense */}
-        <div className="p-4 rounded-2xl bg-navy-900 border border-emerald-500/30 space-y-1 shadow-lg">
+        <motion.div whileHover={{ y: -3 }} className="pro-glass-card p-4 rounded-2xl border-emerald-500/30 space-y-1 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-emerald-400 uppercase font-extrabold">AI Defense Engine</span>
-            <Zap className="w-4 h-4 text-emerald-400" />
+            <span className="text-[11px] text-emerald-400 uppercase font-extrabold tracking-wider">AI Defense Engine</span>
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <Zap className="w-3.5 h-3.5" />
+            </div>
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-3xl font-black text-emerald-300">98.4%</span>
@@ -188,15 +235,17 @@ export default function AuthorityDashboard({
           <div className="text-[10px] text-slate-400">
             Avg Police SOS Dispatch: <strong className="text-white">~3.8 min</strong>
           </div>
-        </div>
+        </motion.div>
 
-      </div>
+      </motion.div>
 
       {/* 3. Hero Command Map with Quick Filter */}
-      <div className="bg-navy-900 border border-slate-800 rounded-3xl p-5 space-y-3 shadow-2xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-          <div className="flex items-center space-x-2">
-            <Radio className="w-4 h-4 text-emerald-400 animate-pulse shrink-0" />
+      <motion.div variants={itemVariants} className="pro-glass-card rounded-3xl p-5 space-y-3 shadow-2xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <Radio className="w-4 h-4 animate-pulse" />
+            </div>
             <div>
               <h2 className="text-base font-black text-white">Live Tactical Radar & Threat Zone Map</h2>
               <p className="text-xs text-slate-400">
@@ -206,8 +255,8 @@ export default function AuthorityDashboard({
           </div>
 
           {/* Easy Filter Buttons */}
-          <div className="flex items-center space-x-1 text-xs">
-            <span className="text-slate-400 mr-1 hidden sm:inline">Filter:</span>
+          <div className="flex items-center space-x-1.5 text-xs bg-slate-950/80 p-1 rounded-2xl border border-slate-800">
+            <span className="text-slate-400 ml-2 mr-1 hidden sm:inline font-bold">Filter:</span>
             {[
               { id: 'ALL', label: 'All' },
               { id: 'CRITICAL', label: '🔴 SOS Alerts' },
@@ -217,10 +266,10 @@ export default function AuthorityDashboard({
               <button
                 key={f.id}
                 onClick={() => setFilterRisk(f.id)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   filterRisk === f.id
-                    ? 'bg-emerald-500 text-white shadow-md'
-                    : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-750'
+                    ? 'bg-emerald-500 text-white shadow-md glow-green'
+                    : 'bg-transparent text-slate-400 hover:text-white hover:bg-slate-850'
                 }`}
               >
                 {f.label}
@@ -237,22 +286,22 @@ export default function AuthorityDashboard({
           emergencyServices={emergencyServices}
           height="500px"
         />
-      </div>
+      </motion.div>
 
       {/* 4. Simplified Operations Center: 2 Clean Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Panel A: Live Emergency SOS & Incidents */}
-        <div className="bg-navy-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-xl flex flex-col justify-between">
+        <div className="pro-glass-card rounded-3xl p-5 space-y-4 shadow-xl flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
               <div className="flex items-center space-x-2">
                 <AlertOctagon className="w-5 h-5 text-red-400 animate-pulse" />
                 <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">
                   Live Emergency SOS & Incidents ({activeIncidents.length})
                 </h3>
               </div>
-              <Link to="/incidents" className="text-xs text-emerald-400 hover:underline font-bold">
+              <Link to="/incidents" className="text-xs text-emerald-400 hover:text-emerald-300 hover:underline font-bold">
                 View Full Log →
               </Link>
             </div>
@@ -283,12 +332,14 @@ export default function AuthorityDashboard({
                         <p className="text-[11px] text-slate-300 leading-relaxed">{inc.description}</p>
                       </div>
 
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
                         onClick={() => onUpdateIncidentStatus(inc.id, 'IN_PROGRESS', 'Assam Tourist Police HQ')}
                         className="px-3 py-1.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl text-xs font-bold shrink-0 shadow-md transition-all"
                       >
                         Dispatch Police Team
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 ))
@@ -296,29 +347,31 @@ export default function AuthorityDashboard({
             </div>
           </div>
 
-          <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+          <div className="pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
             <span>State Police Dispatch CAD: <strong className="text-emerald-400 font-mono">CONNECTED</strong></span>
             <span>Emergency Toll Free: <strong className="text-amber-300 font-mono">112 / 108</strong></span>
           </div>
         </div>
 
         {/* Panel B: Active Danger Zones & Threat Radii Controller */}
-        <div className="bg-navy-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-xl flex flex-col justify-between">
+        <div className="pro-glass-card rounded-3xl p-5 space-y-4 shadow-xl flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
               <div className="flex items-center space-x-2">
                 <ShieldAlert className="w-5 h-5 text-amber-400" />
                 <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">
                   Active Danger Zones & Threat Radii ({geofences.length})
                 </h3>
               </div>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setShowCreateModal(true)}
                 className="text-xs font-bold text-amber-300 hover:text-amber-200 flex items-center space-x-1"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Danger Area</span>
-              </button>
+              </motion.button>
             </div>
 
             <div className="divide-y divide-slate-800/80 max-h-[360px] overflow-y-auto pr-1 space-y-1">
@@ -350,25 +403,27 @@ export default function AuthorityDashboard({
                       </div>
 
                       <div className="flex items-center space-x-2 shrink-0">
-                        <button
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
                           onClick={() => handleToggleZone(gf)}
                           className={`p-1.5 rounded-lg border transition-colors ${
                             gf.active !== false
-                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 glow-green'
                               : 'bg-slate-800 text-slate-500 border-slate-700'
                           }`}
                           title={gf.active !== false ? 'Deactivate Zone' : 'Activate Zone'}
                         >
                           <Power className="w-3.5 h-3.5" />
-                        </button>
+                        </motion.button>
 
-                        <button
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
                           onClick={() => handleDeleteZone(gf.id, gf.name)}
                           className="p-1.5 rounded-lg bg-red-950/40 text-red-400 hover:bg-red-900/60 border border-red-500/30 transition-colors"
                           title="Delete Zone"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        </motion.button>
                       </div>
                     </div>
                   );
@@ -377,16 +432,18 @@ export default function AuthorityDashboard({
             </div>
           </div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
             onClick={() => setShowCreateModal(true)}
-            className="w-full py-2.5 bg-slate-800 hover:bg-slate-750 text-amber-300 font-bold text-xs rounded-xl border border-slate-700 transition-colors flex items-center justify-center space-x-2"
+            className="w-full py-2.5 bg-slate-900/90 hover:bg-slate-800 text-amber-300 font-bold text-xs rounded-xl border border-slate-700/80 transition-colors flex items-center justify-center space-x-2 shadow-md"
           >
             <Plus className="w-4 h-4 text-amber-400" />
             <span>Configure New Danger Area & Radius</span>
-          </button>
+          </motion.button>
         </div>
 
-      </div>
+      </motion.div>
 
       {/* Interactive Modal: Set New Danger Area & Radius */}
       <CreateDangerAreaModal
@@ -395,6 +452,6 @@ export default function AuthorityDashboard({
         onCreated={handleZoneCreated}
       />
 
-    </div>
+    </motion.div>
   );
 }

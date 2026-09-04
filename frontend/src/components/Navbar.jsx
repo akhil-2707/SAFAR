@@ -14,11 +14,14 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <header className="sticky top-0 z-40 bg-safar-navy-900/95 backdrop-blur-md border-b border-safar-shield-500/20 shadow-2xl">
+    <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-2xl border-b border-slate-800/80 shadow-2xl transition-all">
+      {/* Subtle National Tricolor Hairline Accent */}
+      <div className="h-[2.5px] w-full bg-gradient-to-r from-orange-500 via-white/70 to-emerald-500 opacity-90 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-2 flex items-center justify-between">
         
         {/* Brand Logo & Emblem */}
-        <Link to="/" className="group">
+        <Link to="/" className="group transition-transform hover:scale-105 active:scale-95 duration-200">
           <SafarLogo size="sm" showSubtitle={true} />
         </Link>
 
