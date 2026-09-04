@@ -7,8 +7,9 @@ import SOSButtonModal from '../components/SOSButtonModal';
 import WearableBandCard from '../components/WearableBandCard';
 import Emergency112Modal from '../components/Emergency112Modal';
 import BystanderAlertModal from '../components/BystanderAlertModal';
+import OfflineGhostMeshModal from '../components/OfflineGhostMeshModal';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
-import { ShieldCheck, MapPin, Navigation, PhoneCall, AlertTriangle, CheckCircle2, Sparkles, Activity, Radio, Clock, Compass, AlertCircle, Phone, HeartHandshake } from 'lucide-react';
+import { ShieldCheck, MapPin, Navigation, PhoneCall, AlertTriangle, CheckCircle2, Sparkles, Activity, Radio, Clock, Compass, AlertCircle, Phone, HeartHandshake, Zap, SignalZero, WifiOff } from 'lucide-react';
 
 export default function TouristDashboard({
   tourist,
@@ -26,6 +27,7 @@ export default function TouristDashboard({
   const [loading, setLoading] = useState(false);
   const [useLiveGpsMode, setUseLiveGpsMode] = useState(false);
   const [show112Modal, setShow112Modal] = useState(false);
+  const [showMeshModal, setShowMeshModal] = useState(false);
 
   // Native Browser Geolocation Hook
   const { coords, isLive, permissionStatus, error: gpsError, startTracking, stopTracking } = useBrowserGeolocation();
@@ -328,6 +330,29 @@ export default function TouristDashboard({
           {/* Explainable AI Risk Panel */}
           <ExplainableAIPanel riskAnalysis={currentTourist?.riskAnalysis} />
 
+          {/* 0-Network Offline Ghost-Mesh Rescue Protocol Card */}
+          <div className="bg-gradient-to-r from-rose-950/70 via-navy-900 to-amber-950/60 border border-amber-500/40 rounded-2xl p-4 space-y-2.5 shadow-xl">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center space-x-1.5">
+                <Radio className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span>Offline Ghost-Mesh Rescue (0-Bars)</span>
+              </span>
+              <span className="text-[10px] font-mono text-rose-300 font-bold bg-rose-950/80 px-2 py-0.5 rounded border border-rose-500/30">
+                P2P BLE 5.3 Active
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300">
+              When trapped in mountain dead zones with 0 cellular network, relay encrypted SOS packets via nearby hikers' phones.
+            </p>
+            <button
+              onClick={() => setShowMeshModal(true)}
+              className="w-full py-2 bg-gradient-to-r from-rose-600/40 via-amber-600/40 to-rose-600/40 hover:from-rose-600/60 hover:to-amber-600/60 text-amber-200 border border-amber-500/50 rounded-xl font-bold text-xs transition-all flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-400" />
+              <span>Launch Ghost-Mesh P2P Simulator</span>
+            </button>
+          </div>
+
           {/* 112 India National Emergency API Gateway Trigger */}
           <div className="bg-gradient-to-r from-red-950/60 to-navy-900 border border-red-500/40 rounded-2xl p-4 space-y-2">
             <div className="flex items-center justify-between">
@@ -388,6 +413,12 @@ export default function TouristDashboard({
         isOpen={!!activeSosIncident}
         incident={activeSosIncident}
         onClose={() => {}}
+      />
+
+      {/* Offline Ghost-Mesh Rescue Modal Simulator */}
+      <OfflineGhostMeshModal
+        isOpen={showMeshModal}
+        onClose={() => setShowMeshModal(false)}
       />
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, AlertTriangle, Bell, User, LogOut, Navigation, FileCheck, BarChart3, Settings, Activity } from 'lucide-react';
 
-export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead, onShowLoader }) {
+export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead, onShowLoader, onOpenMeshModal }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNotifs, setShowNotifs] = useState(false);
@@ -139,6 +139,15 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
           >
             <span>DPDP Privacy</span>
           </Link>
+
+          <button
+            onClick={onOpenMeshModal}
+            className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-rose-600/30 to-amber-500/30 hover:from-rose-600/50 hover:to-amber-500/50 text-amber-300 border border-amber-500/40 flex items-center space-x-1.5 shadow-md"
+            title="Zero-Network Offline Ghost-Mesh Rescue"
+          >
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+            <span>📡 Ghost-Mesh SOS</span>
+          </button>
         </nav>
 
         {/* User & Notifications CTA */}

@@ -19,9 +19,11 @@ import PrivacyCompliancePage from './pages/PrivacyCompliancePage';
 import VendorMarketplacePage from './pages/VendorMarketplacePage';
 
 import PatrioticLoader from './components/PatrioticLoader';
+import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
 
 export default function App() {
   const [showPatrioticLoader, setShowPatrioticLoader] = useState(false);
+  const [showMeshModal, setShowMeshModal] = useState(false);
 
   const [currentUser, setCurrentUser] = useState({
     id: 'usr_tourist_01',
@@ -256,6 +258,13 @@ export default function App() {
           notifications={notifications}
           onMarkRead={handleMarkRead}
           onShowLoader={() => setShowPatrioticLoader(true)}
+          onOpenMeshModal={() => setShowMeshModal(true)}
+        />
+
+        {/* Offline Ghost-Mesh Rescue Modal Simulator */}
+        <OfflineGhostMeshModal
+          isOpen={showMeshModal}
+          onClose={() => setShowMeshModal(false)}
         />
 
         {/* Floating SIH Evaluator Demo Control Panel */}

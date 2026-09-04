@@ -39,6 +39,7 @@ app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/demo', require('./routes/demoRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/privacy', require('./routes/privacyRoutes'));
+app.use('/api/mesh-rescue', require('./routes/meshRescueRoutes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
