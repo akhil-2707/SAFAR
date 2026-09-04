@@ -53,15 +53,6 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
                 <Activity className="w-4 h-4" />
                 <span>Safety Hub</span>
               </Link>
-              <Link
-                to="/trip-planner"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5 ${
-                  location.pathname === '/trip-planner' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-                }`}
-              >
-                <Navigation className="w-4 h-4" />
-                <span>Trip Planner</span>
-              </Link>
             </>
           )}
 

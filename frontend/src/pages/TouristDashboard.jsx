@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import MapView from '../components/MapView';
 import SOSButtonModal from '../components/SOSButtonModal';
 import OfflineGhostMeshModal from '../components/OfflineGhostMeshModal';
-import BystanderAlertModal from '../components/BystanderAlertModal';
 import SafarLogo from '../components/SafarLogo';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, PhoneCall, Zap, WifiOff, Sparkles, ShieldAlert } from 'lucide-react';
@@ -282,13 +281,6 @@ export default function TouristDashboard({
       <OfflineGhostMeshModal
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
-      />
-
-      {/* Opt-in Community Safety Net Bystander Alert (When SOS is active) */}
-      <BystanderAlertModal
-        isOpen={!!activeSosIncident}
-        incident={activeSosIncident}
-        onClose={() => {}}
       />
     </div>
   );

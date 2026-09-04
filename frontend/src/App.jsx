@@ -14,7 +14,6 @@ import GeoFenceManagementPage from './pages/GeoFenceManagementPage';
 import IncidentManagementPage from './pages/IncidentManagementPage';
 import BlockchainLedgerPage from './pages/BlockchainLedgerPage';
 import AnalyticsPage from './pages/AnalyticsPage';
-import TripPlannerPage from './pages/TripPlannerPage';
 import PrivacyCompliancePage from './pages/PrivacyCompliancePage';
 import VendorMarketplacePage from './pages/VendorMarketplacePage';
 
@@ -354,17 +353,6 @@ export default function App() {
             <Route
               path="/analytics"
               element={<AnalyticsPage />}
-            />
-
-            <Route
-              path="/trip-planner"
-              element={
-                <TripPlannerPage
-                  tourist={touristProfile}
-                  geofences={geofences}
-                  onSimulateDeviation={handleSimulateDeviation}
-                />
-              }
             />
 
             <Route
