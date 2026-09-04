@@ -5,6 +5,7 @@ import OfflineGhostMeshModal from '../components/OfflineGhostMeshModal';
 import SafarLogo from '../components/SafarLogo';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, PhoneCall, Zap, WifiOff, Sparkles, ShieldAlert } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function TouristDashboard({
   tourist,
@@ -17,6 +18,7 @@ export default function TouristDashboard({
   onTriggerSos,
   onCancelSos
 }) {
+  const { t } = useLanguage();
   const [currentTourist, setCurrentTourist] = useState(tourist);
   const [loading, setLoading] = useState(false);
   const [useLiveGpsMode, setUseLiveGpsMode] = useState(false);
@@ -223,28 +225,28 @@ export default function TouristDashboard({
               onClick={() => handleSimulate('SAFE')}
               className="py-2 px-2 rounded-xl bg-emerald-950/50 hover:bg-emerald-900/70 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all text-center"
             >
-              🟢 Safe Zone
+              🟢 {t('tdbSafe', 'Safe Zone')}
             </button>
             <button
               disabled={loading}
               onClick={() => handleSimulate('APPROACH_300M')}
               className="py-2 px-2 rounded-xl bg-yellow-950/50 hover:bg-yellow-900/70 border border-yellow-500/40 text-yellow-300 text-xs font-bold transition-all text-center"
             >
-              🟡 Approach 300m
+              🟡 300m Warning
             </button>
             <button
               disabled={loading}
               onClick={() => handleSimulate('APPROACH_150M')}
               className="py-2 px-2 rounded-xl bg-orange-950/50 hover:bg-orange-900/70 border border-orange-500/40 text-orange-300 text-xs font-bold transition-all text-center"
             >
-              🟠 Approach 150m
+              🟠 150m Imminent
             </button>
             <button
               disabled={loading}
               onClick={() => handleSimulate('RESTRICTED')}
               className="py-2 px-2 rounded-xl bg-red-950/60 hover:bg-red-900/80 border border-red-500/50 text-red-300 text-xs font-bold transition-all text-center"
             >
-              🔴 Breach Zone
+              🔴 {t('tdbHazard', 'Breach Zone')}
             </button>
           </div>
         </div>
@@ -255,14 +257,14 @@ export default function TouristDashboard({
             <div className="flex items-center justify-between">
               <span className="text-xs font-black text-amber-300 uppercase tracking-wider flex items-center space-x-1.5">
                 <Radio className="w-4 h-4 text-amber-400 animate-pulse" />
-                <span>Zero-Network Ghost-Mesh Rescue</span>
+                <span>{t('tdbOfflineMeshTitle', '0-Network Ghost-Mesh Relay')}</span>
               </span>
               <span className="text-[10px] font-mono text-rose-300 font-bold bg-rose-950/90 px-2 py-0.5 rounded border border-rose-500/40">
                 P2P BLE 5.3 + Wi-Fi
               </span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
-              In deep valleys with 0 cellular signal, relay encrypted distress packets peer-to-peer across nearby hikers' phones until reaching a forest ranger uplink.
+              {t('tdbOfflineMeshDesc', "In deep valleys with 0 cellular signal, relay encrypted distress packets peer-to-peer across nearby hikers' phones until reaching a forest ranger uplink.")}
             </p>
           </div>
 
@@ -271,7 +273,7 @@ export default function TouristDashboard({
             className="w-full py-2.5 bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
           >
             <Zap className="w-4 h-4 text-amber-300" />
-            <span>Launch Offline Ghost-Mesh Simulator</span>
+            <span>{t('tdbLaunchMeshSimulator', 'Launch Offline Ghost-Mesh Simulator')}</span>
           </button>
         </div>
 

@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, AlertTriangle, Bell, User, LogOut, Navigation, FileCheck, BarChart3, Settings, Activity, Compass, Radio } from 'lucide-react';
 import SafarLogo from './SafarLogo';
+import LanguageSelector from './LanguageSelector';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead, onOpenMeshModal }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNotifs, setShowNotifs] = useState(false);
+  const { t } = useLanguage();
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -28,7 +31,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
               location.pathname === '/' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
             }`}
           >
-            Overview
+            {t('navOverview', 'Overview')}
           </Link>
 
           {currentUser?.role === 'TOURIST' && (
@@ -40,7 +43,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
                 }`}
               >
                 <Activity className="w-4 h-4" />
-                <span>Safety Hub</span>
+                <span>{t('navSafetyHub', 'Safety Hub')}</span>
               </Link>
             </>
           )}
@@ -54,7 +57,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
                 }`}
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>Command Desk</span>
+                <span>{t('navCommandDesk', 'Command Desk')}</span>
               </Link>
               <Link
                 to="/geo-fence-management"
@@ -63,7 +66,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
                 }`}
               >
                 <Settings className="w-4 h-4 text-emerald-400" />
-                <span>Geo-Fences</span>
+                <span>{t('navGeoFences', 'Geo-Fences')}</span>
               </Link>
               <Link
                 to="/incidents"
@@ -72,7 +75,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
                 }`}
               >
                 <AlertTriangle className="w-4 h-4" />
-                <span>Incidents</span>
+                <span>{t('navIncidents', 'Incidents')}</span>
               </Link>
               <Link
                 to="/blockchain-ledger"
@@ -81,7 +84,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
                 }`}
               >
                 <FileCheck className="w-4 h-4" />
-                <span>Blockchain</span>
+                <span>{t('navBlockchain', 'Blockchain')}</span>
               </Link>
             </>
           )}
@@ -92,7 +95,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
               location.pathname === '/vendor-marketplace' ? 'bg-slate-800 text-cyan-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
             }`}
           >
-            <span>Vendors</span>
+            <span>{t('navMarketplace', 'Emergency Hub')}</span>
           </Link>
 
           <Link
@@ -115,7 +118,9 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
         </nav>
 
         {/* User & Notifications CTA */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5">
+          {/* Quick Language Switcher Logo/Button */}
+          <LanguageSelector variant="navbar" />
           
           {/* Notification Bell */}
           <div className="relative">
@@ -204,7 +209,7 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
               <button
                 onClick={onLogout}
                 className="p-1 text-slate-400 hover:text-red-400 transition-colors ml-1"
-                title="Logout"
+                title={t('navLogout', 'Logout')}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -215,13 +220,13 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
                 to="/login"
                 className="px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors"
               >
-                Login
+                {t('navLogin', 'Login')}
               </Link>
               <Link
                 to="/register"
                 className="px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 rounded-lg shadow-md transition-all"
               >
-                Register Digital ID
+                {t('navRegister', 'Register Digital ID')}
               </Link>
             </div>
           )}

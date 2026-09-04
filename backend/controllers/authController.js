@@ -58,6 +58,7 @@ function registerTourist(req, res) {
       dob: dob || '1998-05-15',
       gender: gender || 'Other',
       nationality: nationality || 'Indian',
+      preferredLanguage: req.body.preferredLanguage || 'en',
       mobileNumber,
       emergencyContact: {
         name: emergencyContactName || 'Emergency Contact',

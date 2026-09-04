@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AlertOctagon, PhoneCall, ShieldAlert, X, CheckCircle2, Clock, MapPin, Hospital, Building2 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function SOSButtonModal({
   tourist,
@@ -8,6 +9,7 @@ export default function SOSButtonModal({
   onCancelSos,
   nearbyServices = []
 }) {
+  const { t } = useLanguage();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
@@ -71,7 +73,7 @@ export default function SOSButtonModal({
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center sos-radar-animation">
             <AlertOctagon className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
           </div>
-          <span className="tracking-wider uppercase">EMERGENCY SOS</span>
+          <span className="tracking-wider uppercase">{t('tdbSosButtonText', 'TRIGGER EMERGENCY SOS')}</span>
         </button>
       ) : (
         /* Active SOS Dispatch Card */
@@ -81,7 +83,7 @@ export default function SOSButtonModal({
               <div className="w-3 h-3 rounded-full bg-red-500 animate-ping" />
               <AlertOctagon className="w-6 h-6 text-red-400" />
               <div>
-                <h3 className="font-black text-lg text-white">EMERGENCY SOS DISPATCH ACTIVE</h3>
+                <h3 className="font-black text-lg text-white">{t('tdbSosActiveAlert', 'EMERGENCY SOS BROADCAST ACTIVE')}</h3>
                 <p className="text-xs text-red-200">Authorities & Emergency Dispatchers Notified</p>
               </div>
             </div>
@@ -130,7 +132,7 @@ export default function SOSButtonModal({
             onClick={() => setShowCancelConfirmModal(true)}
             className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-red-400 hover:text-red-300 rounded-xl font-bold text-xs border border-red-500/40 transition-colors"
           >
-            Cancel SOS (Confirm Safety)
+            {t('tdbCancelSos', 'Cancel SOS (Mark False Alarm)')}
           </button>
         </div>
       )}
