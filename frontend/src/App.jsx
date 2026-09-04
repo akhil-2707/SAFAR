@@ -21,7 +21,7 @@ import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
 
 export default function App() {
-  const [showPatrioticLoader, setShowPatrioticLoader] = useState(false);
+  const [showPatrioticLoader, setShowPatrioticLoader] = useState(true);
   const [showMeshModal, setShowMeshModal] = useState(false);
 
   const [currentUser, setCurrentUser] = useState({
@@ -256,7 +256,6 @@ export default function App() {
           onLogout={() => setCurrentUser(null)}
           notifications={notifications}
           onMarkRead={handleMarkRead}
-          onShowLoader={() => setShowPatrioticLoader(true)}
           onOpenMeshModal={() => setShowMeshModal(true)}
         />
 

@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, AlertTriangle, Bell, User, LogOut, Navigation, FileCheck, BarChart3, Settings, Activity, Compass, Radio } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 
-export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead, onShowLoader, onOpenMeshModal }) {
+export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead, onOpenMeshModal }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNotifs, setShowNotifs] = useState(false);
@@ -21,17 +21,6 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
 
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center space-x-1">
-          {/* Replay Patriotic Indian Flag Intro */}
-          {onShowLoader && (
-            <button
-              onClick={onShowLoader}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-amber-500/20 via-slate-100/10 to-emerald-500/20 border border-slate-700 text-amber-300 hover:text-white hover:border-amber-400 transition-all flex items-center space-x-1.5 shadow-sm"
-              title="Play Indian Flag Intro Animation"
-            >
-              <span>🇮🇳</span>
-              <span>Flag Intro</span>
-            </button>
-          )}
 
           <Link
             to="/"
