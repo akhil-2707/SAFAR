@@ -319,6 +319,7 @@ export default function App() {
                   notifications={notifications}
                   emergencyServices={emergencyServices}
                   onUpdateIncidentStatus={handleUpdateIncidentStatus}
+                  onRefreshData={fetchInitialData}
                 />
               }
             />

@@ -177,41 +177,91 @@ export default function MapView({
           maxNativeZoom={currentProvider.maxNativeZoom}
         />
 
-        {/* Geo-Fence Polygons */}
+        {/* Geo-Fence Polygons & Circular Danger Zones */}
         {showZones &&
-          activeGeofences.map((gf) => (
-            <Polygon
-              key={gf.id}
-              positions={gf.coordinates}
-              pathOptions={{
-                color: gf.strokeColor || gf.color,
-                fillColor: gf.color,
-                fillOpacity: 0.25,
-                weight: 2
-              }}
-            >
-              <Popup>
-                <div className="p-1 space-y-1">
-                  <div className="flex items-center space-x-1">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: gf.color }}
-                    />
-                    <span className="font-bold text-sm text-slate-100">{gf.name}</span>
+          activeGeofences.map((gf) => {
+            // If the zone is a Circle or has a center with radius
+            if (gf.shape === 'CIRCLE' || (!gf.coordinates?.length && gf.center && gf.radiusMeters)) {
+              const centerLat = gf.center?.lat ?? (Array.isArray(gf.center) ? gf.center[0] : 26.1445);
+              const centerLng = gf.center?.lng ?? (Array.isArray(gf.center) ? gf.center[1] : 91.7362);
+              const radius = gf.radiusMeters || 500;
+              return (
+                <Circle
+                  key={gf.id}
+                  center={[centerLat, centerLng]}
+                  radius={radius}
+                  pathOptions={{
+                    color: gf.strokeColor || gf.color || '#EF4444',
+                    fillColor: gf.color || '#EF4444',
+                    fillOpacity: 0.28,
+                    weight: 2.5,
+                    dashArray: gf.type === 'RESTRICTED' ? '6, 6' : undefined
+                  }}
+                >
+                  <Popup>
+                    <div className="p-1.5 space-y-1 min-w-[190px]">
+                      <div className="flex items-center space-x-1.5">
+                        <span
+                          className="w-3 h-3 rounded-full shrink-0"
+                          style={{ backgroundColor: gf.color || '#EF4444' }}
+                        />
+                        <span className="font-bold text-sm text-slate-100">{gf.name}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] pt-1">
+                        <span className="font-bold uppercase px-1.5 py-0.5 rounded bg-slate-800 text-amber-300">
+                          {gf.type} • {gf.riskLevel || 'HIGH'}
+                        </span>
+                        <span className="font-mono text-cyan-400 font-bold">
+                          Radius: {radius >= 1000 ? `${(radius / 1000).toFixed(1)} km` : `${radius}m`}
+                        </span>
+                      </div>
+                      {gf.alertMessage && (
+                        <p className="text-[11px] text-red-300 bg-red-950/60 p-1.5 rounded border border-red-500/30 mt-1">
+                          ⚠️ {gf.alertMessage}
+                        </p>
+                      )}
+                    </div>
+                  </Popup>
+                </Circle>
+              );
+            }
+
+            if (!gf.coordinates || !gf.coordinates.length) return null;
+
+            return (
+              <Polygon
+                key={gf.id}
+                positions={gf.coordinates}
+                pathOptions={{
+                  color: gf.strokeColor || gf.color,
+                  fillColor: gf.color,
+                  fillOpacity: 0.25,
+                  weight: 2
+                }}
+              >
+                <Popup>
+                  <div className="p-1 space-y-1">
+                    <div className="flex items-center space-x-1">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ backgroundColor: gf.color }}
+                      />
+                      <span className="font-bold text-sm text-slate-100">{gf.name}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                        {gf.type}
+                      </span>
+                      <span className="text-[10px] text-amber-400 font-semibold">
+                        Warn: {gf.warningDistance || 300}m
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">{gf.description}</p>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
-                      {gf.type}
-                    </span>
-                    <span className="text-[10px] text-amber-400 font-semibold">
-                      Warn: {gf.warningDistance || 300}m
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-1">{gf.description}</p>
-                </div>
-              </Popup>
-            </Polygon>
-          ))}
+                </Popup>
+              </Polygon>
+            );
+          })}
 
         {/* Planned Route Polyline */}
         {plannedRoute && plannedRoute.routeWaypoints && plannedRoute.routeWaypoints.length > 1 && (
