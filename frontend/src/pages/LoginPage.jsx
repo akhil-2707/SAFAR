@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, Mail, Lock, Key, UserCheck, ShieldAlert, ArrowRight } from 'lucide-react';
 
+import SafarLogo from '../components/SafarLogo';
+
 export default function LoginPage({ onLoginSuccess }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState('rohan.verma@example.com');
@@ -65,16 +67,21 @@ export default function LoginPage({ onLoginSuccess }) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
-      <div className="bg-navy-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+      <div className="bg-safar-navy-900 border border-safar-shield-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
         
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto shadow-lg">
-            <ShieldCheck className="w-8 h-8" />
+        {/* Header with S.A.F.A.R. Logo */}
+        <div className="text-center space-y-3">
+          <div className="flex justify-center">
+            <SafarLogo size="lg" showText={false} animated={true} />
           </div>
-          <h2 className="text-3xl font-black text-white tracking-tight">SafeTour NE Dual Portal Login</h2>
-          <p className="text-xs text-slate-300 font-medium max-w-md mx-auto">
-            Select role for direct 1-click demo entry or sign in with credentials
+          <div>
+            <h2 className="text-3xl font-black text-white tracking-tight">S.A.F.A.R. Gateway Login</h2>
+            <p className="text-xs text-safar-saffron-400 font-bold uppercase tracking-wider mt-0.5">
+              Smart AI Framework for Assured & Responsible Tourism
+            </p>
+          </div>
+          <p className="text-xs text-slate-400 max-w-md mx-auto">
+            Direct 1-Click Evaluation Access for Hackathon Judges & Field Teams
           </p>
         </div>
 

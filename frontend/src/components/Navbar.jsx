@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, AlertTriangle, Bell, User, LogOut, Navigation, FileCheck, BarChart3, Settings, Activity } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, Bell, User, LogOut, Navigation, FileCheck, BarChart3, Settings, Activity, Compass, Radio } from 'lucide-react';
+import SafarLogo from './SafarLogo';
 
 export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead, onShowLoader, onOpenMeshModal }) {
   const navigate = useNavigate();
@@ -10,29 +11,12 @@ export default function Navbar({ currentUser, onLogout, notifications = [], onMa
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <header className="sticky top-0 z-40 bg-navy-900/90 backdrop-blur-md border-b border-slate-800 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-safar-navy-900/95 backdrop-blur-md border-b border-safar-shield-500/20 shadow-2xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-2 flex items-center justify-between">
         
-        {/* Brand & Emblem */}
-        <Link to="/" className="flex items-center space-x-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 p-0.5 shadow-lg group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-navy-950 rounded-[10px] flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6 text-brand-500" />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-extrabold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-emerald-400">
-                SafeTour NE
-              </span>
-              <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/20 uppercase tracking-widest">
-                SIH25002
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 font-medium hidden sm:block">
-              Ministry of Development of North Eastern Region
-            </p>
-          </div>
+        {/* Brand Logo & Emblem */}
+        <Link to="/" className="group">
+          <SafarLogo size="sm" showSubtitle={true} />
         </Link>
 
         {/* Navigation Links */}

@@ -4,6 +4,8 @@ import MiniMap from '../components/MiniMap';
 import { ShieldCheck, AlertTriangle, Users, AlertOctagon, CheckCircle2, Phone, ExternalLink, Activity, Radio, BarChart3, Settings, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import SafarLogo from '../components/SafarLogo';
+
 export default function AuthorityDashboard({
   tourists = [],
   geofences = [],
@@ -31,17 +33,20 @@ export default function AuthorityDashboard({
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       
       {/* Top Banner Header */}
-      <div className="bg-navy-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className="font-extrabold text-2xl text-white">Authority Command & Safety Control Center</span>
-            <span className="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase tracking-widest">
-              Live Monitoring Desk
-            </span>
+      <div className="bg-safar-navy-900 border border-safar-shield-500/30 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-4">
+          <SafarLogo size="sm" showText={false} animated={true} />
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="font-extrabold text-2xl text-white">S.A.F.A.R. Command & Safety Control Center</span>
+              <span className="bg-safar-saffron-500/15 text-safar-saffron-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-safar-saffron-500/30 uppercase tracking-widest">
+                National Desk
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 mt-0.5">
+              Smart AI Framework for Assured & Responsible Tourism • Ministry of DoNER & State Police Console
+            </p>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Ministry of DoNER & State Tourist Police Operations Console
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

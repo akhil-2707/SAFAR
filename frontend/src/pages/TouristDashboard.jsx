@@ -8,6 +8,7 @@ import WearableBandCard from '../components/WearableBandCard';
 import Emergency112Modal from '../components/Emergency112Modal';
 import BystanderAlertModal from '../components/BystanderAlertModal';
 import OfflineGhostMeshModal from '../components/OfflineGhostMeshModal';
+import SafarLogo from '../components/SafarLogo';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { ShieldCheck, MapPin, Navigation, PhoneCall, AlertTriangle, CheckCircle2, Sparkles, Activity, Radio, Clock, Compass, AlertCircle, Phone, HeartHandshake, Zap, SignalZero, WifiOff } from 'lucide-react';
 
@@ -92,29 +93,32 @@ export default function TouristDashboard({
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       
       {/* Top Banner: Tourist Safety Status Header */}
-      <div className="bg-navy-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-extrabold text-2xl text-white">{currentTourist?.fullName || 'Rohan Verma'}</span>
-            <span className="text-xs font-mono font-bold bg-slate-800 text-emerald-400 px-2 py-0.5 rounded border border-slate-700">
-              {currentTourist?.touristId || 'TID-1024'}
-            </span>
+      <div className="bg-safar-navy-900 border border-safar-shield-500/30 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-4">
+          <SafarLogo size="sm" showText={false} animated={true} />
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-extrabold text-2xl text-white">{currentTourist?.fullName || 'Rohan Verma'}</span>
+              <span className="text-xs font-mono font-bold bg-safar-navy-850 text-safar-saffron-400 px-2.5 py-0.5 rounded border border-safar-saffron-500/30">
+                S.A.F.A.R. PASS #{currentTourist?.touristId || 'TID-1024'}
+              </span>
 
-            {/* Strict Live vs Demo Badge */}
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full flex items-center space-x-1 border ${
-              isLiveGpsActive
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 glow-green'
-                : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-            }`}>
-              <Radio className={`w-3 h-3 ${isLiveGpsActive ? 'text-emerald-400 animate-pulse' : 'text-amber-400'}`} />
-              <span>{isLiveGpsActive ? '🟢 LIVE GPS (Browser Sensor)' : '🟡 DEMO LOCATION'}</span>
-            </span>
+              {/* Strict Live vs Demo Badge */}
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full flex items-center space-x-1 border ${
+                isLiveGpsActive
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 glow-green'
+                  : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+              }`}>
+                <Radio className={`w-3 h-3 ${isLiveGpsActive ? 'text-emerald-400 animate-pulse' : 'text-amber-400'}`} />
+                <span>{isLiveGpsActive ? '🟢 LIVE GPS SENSOR' : '🟡 SIMULATOR MODE'}</span>
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-300 flex items-center space-x-1">
+              <MapPin className="w-3.5 h-3.5 text-safar-saffron-400 shrink-0" />
+              <span>Current Corridor: <strong className="text-white">{currentTourist?.currentLocation?.address || 'Guwahati Safe Tourism Hub'}</strong></span>
+            </p>
           </div>
-
-          <p className="text-xs text-slate-400 flex items-center space-x-1">
-            <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Position: <strong>{currentTourist?.currentLocation?.address || 'Guwahati Safe Tourism Hub'}</strong></span>
-          </p>
         </div>
 
         {/* Live Browser GPS Sensor Toggle */}
