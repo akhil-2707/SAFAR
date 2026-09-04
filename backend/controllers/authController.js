@@ -90,7 +90,7 @@ function registerTourist(req, res) {
       touristIdHash,
       digitalIdHash,
       verificationStatus: 'VERIFIED',
-      issuer: 'Ministry of Development of North Eastern Region (DoNER)',
+      issuer: 'S.A.F.A.R. National Tourism Safety Authority',
       network: 'Prototype Blockchain Ledger',
       travelValidity: `${newTourist.travelStartDate} to ${newTourist.travelEndDate}`
     });

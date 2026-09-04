@@ -13,7 +13,7 @@ function getInitialData() {
       email: 'authority@safetour.gov.in',
       password: defaultPasswordHash,
       role: 'AUTHORITY',
-      department: 'Ministry of DoNER Safety Desk',
+      department: 'S.A.F.A.R. Central Command Desk',
       phone: '+91 98640 12345'
     },
     {
@@ -292,7 +292,7 @@ function getInitialData() {
       touristIdHash,
       digitalIdHash,
       verificationStatus: 'VERIFIED',
-      issuer: 'Ministry of Development of North Eastern Region (DoNER)',
+      issuer: 'S.A.F.A.R. National Tourism Safety Authority',
       network: 'Prototype Blockchain Ledger',
       travelValidity: `${t.travelStartDate} to ${t.travelEndDate}`
     });
@@ -337,7 +337,7 @@ function getInitialData() {
     },
     {
       id: 'es_03',
-      name: 'DoNER Tourist Safety Help Desk',
+      name: 'S.A.F.A.R. Tourist Safety Help Desk',
       type: 'TOURIST_HELP',
       phone: '1800 123 7233 (Toll Free)',
       address: 'NE Council Complex, Shillong / Guwahati Desk',

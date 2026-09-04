@@ -1,9 +1,9 @@
-# SafeTour NE — Smart Tourist Safety Monitoring & Incident Response System
+# S.A.F.A.R. — Smart AI Framework for Assured & Responsible Tourism
 
-**PS ID:** SIH25002  
-**Title:** Smart Tourist Safety Monitoring & Incident Response System using AI, Geo-Fencing, and Blockchain-based Digital ID  
-**Ministry:** Ministry of Development of North Eastern Region (DoNER)  
-**Theme:** Travel & Tourism  
+**Project:** S.A.F.A.R. (SIH 2026)  
+**Title:** Smart Tourist Safety Monitoring & Incident Response System using AI, Geo-Fencing, Ghost-Mesh, and Blockchain-based Digital ID  
+**Ministry:** Ministry of Tourism, Government of India  
+**Theme:** Travel & Tourism / Student Innovation  
 **Category:** Software  
 
 ---
@@ -92,7 +92,7 @@ npm run dev
 | Role | Email | Password | Details |
 | :--- | :--- | :--- | :--- |
 | **Tourist (Rohan Verma)** | `rohan.verma@example.com` | `tourist123` | Tourist ID: `TID-1024` |
-| **Authority (Ministry of DoNER)** | `authority@safetour.gov.in` | `admin123` | Central Safety Desk Officer |
+| **Authority (National Safety Desk)** | `authority@safetour.gov.in` | `admin123` | Central Safety Desk Officer |
 | **Tourist Police HQ** | `police@safetour.gov.in` | `admin123` | Assam Tourist Police Patrol |
 | **Disaster Response** | `disaster@safetour.gov.in` | `admin123` | Emergency Rescue Force |
 
@@ -121,4 +121,4 @@ Use the floating **SIH Evaluator Demo Control Panel** at the bottom-right corner
 
 ## 📄 License & Credits
 
-Developed for the **Smart India Hackathon (SIH 2026)** under Problem Statement **SIH25002** for the **Ministry of Development of North Eastern Region**.
+Developed for the **Smart India Hackathon (SIH 2026)** — **S.A.F.A.R.** (Ministry of Tourism, Government of India).

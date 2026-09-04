@@ -47,7 +47,7 @@ class PrototypeBlockchainLedger {
       touristIdHash: crypto.createHash('sha256').update('GENESIS_SAFE_TOUR_NE_NODE_0').digest('hex'),
       digitalIdHash: crypto.createHash('sha256').update('GENESIS_DIGITAL_ID_0000').digest('hex'),
       verificationStatus: 'GENESIS_VERIFIED',
-      issuer: 'Ministry of Development of North Eastern Region (DoNER)',
+      issuer: 'S.A.F.A.R. National Tourism Safety Authority',
       network: 'Prototype Blockchain Ledger (Private Consensus)',
       timestamp: new Date('2026-01-01T00:00:00Z').toISOString()
     };
@@ -185,7 +185,7 @@ class PrototypeBlockchainLedger {
       for (let i = 1; i < this.chain.length; i++) {
         if (this.chain[i].data.verificationStatus === 'TAMPERED_UNAUTHORIZED_ALTERATION') {
           this.chain[i].data.verificationStatus = 'VERIFIED';
-          this.chain[i].data.issuer = 'Ministry of Development of North Eastern Region (DoNER)';
+          this.chain[i].data.issuer = 'S.A.F.A.R. National Tourism Safety Authority';
         }
         this.chain[i].previousHash = this.chain[i - 1].hash;
         this.chain[i].hash = this.chain[i].calculateHash();

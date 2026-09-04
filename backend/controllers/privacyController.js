@@ -9,7 +9,7 @@ function getPrivacyStatus(req, res) {
     const privacyAudit = {
       complianceFramework: 'Digital Personal Data Protection (DPDP) Act 2023',
       jurisdiction: 'Republic of India - Ministry of Law and Justice',
-      dataFiduciary: 'Ministry of Development of North Eastern Region (DoNER) / SafeTour NE',
+      dataFiduciary: 'S.A.F.A.R. National Tourism Safety Authority',
       consentStatus: {
         locationTracking: true,
         cryptoDigitalIdSharing: true,

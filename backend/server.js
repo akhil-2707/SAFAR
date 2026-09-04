@@ -20,9 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ONLINE',
-    service: 'SafeTour NE - Smart Tourist Safety System Backend',
-    psId: 'SIH25002',
-    ministry: 'Ministry of Development of North Eastern Region',
+    service: 'S.A.F.A.R. - Smart Tourist Safety System Backend',
+    framework: 'Smart AI Framework for Assured & Responsible Tourism',
+    ministry: 'Ministry of Tourism, Govt. of India',
     timestamp: new Date().toISOString()
   });
 });
@@ -53,8 +53,8 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`=======================================================`);
-  console.log(` SafeTour NE API Server Running on Port ${PORT}`);
+  console.log(` S.A.F.A.R. API Server Running on Port ${PORT}`);
   console.log(` Health Check: http://localhost:${PORT}/api/health`);
-  console.log(` SIH PS ID: SIH25002 - Ministry of DoNER`);
+  console.log(` S.A.F.A.R. Tourist Safety & Blockchain Network`);
   console.log(`=======================================================`);
 });

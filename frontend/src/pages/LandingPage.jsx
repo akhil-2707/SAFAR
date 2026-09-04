@@ -36,9 +36,9 @@ export default function LandingPage({ onScenarioTrigger }) {
                 className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-safar-navy-850/90 border border-safar-saffron-500/40 text-xs font-extrabold text-safar-saffron-400 shadow-xl"
               >
                 <span>🇮🇳</span>
-                <span>MINISTRY OF DoNER & GOI SMART TOURISM INITIATIVE</span>
+                <span>GOVERNMENT OF INDIA • SMART TOURISM INITIATIVE</span>
                 <span className="text-slate-500">•</span>
-                <span className="text-emerald-400">SIH25002</span>
+                <span className="text-emerald-400">SIH 2026</span>
               </motion.div>
 
               <motion.h1
@@ -264,7 +264,7 @@ export default function LandingPage({ onScenarioTrigger }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300">
             <div className="flex items-start space-x-3 bg-safar-navy-950/80 p-3.5 rounded-2xl border border-slate-800">
               <CheckCircle2 className="w-4 h-4 text-safar-saffron-400 shrink-0 mt-0.5" />
-              <span><strong>Official Government Alignment:</strong> Designed specifically for Ministry of DoNER problem statement SIH25002 with DPDP Act 2023 compliance.</span>
+              <span><strong>Official Government Alignment:</strong> Designed with full DPDP Act 2023 compliance and autonomous tourist safety matrix.</span>
             </div>
             <div className="flex items-start space-x-3 bg-safar-navy-950/80 p-3.5 rounded-2xl border border-slate-800">
               <CheckCircle2 className="w-4 h-4 text-safar-shield-400 shrink-0 mt-0.5" />
@@ -288,7 +288,7 @@ export default function LandingPage({ onScenarioTrigger }) {
           <SafarLogo size="xs" showSubtitle={false} />
         </div>
         <p>© 2026 S.A.F.A.R. | Smart AI Framework for Assured & Responsible Tourism</p>
-        <p className="text-[11px] text-slate-600">Developed for Smart India Hackathon | Ministry of Development of North Eastern Region (DoNER)</p>
+        <p className="text-[11px] text-slate-600">Developed for Smart India Hackathon 2026 | Ministry of Tourism, Govt. of India</p>
       </footer>
     </div>
   );

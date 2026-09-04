@@ -91,7 +91,7 @@ export default function VerifyDigitalIdPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="bg-slate-800/40 p-3 rounded-xl border border-slate-700/60 space-y-1">
             <span className="text-[10px] text-slate-400 uppercase font-bold block">Issuer Authority</span>
-            <span className="font-bold text-slate-200 block">Ministry of DoNER</span>
+            <span className="font-bold text-slate-200 block">S.A.F.A.R. National Tourism Safety Authority</span>
           </div>
 
           <div className="bg-slate-800/40 p-3 rounded-xl border border-slate-700/60 space-y-1">

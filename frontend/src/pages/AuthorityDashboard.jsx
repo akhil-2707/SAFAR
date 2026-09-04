@@ -44,7 +44,7 @@ export default function AuthorityDashboard({
               </span>
             </div>
             <p className="text-xs text-slate-300 mt-0.5">
-              Smart AI Framework for Assured & Responsible Tourism • Ministry of DoNER & State Police Console
+              Smart AI Framework for Assured & Responsible Tourism • Ministry of Tourism & State Police Console
             </p>
           </div>
         </div>

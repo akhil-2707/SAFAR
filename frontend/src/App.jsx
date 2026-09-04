@@ -114,7 +114,7 @@ export default function App() {
         name: 'Dr. Ananya Sharma',
         email: 'authority@safetour.gov.in',
         role: 'AUTHORITY',
-        department: 'Ministry of DoNER Safety Desk'
+        department: 'S.A.F.A.R. Central Command Desk'
       });
     } else {
       setCurrentUser({
