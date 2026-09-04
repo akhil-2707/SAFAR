@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShieldCheck, MapPin, Cpu, Lock, AlertOctagon, Activity, Users, FileCheck, CheckCircle2, ArrowRight, Phone, ShieldAlert, Sparkles, Navigation, Play, Eye, Radio, Compass, Zap } from 'lucide-react';
+import { ShieldCheck, MapPin, Cpu, Lock, AlertOctagon, Activity, Users, FileCheck, CheckCircle2, ArrowRight, Phone, ShieldAlert, Sparkles, Navigation, Play, Eye, Radio, Compass, Zap, SignalZero } from 'lucide-react';
 import CinematicHeroMap from '../components/CinematicHeroMap';
 import SafarLogo from '../components/SafarLogo';
 
