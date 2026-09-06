@@ -11,6 +11,7 @@ import OfflineGhostMeshModal from '../components/OfflineGhostMeshModal';
 import SafarLogo from '../components/SafarLogo';
 import DeadmanSwitch from '../components/DeadmanSwitch';
 import LocalFareEstimator from '../components/LocalFareEstimator';
+import RedZonePreEntryBanner from '../components/RedZonePreEntryBanner';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
@@ -399,49 +400,12 @@ export default function TouristDashboard({
         </div>
       )}
 
-      {/* Pre-Entry Proximity Warning Banner */}
-      <AnimatePresence>
-        {proxWarn && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            className="p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
-            style={{
-              background:
-                proxWarn.severity === 'CRITICAL'
-                  ? 'linear-gradient(135deg, rgba(255,241,242,0.98), rgba(255,255,255,0.99))'
-                  : 'linear-gradient(135deg, rgba(255,247,237,0.98), rgba(255,255,255,0.99))',
-              border: `2px solid ${proxWarn.severity === 'CRITICAL' ? 'rgba(239,68,68,0.5)' : 'rgba(249,115,22,0.45)'}`,
-              boxShadow: proxWarn.severity === 'CRITICAL' ? '0 8px 30px rgba(239,68,68,0.2)' : '0 8px 30px rgba(249,115,22,0.15)',
-            }}
-          >
-            <div className="flex items-center space-x-3">
-              <motion.div
-                className="w-11 h-11 rounded-xl flex items-center justify-center"
-                style={{ background: 'rgba(239,68,68,0.12)', border: '1.5px solid rgba(239,68,68,0.3)' }}
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 0.8, repeat: Infinity }}
-              >
-                <ShieldAlert className="w-6 h-6 text-red-500" />
-              </motion.div>
-              <div>
-                <span className="font-black text-sm block text-red-700">
-                  {proxWarn.tier === 'APPROACH'
-                    ? '🟡 RESTRICTED AREA APPROACHING (300M BUFFER)'
-                    : proxWarn.tier === 'IMMINENT'
-                    ? '🟠 IMMINENT ZONE ENTRY (150M BUFFER)'
-                    : '🔴 RESTRICTED ZONE BREACH DETECTED!'}
-                </span>
-                <p className="text-xs text-gray-600 mt-0.5">{proxWarn.message}</p>
-              </div>
-            </div>
-            <span className="text-xs font-mono font-bold px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-sm text-slate-800">
-              Distance: <strong className="text-orange-600">{proxWarn.distanceMeters}m Away</strong>
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* 🔴 High-Definition Red-Zone Pre-Entry Floating Motion Banner (Govt Synchronized Deadman) */}
+      <RedZonePreEntryBanner
+        tourist={currentTourist}
+        proximityWarning={proxWarn}
+        isDangerZone={currentTourist?.riskLevel === 'CRITICAL' || currentTourist?.riskLevel === 'HIGH'}
+      />
 
       {/* Main Grid: Left Column (2 cols) & Right Column (1 col) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

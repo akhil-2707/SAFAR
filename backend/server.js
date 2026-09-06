@@ -42,6 +42,7 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/privacy', require('./routes/privacyRoutes'));
 app.use('/api/mesh-rescue', require('./routes/meshRescueRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
+app.use('/api/deadman', require('./routes/deadmanRoutes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {

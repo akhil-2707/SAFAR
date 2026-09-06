@@ -560,6 +560,7 @@ function AppContent({
                     />
                   }
                 />
+                <Route path="/authority" element={<Navigate to="/authority-dashboard" replace />} />
 
                 <Route
                   path="/geo-fence-management"

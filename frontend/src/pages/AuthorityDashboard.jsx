@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MapView from '../components/MapView';
 import MiniMap from '../components/MiniMap';
 import CreateDangerAreaModal from '../components/CreateDangerAreaModal';
+import DeadmanAuthoritySentinel from '../components/DeadmanAuthoritySentinel';
 import SafarLogo from '../components/SafarLogo';
 import { 
   ShieldCheck, AlertTriangle, Users, AlertOctagon, CheckCircle2, 
@@ -287,6 +288,11 @@ export default function AuthorityDashboard({
           <div className="text-xs font-mono font-bold text-slate-900">Total Retrained Cases: {resolvedIncidents + 12}</div>
           <div className="text-[10px] font-mono text-emerald-700 font-extrabold">Prediction Accuracy: 98.4%</div>
         </div>
+      </motion.div>
+
+      {/* Synchronized Red-Zone Deadman Sentinel Desk */}
+      <motion.div variants={itemVariants}>
+        <DeadmanAuthoritySentinel />
       </motion.div>
 
       {/* Tactical Radar Map */}
