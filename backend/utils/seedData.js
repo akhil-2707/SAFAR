@@ -49,6 +49,54 @@ function getInitialData() {
       password: defaultPasswordHash,
       role: 'TOURIST',
       touristId: 'TID-1025'
+    },
+    {
+      id: 'usr_tourist_ayodhya',
+      name: 'Ananya Mishra',
+      email: 'ananya.mishra@example.com',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-1035'
+    },
+    {
+      id: 'usr_tourist_jammu',
+      name: 'Vikas Chandel',
+      email: 'vikas.chandel@example.com',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-1036'
+    },
+    {
+      id: 'usr_tourist_varanasi',
+      name: 'Sneha Kulkarni',
+      email: 'sneha.k@example.com',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-1037'
+    },
+    {
+      id: 'usr_tourist_jaipur',
+      name: 'Kabir Rathore',
+      email: 'kabir.rathore@example.com',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-1038'
+    },
+    {
+      id: 'usr_tourist_tajmahal',
+      name: 'Aarav Sharma',
+      email: 'aarav.taj@example.com',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-1039'
+    },
+    {
+      id: 'usr_tourist_realtime',
+      name: 'Real-Time Device Tourist',
+      email: 'reallive@safetour.gov.in',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-REAL'
     }
   ];
 
@@ -143,6 +191,138 @@ function getInitialData() {
       ],
       color: '#991B1B',
       strokeColor: '#7F1D1D'
+    },
+    // Ayodhya Geo-fences
+    {
+      id: 'gf_ayodhya_01',
+      name: 'Ayodhya Ram Janmabhoomi Pilgrim Corridor',
+      type: 'SAFE',
+      description: 'CCTV & Drone monitored high-security temple corridor',
+      center: { lat: 26.7922, lng: 82.1998 },
+      coordinates: [
+        [26.802, 82.190],
+        [26.802, 82.210],
+        [26.782, 82.210],
+        [26.782, 82.190]
+      ],
+      color: '#10B981',
+      strokeColor: '#059669'
+    },
+    {
+      id: 'gf_ayodhya_02',
+      name: 'Saryu River Deep Water Ghats',
+      type: 'CAUTION',
+      description: 'Deep river flow hazard - swimming strictly prohibited during high currents',
+      center: { lat: 26.7980, lng: 82.2030 },
+      coordinates: [
+        [26.808, 82.195],
+        [26.808, 82.215],
+        [26.795, 82.215],
+        [26.795, 82.195]
+      ],
+      color: '#F59E0B',
+      strokeColor: '#D97706'
+    },
+    // Jammu & Kashmir Geo-fences
+    {
+      id: 'gf_jammu_01',
+      name: 'Katra Vaishno Devi Bhawan Safe Corridor',
+      type: 'SAFE',
+      description: 'RFID tracking & Disaster Management monitored high-altitude trail',
+      center: { lat: 32.9934, lng: 74.9328 },
+      coordinates: [
+        [33.010, 74.915],
+        [33.010, 74.950],
+        [32.975, 74.950],
+        [32.975, 74.915]
+      ],
+      color: '#10B981',
+      strokeColor: '#059669'
+    },
+    {
+      id: 'gf_jammu_02',
+      name: 'Banihal High-Altitude Landslide Zone',
+      type: 'RESTRICTED',
+      description: 'Active landslide & avalanche danger zone - entry requires border clearance',
+      center: { lat: 33.4900, lng: 75.2000 },
+      coordinates: [
+        [33.510, 75.180],
+        [33.510, 75.220],
+        [33.470, 75.220],
+        [33.470, 75.180]
+      ],
+      color: '#EF4444',
+      strokeColor: '#DC2626'
+    },
+    // Varanasi Geo-fence
+    {
+      id: 'gf_varanasi_01',
+      name: 'Kashi Vishwanath Cultural Safe Perimeter',
+      type: 'SAFE',
+      description: 'Protected heritage riverfront with tourist police river patrol',
+      center: { lat: 25.3109, lng: 83.0107 },
+      coordinates: [
+        [25.325, 82.995],
+        [25.325, 83.025],
+        [25.295, 83.025],
+        [25.295, 82.995]
+      ],
+      color: '#10B981',
+      strokeColor: '#059669'
+    },
+    // Jaipur Geo-fences
+    {
+      id: 'gf_jaipur_01',
+      name: 'Amber Fort Heritage Safe Zone',
+      type: 'SAFE',
+      description: 'UNESCO World Heritage tourist police and guide corridor',
+      center: { lat: 26.9855, lng: 75.8513 },
+      coordinates: [
+        [27.000, 75.835],
+        [27.000, 75.865],
+        [26.970, 75.865],
+        [26.970, 75.835]
+      ],
+      color: '#10B981',
+      strokeColor: '#059669'
+    },
+    {
+      id: 'gf_jaipur_02',
+      name: 'Nahargarh Forest Wildlife Buffer',
+      type: 'CAUTION',
+      description: 'Rugged forest terrain with nocturnal wildlife movement',
+      center: { lat: 26.9380, lng: 75.8160 },
+      coordinates: [
+        [26.955, 75.800],
+        [26.955, 75.830],
+        [26.920, 75.830],
+        [26.920, 75.800]
+      ],
+      color: '#F59E0B',
+      strokeColor: '#D97706'
+    },
+    {
+      id: 'gf_tajmahal_01',
+      name: 'Taj Mahal Monument Safe Heritage Perimeter',
+      type: 'SAFE',
+      shape: 'CIRCLE',
+      center: { lat: 27.1751, lng: 78.0421 },
+      radiusMeters: 550,
+      color: '#10B981',
+      strokeColor: '#059669',
+      description: 'UNESCO World Heritage Monument and gardens with maximum CISF & Tourist Police security'
+    },
+    {
+      id: 'gf_tajmahal_02',
+      name: 'Yamuna River Shoreline Danger Zone',
+      type: 'RESTRICTED',
+      shape: 'CIRCLE',
+      center: { lat: 27.1795, lng: 78.0425 },
+      radiusMeters: 380,
+      color: '#EF4444',
+      strokeColor: '#B91C1C',
+      description: 'Prohibited military boundary and dangerous river currents behind Taj Mahal north facade',
+      alertMessage: '⚠️ RESTRICTED: Approaching hazardous Yamuna river bank! Please return to paved monument promenade.'
     }
   ];
 
@@ -277,6 +457,162 @@ function getInitialData() {
       isSosActive: false,
       status: 'SAFE',
       lastSeen: new Date().toISOString()
+    },
+    {
+      id: 'tourist_ayodhya',
+      touristId: 'TID-1035',
+      fullName: 'Ananya Mishra',
+      dob: '1997-08-20',
+      gender: 'Female',
+      nationality: 'Indian',
+      mobileNumber: '+91 94150 11223',
+      emergencyContact: {
+        name: 'Ramesh Mishra (Father)',
+        phone: '+91 94150 00001',
+        relation: 'Father'
+      },
+      email: 'ananya.mishra@example.com',
+      idProofType: 'Aadhaar Card',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Ayodhya Ram Janmabhoomi & Saryu Heritage Circuit',
+      travelStartDate: '2026-09-01',
+      travelEndDate: '2026-09-15',
+      currentLocation: { lat: 26.7922, lng: 82.1998, address: 'Ram Janmabhoomi Complex, Ayodhya', speedKmH: 2.8, accuracyMeters: 6 },
+      riskScore: 8,
+      riskLevel: 'LOW',
+      isSosActive: false,
+      status: 'SAFE',
+      lastSeen: new Date().toISOString()
+    },
+    {
+      id: 'tourist_jammu',
+      touristId: 'TID-1036',
+      fullName: 'Vikas Chandel',
+      dob: '1993-03-14',
+      gender: 'Male',
+      nationality: 'Indian',
+      mobileNumber: '+91 97960 44556',
+      emergencyContact: {
+        name: 'Sunita Chandel (Spouse)',
+        phone: '+91 97960 00002',
+        relation: 'Spouse'
+      },
+      email: 'vikas.chandel@example.com',
+      idProofType: 'Aadhaar Card',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Katra Vaishno Devi Shrine & Jammu Pilgrim Track',
+      travelStartDate: '2026-09-03',
+      travelEndDate: '2026-09-12',
+      currentLocation: { lat: 32.9934, lng: 74.9328, address: 'Vaishno Devi Bhawan Track, Katra, Jammu', speedKmH: 3.4, accuracyMeters: 8 },
+      riskScore: 18,
+      riskLevel: 'LOW',
+      isSosActive: false,
+      status: 'SAFE',
+      lastSeen: new Date().toISOString()
+    },
+    {
+      id: 'tourist_varanasi',
+      touristId: 'TID-1037',
+      fullName: 'Sneha Kulkarni',
+      dob: '1999-10-05',
+      gender: 'Female',
+      nationality: 'Indian',
+      mobileNumber: '+91 98220 77889',
+      emergencyContact: {
+        name: 'Madhusudan Kulkarni (Father)',
+        phone: '+91 98220 00003',
+        relation: 'Father'
+      },
+      email: 'sneha.k@example.com',
+      idProofType: 'Driving License',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Kashi Vishwanath Corridor & Ganga Ghats',
+      travelStartDate: '2026-09-02',
+      travelEndDate: '2026-09-10',
+      currentLocation: { lat: 25.3109, lng: 83.0107, address: 'Dashashwamedh Ghat, Varanasi', speedKmH: 2.1, accuracyMeters: 5 },
+      riskScore: 12,
+      riskLevel: 'LOW',
+      isSosActive: false,
+      status: 'SAFE',
+      lastSeen: new Date().toISOString()
+    },
+    {
+      id: 'tourist_jaipur',
+      touristId: 'TID-1038',
+      fullName: 'Kabir Rathore',
+      dob: '1994-06-18',
+      gender: 'Male',
+      nationality: 'Indian',
+      mobileNumber: '+91 98290 33445',
+      emergencyContact: {
+        name: 'Pratap Rathore (Brother)',
+        phone: '+91 98290 00004',
+        relation: 'Brother'
+      },
+      email: 'kabir.rathore@example.com',
+      idProofType: 'Passport',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Amber Fort & Aravalli Heritage Circuit',
+      travelStartDate: '2026-09-04',
+      travelEndDate: '2026-09-14',
+      currentLocation: { lat: 26.9855, lng: 75.8513, address: 'Amber Palace Maota Lake, Jaipur', speedKmH: 4.2, accuracyMeters: 7 },
+      riskScore: 35,
+      riskLevel: 'MEDIUM',
+      isSosActive: false,
+      status: 'CAUTION',
+      lastSeen: new Date().toISOString()
+    },
+    {
+      id: 'tourist_tajmahal',
+      touristId: 'TID-1039',
+      fullName: 'Aarav Sharma',
+      dob: '1998-11-12',
+      gender: 'Male',
+      nationality: 'Indian',
+      mobileNumber: '+91 98390 55441',
+      emergencyContact: {
+        name: 'Sunita Sharma (Mother)',
+        phone: '+91 98390 00011',
+        relation: 'Mother'
+      },
+      email: 'aarav.taj@example.com',
+      idProofType: 'Aadhaar Card',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Taj Mahal & Agra Heritage Promenade',
+      travelStartDate: '2026-09-02',
+      travelEndDate: '2026-09-18',
+      currentLocation: { lat: 27.1751, lng: 78.0421, address: 'Taj Mahal Complex, Agra', speedKmH: 3.6, accuracyMeters: 5 },
+      riskScore: 8,
+      riskLevel: 'LOW',
+      isSosActive: false,
+      status: 'SAFE',
+      lastSeen: new Date().toISOString()
+    },
+    {
+      id: 'tourist_realtime',
+      touristId: 'TID-REAL',
+      fullName: 'My Real-Time Device Location',
+      dob: '2000-01-01',
+      gender: 'Other',
+      nationality: 'Indian',
+      mobileNumber: '+91 99999 11222',
+      emergencyContact: {
+        name: 'National ERSS 112 Desk',
+        phone: '112',
+        relation: 'Official Emergency'
+      },
+      email: 'reallive@safetour.gov.in',
+      idProofType: 'Aadhaar Card',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Live Real Device GPS Tracking (Mobile/Browser)',
+      travelStartDate: '2026-09-01',
+      travelEndDate: '2026-09-30',
+      currentLocation: { lat: 28.6139, lng: 77.2090, address: '📍 Live Device GPS (Detecting...)', isLiveGps: true, speedKmH: 0, accuracyMeters: 5 },
+      riskScore: 10,
+      riskLevel: 'LOW',
+      isSosActive: false,
+      status: 'SAFE',
+      lastSeen: new Date().toISOString()
     }
   ];
 
@@ -353,7 +689,57 @@ function getInitialData() {
       address: 'Sohra Civil Sub-Division, Meghalaya',
       location: { lat: 25.2986, lng: 91.7321 },
       distanceKm: 2.1,
-      availability: 'Monsoon High-Alert Team'
+      availability: 'Monsoon Hazard Quick Response'
+    },
+    {
+      id: 'es_ayodhya',
+      name: 'Ayodhya Shri Ram Hospital & Tourist Police Unit',
+      type: 'POLICE',
+      phone: '112 / +91 5278 232 001',
+      address: 'Ram Katha Park, Ayodhya, UP',
+      location: { lat: 26.7950, lng: 82.2020 },
+      distanceKm: 0.8,
+      availability: '24/7 Rapid Pilgrim Response'
+    },
+    {
+      id: 'es_jammu',
+      name: 'Katra Shrine Board Emergency Medical Center',
+      type: 'HOSPITAL',
+      phone: '112 / +91 1991 232 022',
+      address: 'Central Yatri Hub, Katra, Jammu',
+      location: { lat: 32.9900, lng: 74.9300 },
+      distanceKm: 1.1,
+      availability: '24/7 Mountain Medevac'
+    },
+    {
+      id: 'es_varanasi',
+      name: 'Kashi Vishwanath Corridor Tourist Safety Desk',
+      type: 'POLICE',
+      phone: '112 / +91 542 250 8822',
+      address: 'Gowdowlia Gate, Varanasi, UP',
+      location: { lat: 25.3115, lng: 83.0080 },
+      distanceKm: 0.6,
+      availability: '24/7 River & Ghat Sentinel'
+    },
+    {
+      id: 'es_jaipur',
+      name: 'Rajasthan Tourist Assistance Force (TAF) Amber Post',
+      type: 'POLICE',
+      phone: '112 / +91 141 253 0143',
+      address: 'Amber Fort Road, Jaipur, Rajasthan',
+      location: { lat: 26.9880, lng: 75.8530 },
+      distanceKm: 0.5,
+      availability: '24/7 Heritage Patrol'
+    },
+    {
+      id: 'es_tajmahal',
+      name: 'Agra Tajganj Tourist Police & Emergency First Aid Station',
+      type: 'POLICE',
+      phone: '112 / +91 562 222 6112',
+      address: 'Taj East Gate Promenade, Tajganj, Agra, UP 282001',
+      location: { lat: 27.1725, lng: 78.0400 },
+      distanceKm: 0.4,
+      availability: '24/7 UNESCO Sentinel & Medical'
     }
   ];
 

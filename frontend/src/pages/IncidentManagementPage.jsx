@@ -48,10 +48,10 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Header */}
-      <div className="bg-navy-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-6 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-xl">
         <div>
-          <h2 className="text-2xl font-black text-white">Emergency Incident Management Console</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-2xl font-black text-gray-900">Emergency Incident Management Console</h2>
+          <p className="text-xs text-gray-500 font-medium">
             Real-Time Response Dispatch & AI Category Override Console
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
           <select
             value={filterSeverity}
             onChange={(e) => setFilterSeverity(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg p-2 font-semibold"
+            className="bg-gray-50 border border-gray-200 text-gray-800 rounded-xl p-2 font-bold shadow-sm"
           >
             <option value="ALL">All Severities</option>
             <option value="CRITICAL">CRITICAL 🔴</option>
@@ -73,7 +73,7 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg p-2 font-semibold"
+            className="bg-gray-50 border border-gray-200 text-gray-800 rounded-xl p-2 font-bold shadow-sm"
           >
             <option value="ALL">All Statuses</option>
             <option value="NEW">NEW</option>
@@ -88,31 +88,31 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
       {/* Incidents Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredIncidents.length === 0 ? (
-          <div className="md:col-span-2 bg-navy-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400 text-sm">
+          <div className="md:col-span-2 bg-white/95 border border-gray-200 rounded-2xl p-12 text-center text-gray-500 text-sm shadow-md">
             No incidents match selected filters
           </div>
         ) : (
           filteredIncidents.map((inc) => (
             <div
               key={inc.id}
-              className="bg-navy-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4 hover:border-slate-700 transition-all flex flex-col justify-between"
+              className="bg-white/95 border border-gray-200/80 rounded-2xl p-5 shadow-lg space-y-4 hover:border-gray-300 transition-all flex flex-col justify-between backdrop-blur-xl"
             >
               <div className="space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                   <div className="flex items-center space-x-2">
-                    <span className="font-mono font-black text-xs text-red-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                    <span className="font-mono font-black text-xs text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200 shadow-sm">
                       {inc.id}
                     </span>
-                    <span className="font-extrabold text-sm text-white">{inc.touristName}</span>
+                    <span className="font-extrabold text-sm text-gray-900">{inc.touristName}</span>
                   </div>
 
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                       inc.severity === 'CRITICAL'
-                        ? 'bg-red-500/20 text-red-400 border border-red-500/40'
+                        ? 'bg-red-50 text-red-800 border border-red-200'
                         : inc.severity === 'HIGH'
-                        ? 'bg-orange-500/20 text-orange-400 border border-orange-500/40'
-                        : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                        ? 'bg-orange-50 text-orange-800 border border-orange-200'
+                        : 'bg-amber-50 text-amber-800 border border-amber-200'
                     }`}
                   >
                     {inc.severity}
@@ -130,31 +130,31 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
                   />
                 )}
 
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 bg-slate-800/40 p-2.5 rounded-xl border border-slate-700/60">
+                <div className="grid grid-cols-2 gap-2 text-xs text-gray-700 bg-gray-50 p-2.5 rounded-xl border border-gray-200 shadow-sm">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Category</span>
-                    <span className="font-semibold text-white">{inc.type}</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-500 block">Category</span>
+                    <span className="font-bold text-gray-900">{inc.type}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Status</span>
-                    <span className="font-bold text-emerald-400">{inc.status}</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-500 block">Status</span>
+                    <span className="font-extrabold text-emerald-700">{inc.status}</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 leading-relaxed">
+                <p className="text-xs text-gray-700 bg-gray-50/80 p-3 rounded-xl border border-gray-200 leading-relaxed shadow-sm">
                   {inc.description}
                 </p>
               </div>
 
               {/* Actions Footer */}
-              <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-[10px] text-slate-400 font-mono">
+              <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs">
+                <span className="text-[10px] text-gray-500 font-mono font-medium">
                   {new Date(inc.time).toLocaleTimeString()}
                 </span>
 
                 <button
                   onClick={() => handleOpenModal(inc)}
-                  className="px-3.5 py-1.5 bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold rounded-lg shadow transition-all flex items-center space-x-1.5"
+                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-md transition-all flex items-center space-x-1.5"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                   <span>Update Workflow</span>
@@ -167,17 +167,17 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
 
       {/* Workflow & Response Update Modal */}
       {selectedIncident && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-navy-900 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white/98 border border-gray-200 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto backdrop-blur-2xl">
             
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
               <div>
-                <h3 className="text-lg font-black text-white">Incident Response Command Modal</h3>
-                <span className="text-xs font-mono text-red-400">{selectedIncident.id} — {selectedIncident.touristName}</span>
+                <h3 className="text-lg font-black text-gray-900">Incident Response Command Modal</h3>
+                <span className="text-xs font-mono font-bold text-red-700">{selectedIncident.id} — {selectedIncident.touristName}</span>
               </div>
               <button
                 onClick={() => setSelectedIncident(null)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-gray-400 hover:text-gray-700 p-1"
               >
                 ✕
               </button>
@@ -198,18 +198,18 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
             <IncidentTimeline timeline={selectedIncident.timeline} />
 
             {/* Update Form */}
-            <form onSubmit={handleSaveUpdate} className="space-y-4 pt-4 border-t border-slate-800">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-emerald-400">
+            <form onSubmit={handleSaveUpdate} className="space-y-4 pt-4 border-t border-gray-100">
+              <h4 className="text-xs font-extrabold uppercase tracking-wider text-emerald-800">
                 Update Status & Override Parameters
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Status Transition</label>
+                  <label className="text-gray-700 font-semibold block mb-1">Status Transition</label>
                   <select
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 focus:bg-white focus:outline-none focus:border-emerald-500 font-medium"
                   >
                     <option value="NEW">NEW</option>
                     <option value="ACKNOWLEDGED">ACKNOWLEDGED</option>
@@ -220,22 +220,22 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Assigned Dispatch Unit</label>
+                  <label className="text-gray-700 font-semibold block mb-1">Assigned Dispatch Unit</label>
                   <input
                     type="text"
                     value={assignedTeam}
                     onChange={(e) => setAssignedTeam(e.target.value)}
                     placeholder="Assam Tourist Police Unit 4"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 focus:bg-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">AI Category Override</label>
+                  <label className="text-gray-700 font-semibold block mb-1">AI Category Override</label>
                   <select
                     value={categoryOverride}
                     onChange={(e) => setCategoryOverride(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 focus:bg-white focus:outline-none focus:border-emerald-500 font-medium"
                   >
                     <option value="SOS Emergency">SOS Emergency</option>
                     <option value="Medical Emergency">Medical Emergency</option>
@@ -249,11 +249,11 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-semibold block mb-1">Severity Override</label>
+                  <label className="text-gray-700 font-semibold block mb-1">Severity Override</label>
                   <select
                     value={severityOverride}
                     onChange={(e) => setSeverityOverride(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-gray-900 focus:bg-white focus:outline-none focus:border-emerald-500 font-bold"
                   >
                     <option value="CRITICAL">CRITICAL 🔴</option>
                     <option value="HIGH">HIGH 🟠</option>
@@ -264,13 +264,13 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
               </div>
 
               <div>
-                <label className="text-xs text-slate-300 font-semibold block mb-1">Response Log Note</label>
+                <label className="text-xs text-gray-700 font-semibold block mb-1">Response Log Note</label>
                 <textarea
                   rows={2}
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Enter official response notes / dispatch telemetry updates..."
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
@@ -278,13 +278,13 @@ export default function IncidentManagementPage({ incidents = [], geofences = [],
                 <button
                   type="button"
                   onClick={() => setSelectedIncident(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl border border-gray-300"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold rounded-xl shadow-md transition-all"
                 >
                   Save & Update Workflow
                 </button>

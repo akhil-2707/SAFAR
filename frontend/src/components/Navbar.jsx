@@ -1,240 +1,327 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, AlertTriangle, Bell, User, LogOut, Navigation, FileCheck, BarChart3, Settings, Activity, Compass, Radio } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Bell, LogOut, ShieldCheck, AlertTriangle, Activity, X, CheckCircle } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead, onOpenMeshModal }) {
-  const navigate = useNavigate();
+const SPRING = { type: 'spring', stiffness: 380, damping: 30 };
+
+export default function Navbar({ currentUser, onLogout, notifications = [], onMarkRead }) {
   const location = useLocation();
   const [showNotifs, setShowNotifs] = useState(false);
   const { t } = useLanguage();
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  return (
-    <header className="sticky top-0 z-40 bg-slate-950/85 backdrop-blur-2xl border-b border-slate-800/80 shadow-2xl transition-all">
-      {/* Subtle National Tricolor Hairline Accent */}
-      <div className="h-[2.5px] w-full bg-gradient-to-r from-orange-500 via-white/70 to-emerald-500 opacity-90 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+  useEffect(() => {
+    setShowNotifs(false);
+  }, [location.pathname]);
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-2 flex items-center justify-between">
-        
-        {/* Brand Logo & Emblem */}
-        <Link to="/" className="group transition-transform hover:scale-105 active:scale-95 duration-200">
-          <SafarLogo size="sm" showSubtitle={true} />
+  // Close notifs on outside click
+  useEffect(() => {
+    if (!showNotifs) return;
+    const handler = (e) => {
+      if (!e.target.closest('#notif-panel') && !e.target.closest('#notif-btn')) {
+        setShowNotifs(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showNotifs]);
+
+  return (
+    <motion.header
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="sticky top-0 z-40 navbar-ios"
+    >
+      {/* Tricolor Ribbon — ultra thin */}
+      <div className="h-[2.5px] w-full" style={{
+        background: 'linear-gradient(90deg, #FF9F0A 0%, #FF9F0A 33%, #ffffff 33%, #ffffff 66%, #34C759 66%, #34C759 100%)',
+      }} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 h-14 flex items-center justify-between gap-3">
+
+        {/* Brand */}
+        <Link to="/" className="flex-shrink-0 group">
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
+            <SafarLogo size="sm" showSubtitle={true} />
+          </motion.div>
         </Link>
 
-        {/* Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-1">
+        {/* Desktop Nav Links — centered pill nav */}
+        {currentUser?.role === 'AUTHORITY' ? (
+          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl" style={{
+            background: 'rgba(120,120,128,0.1)',
+          }}>
+            {[
+              { to: '/authority-dashboard', label: t('navCommandDesk', 'Command Desk'), icon: ShieldCheck },
+              { to: '/incidents', label: t('navIncidents', 'Incidents'), icon: AlertTriangle },
+              { to: '/geo-fence-management', label: 'Zones', icon: Activity },
+              { to: '/blockchain-ledger', label: 'Blockchain', icon: ShieldCheck },
+            ].map((nl) => {
+              const IconC = nl.icon;
+              const active = location.pathname === nl.to;
+              return (
+                <Link key={nl.to} to={nl.to}>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={SPRING}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    style={{
+                      background: active ? 'rgba(255,255,255,0.85)' : 'transparent',
+                      color: active ? '#1C1C1E' : 'rgba(60,60,67,0.7)',
+                      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                    }}
+                  >
+                    <IconC className="w-3.5 h-3.5" />
+                    <span>{nl.label}</span>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </nav>
+        ) : (
+          <nav className="hidden lg:flex items-center gap-1 p-1 rounded-2xl" style={{
+            background: 'rgba(120,120,128,0.1)',
+          }}>
+            {[
+              { to: '/tourist-dashboard', label: 'Safety Map' },
+              { to: '/digital-id', label: 'Digital ID' },
+              { to: '/deadman-switch', label: 'Deadman Switch' },
+              { to: '/fares', label: 'Transport Fares' },
+              { to: '/emergency-help', label: 'Help & 112' },
+            ].map((nl) => {
+              const active = location.pathname === nl.to;
+              return (
+                <Link key={nl.to} to={nl.to}>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={SPRING}
+                    className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
+                    style={{
+                      background: active ? 'rgba(255,255,255,0.85)' : 'transparent',
+                      color: active ? '#0A84FF' : 'rgba(60,60,67,0.7)',
+                      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                    }}
+                  >
+                    <span>{nl.label}</span>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </nav>
+        )}
 
-          <Link
-            to="/"
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              location.pathname === '/' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-            }`}
-          >
-            {t('navOverview', 'Overview')}
-          </Link>
-
-          {currentUser?.role === 'TOURIST' && (
-            <>
-              <Link
-                to="/tourist-dashboard"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5 ${
-                  location.pathname === '/tourist-dashboard' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-                }`}
-              >
-                <Activity className="w-4 h-4" />
-                <span>{t('navSafetyHub', 'Safety Hub')}</span>
-              </Link>
-            </>
-          )}
-
-          {currentUser?.role === 'AUTHORITY' && (
-            <>
-              <Link
-                to="/authority-dashboard"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5 ${
-                  location.pathname === '/authority-dashboard' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-                }`}
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>{t('navCommandDesk', 'Command Desk')}</span>
-              </Link>
-              <Link
-                to="/geo-fence-management"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5 ${
-                  location.pathname === '/geo-fence-management' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-                }`}
-              >
-                <Settings className="w-4 h-4 text-emerald-400" />
-                <span>{t('navGeoFences', 'Geo-Fences')}</span>
-              </Link>
-              <Link
-                to="/incidents"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5 ${
-                  location.pathname === '/incidents' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-                }`}
-              >
-                <AlertTriangle className="w-4 h-4" />
-                <span>{t('navIncidents', 'Incidents')}</span>
-              </Link>
-              <Link
-                to="/blockchain-ledger"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5 ${
-                  location.pathname === '/blockchain-ledger' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-                }`}
-              >
-                <FileCheck className="w-4 h-4" />
-                <span>{t('navBlockchain', 'Blockchain')}</span>
-              </Link>
-            </>
-          )}
-
-          <Link
-            to="/vendor-marketplace"
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1 ${
-              location.pathname === '/vendor-marketplace' ? 'bg-slate-800 text-cyan-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-            }`}
-          >
-            <span>{t('navMarketplace', 'Emergency Hub')}</span>
-          </Link>
-
-          <Link
-            to="/privacy-compliance"
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1 ${
-              location.pathname === '/privacy-compliance' ? 'bg-slate-800 text-emerald-400' : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
-            }`}
-          >
-            <span>DPDP Privacy</span>
-          </Link>
-
-          <button
-            onClick={onOpenMeshModal}
-            className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-rose-600/30 to-amber-500/30 hover:from-rose-600/50 hover:to-amber-500/50 text-amber-300 border border-amber-500/40 flex items-center space-x-1.5 shadow-md"
-            title="Zero-Network Offline Ghost-Mesh Rescue"
-          >
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-            <span>📡 Ghost-Mesh SOS</span>
-          </button>
-        </nav>
-
-        {/* User & Notifications CTA */}
-        <div className="flex items-center space-x-2.5">
-          {/* Quick Language Switcher Logo/Button */}
+        {/* Right Section */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <LanguageSelector variant="navbar" />
-          
+
           {/* Notification Bell */}
           <div className="relative">
-            <button
+            <motion.button
+              id="notif-btn"
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.9 }}
+              transition={SPRING}
               onClick={() => setShowNotifs(!showNotifs)}
-              className="p-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white relative transition-colors"
-              title="Notifications"
+              className="relative w-9 h-9 flex items-center justify-center rounded-xl transition-colors"
+              style={{
+                background: showNotifs ? 'rgba(10,132,255,0.12)' : 'rgba(120,120,128,0.1)',
+                color: showNotifs ? '#0A84FF' : 'rgba(60,60,67,0.7)',
+              }}
             >
-              <Bell className="w-5 h-5" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white font-bold text-[10px] rounded-full flex items-center justify-center animate-bounce-soft">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+              <Bell className="w-4.5 h-4.5" style={{ width: 18, height: 18 }} />
+              <AnimatePresence>
+                {unreadCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={SPRING}
+                    className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 font-bold text-[9px] rounded-full flex items-center justify-center text-white"
+                    style={{
+                      background: '#FF3B30',
+                      width: 18, height: 18,
+                      boxShadow: '0 0 0 2px rgba(242,242,247,0.9)',
+                    }}
+                  >
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
 
-            {/* Notification Dropdown Drawer */}
-            {showNotifs && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-navy-900 border border-slate-800 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="p-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Bell className="w-4 h-4 text-emerald-400" />
-                    <span className="text-sm font-bold text-white">Live System Alerts</span>
+            {/* Notification Panel */}
+            <AnimatePresence>
+              {showNotifs && (
+                <motion.div
+                  id="notif-panel"
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={SPRING}
+                  className="absolute right-0 mt-2 w-80 sm:w-96 overflow-hidden z-50 apple-sheet"
+                  style={{ transformOrigin: 'top right' }}
+                >
+                  {/* Panel Header */}
+                  <div className="px-4 py-3 flex items-center justify-between" style={{
+                    borderBottom: '0.5px solid rgba(60,60,67,0.12)',
+                    background: 'rgba(255,255,255,0.5)',
+                  }}>
+                    <div className="flex items-center gap-2">
+                      <Bell className="w-4 h-4" style={{ color: '#0A84FF' }} />
+                      <span className="text-sm font-semibold" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
+                        Alerts
+                      </span>
+                      {unreadCount > 0 && (
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{
+                          background: 'rgba(255,59,48,0.1)', color: '#FF3B30',
+                        }}>
+                          {unreadCount} new
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={() => onMarkRead()}
+                          className="text-xs font-medium transition-colors"
+                          style={{ color: '#0A84FF' }}
+                        >
+                          Mark all read
+                        </button>
+                      )}
+                      <button onClick={() => setShowNotifs(false)} style={{ color: 'rgba(60,60,67,0.5)' }}>
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={() => onMarkRead()}
-                      className="text-xs text-emerald-400 hover:underline font-medium"
-                    >
-                      Mark all as read
-                    </button>
-                  )}
-                </div>
 
-                <div className="max-h-80 overflow-y-auto divide-y divide-slate-800/60">
-                  {notifications.length === 0 ? (
-                    <div className="p-6 text-center text-slate-400 text-sm">No active alerts</div>
-                  ) : (
-                    notifications.map((n) => (
-                      <div
-                        key={n.id}
-                        className={`p-3 text-xs transition-colors ${
-                          !n.read ? 'bg-slate-800/60 border-l-2 border-emerald-500' : 'opacity-70'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span
-                            className={`font-bold uppercase tracking-wider text-[10px] px-1.5 py-0.5 rounded ${
-                              n.type === 'CRITICAL'
-                                ? 'bg-red-500/20 text-red-400'
-                                : n.type === 'HIGH'
-                                ? 'bg-orange-500/20 text-orange-400'
-                                : n.type === 'MEDIUM'
-                                ? 'bg-amber-500/20 text-amber-400'
-                                : 'bg-emerald-500/20 text-emerald-400'
-                            }`}
-                          >
-                            {n.type}
-                          </span>
-                          <span className="text-[10px] text-slate-400">
-                            {new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                        <p className="font-semibold text-slate-200 mb-0.5">{n.title}</p>
-                        <p className="text-slate-400 leading-relaxed">{n.message}</p>
+                  <div className="max-h-72 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="py-10 text-center">
+                        <CheckCircle className="w-8 h-8 mx-auto mb-2" style={{ color: '#34C759' }} />
+                        <p className="text-sm font-medium" style={{ color: 'rgba(60,60,67,0.6)' }}>No active alerts</p>
                       </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
+                    ) : (
+                      notifications.map((n, i) => (
+                        <motion.div
+                          key={n.id}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.04, ...SPRING }}
+                          className="px-4 py-3"
+                          style={{
+                            borderBottom: '0.5px solid rgba(60,60,67,0.06)',
+                            background: !n.read ? 'rgba(10,132,255,0.04)' : 'transparent',
+                            borderLeft: !n.read ? '3px solid #0A84FF' : '3px solid transparent',
+                            opacity: n.read ? 0.65 : 1,
+                          }}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md" style={{
+                              background: n.type === 'CRITICAL' ? 'rgba(255,59,48,0.1)'
+                                : n.type === 'HIGH' ? 'rgba(255,159,10,0.1)'
+                                : n.type === 'MEDIUM' ? 'rgba(255,204,0,0.12)' : 'rgba(52,199,89,0.1)',
+                              color: n.type === 'CRITICAL' ? '#FF3B30'
+                                : n.type === 'HIGH' ? '#FF9F0A'
+                                : n.type === 'MEDIUM' ? '#FFCC00' : '#34C759',
+                            }}>
+                              {n.type}
+                            </span>
+                            <span className="text-[10px]" style={{ color: 'rgba(60,60,67,0.45)' }}>
+                              {new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <p className="text-sm font-semibold" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>{n.title}</p>
+                          <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'rgba(60,60,67,0.65)' }}>{n.message}</p>
+                        </motion.div>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* User Profile / Auth State */}
+          {/* User Avatar */}
           {currentUser ? (
-            <div className="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
-              <div className="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs">
-                {currentUser.name ? currentUser.name[0] : 'U'}
-              </div>
-              <div className="hidden sm:block text-left">
-                <p className="text-xs font-semibold text-slate-200 leading-tight">{currentUser.name}</p>
-                <p className="text-[10px] text-emerald-400 font-mono font-medium">
-                  {currentUser.role} {currentUser.touristId ? `(${currentUser.touristId})` : ''}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={SPRING}
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-2xl"
+              style={{
+                background: 'rgba(120,120,128,0.1)',
+                border: '0.5px solid rgba(60,60,67,0.1)',
+              }}
+            >
+              <motion.div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs"
+                style={{
+                  background: 'linear-gradient(135deg, #0A84FF, #5E5CE6)',
+                  boxShadow: '0 2px 8px rgba(10,132,255,0.3)',
+                }}
+                animate={{
+                  boxShadow: ['0 2px 8px rgba(10,132,255,0.3)', '0 2px 14px rgba(94,92,230,0.4)', '0 2px 8px rgba(10,132,255,0.3)']
+                }}
+                transition={{ duration: 2.5, repeat: Infinity }}
+              >
+                {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
+              </motion.div>
+              <div className="hidden sm:block">
+                <p className="text-xs font-semibold leading-tight" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
+                  {currentUser.name}
+                </p>
+                <p className="text-[10px] font-medium" style={{ color: '#0A84FF' }}>
+                  {currentUser.role}{currentUser.touristId ? ` · ${currentUser.touristId}` : ''}
                 </p>
               </div>
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={onLogout}
-                className="p-1 text-slate-400 hover:text-red-400 transition-colors ml-1"
-                title={t('navLogout', 'Logout')}
+                className="ml-0.5 p-1 rounded-lg transition-colors"
+                style={{ color: 'rgba(60,60,67,0.45)' }}
+                title="Sign out"
               >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
+                <LogOut className="w-3.5 h-3.5" />
+              </motion.button>
+            </motion.div>
           ) : (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-1.5">
               <Link
                 to="/login"
-                className="px-3 py-1.5 text-xs font-semibold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold rounded-xl transition-colors"
+                style={{
+                  background: 'rgba(120,120,128,0.1)',
+                  color: 'rgba(60,60,67,0.8)',
+                  border: '0.5px solid rgba(60,60,67,0.12)',
+                }}
               >
-                {t('navLogin', 'Login')}
+                {t('navLogin', 'Sign In')}
               </Link>
-              <Link
-                to="/register"
-                className="px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 rounded-lg shadow-md transition-all"
-              >
-                {t('navRegister', 'Register Digital ID')}
-              </Link>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
+                <Link
+                  to="/register"
+                  className="px-3 py-1.5 text-xs font-semibold rounded-xl text-white transition-all"
+                  style={{
+                    background: 'linear-gradient(135deg, #0A84FF, #5E5CE6)',
+                    boxShadow: '0 2px 10px rgba(10,132,255,0.35)',
+                  }}
+                >
+                  Register
+                </Link>
+              </motion.div>
             </div>
           )}
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

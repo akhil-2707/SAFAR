@@ -77,15 +77,15 @@ export default function BlockchainLedgerPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Top Banner Header */}
-      <div className="bg-navy-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-6 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-xl">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="font-extrabold text-2xl text-white">Prototype Blockchain Ledger & Tamper Audit</span>
-            <span className="bg-cyan-500/10 text-cyan-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-cyan-500/30 uppercase tracking-widest">
+            <span className="font-extrabold text-2xl text-gray-900">Prototype Blockchain Ledger & Tamper Audit</span>
+            <span className="bg-cyan-50 text-cyan-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-cyan-200 uppercase tracking-widest shadow-sm">
               Private SHA-256 Ledger
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-gray-500 font-medium mt-1">
             Tamper-Evident Digital Tourist ID Verification Engine
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function BlockchainLedgerPage() {
           <button
             disabled={loading}
             onClick={handleVerify}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center space-x-1.5 transition-all"
+            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center space-x-1.5 transition-all"
           >
             <CheckCircle2 className="w-4 h-4" />
             <span>Verify Integrity Audit</span>
@@ -104,18 +104,18 @@ export default function BlockchainLedgerPage() {
           <button
             disabled={loading}
             onClick={handleTamper}
-            className="px-4 py-2 bg-rose-900/60 hover:bg-rose-800/80 text-rose-300 font-bold text-xs rounded-xl border border-rose-500/40 flex items-center space-x-1.5 transition-all"
+            className="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs rounded-xl border border-rose-300 flex items-center space-x-1.5 transition-all shadow-sm"
           >
-            <ShieldAlert className="w-4 h-4 text-rose-400" />
+            <ShieldAlert className="w-4 h-4 text-rose-600" />
             <span>Simulate Tampering (Block #1)</span>
           </button>
 
           <button
             disabled={loading}
             onClick={handleRestore}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 flex items-center space-x-1.5 transition-all"
+            className="px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl border border-gray-300 flex items-center space-x-1.5 transition-all shadow-sm"
           >
-            <RefreshCw className="w-4 h-4 text-cyan-400" />
+            <RefreshCw className="w-4 h-4 text-cyan-600" />
             <span>Restore Ledger</span>
           </button>
         </div>
@@ -123,20 +123,20 @@ export default function BlockchainLedgerPage() {
 
       {/* Audit Banner Result */}
       {auditResult && (
-        <div className={`p-4 rounded-2xl border flex items-center justify-between ${
-          isChainValid ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' : 'bg-red-950/60 border-red-500/60 text-red-300 glow-red'
+        <div className={`p-4 rounded-2xl border flex items-center justify-between shadow-sm ${
+          isChainValid ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-red-50 border-red-300 text-red-900'
         }`}>
           <div className="flex items-center space-x-3">
-            {isChainValid ? <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" /> : <AlertTriangle className="w-6 h-6 text-red-400 shrink-0" />}
+            {isChainValid ? <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-6 h-6 text-red-600 shrink-0" />}
             <div>
               <span className="font-extrabold text-sm block">
                 {isChainValid ? '✓ Prototype Blockchain Ledger Integrity Verified' : '✗ Tampering Detected! Cryptographic Audit Failed'}
               </span>
-              <p className="text-xs text-slate-300">{auditResult.error || auditResult.message}</p>
+              <p className="text-xs font-semibold mt-0.5 opacity-90">{auditResult.error || auditResult.message}</p>
             </div>
           </div>
 
-          <span className="text-xs font-mono font-bold bg-slate-900 px-3 py-1 rounded-lg border border-slate-800">
+          <span className="text-xs font-mono font-bold bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm text-gray-800">
             Total Blocks: {ledgerData?.chain?.length || 0}
           </span>
         </div>
@@ -144,7 +144,7 @@ export default function BlockchainLedgerPage() {
 
       {/* Blocks Chain Visual Explorer */}
       <div className="space-y-4">
-        <span className="text-xs font-extrabold uppercase tracking-wider text-slate-300 block">
+        <span className="text-xs font-extrabold uppercase tracking-wider text-gray-700 block">
           Block Ledger Chain Visualization
         </span>
 
@@ -155,59 +155,59 @@ export default function BlockchainLedgerPage() {
             return (
               <div
                 key={block.index}
-                className={`p-5 rounded-2xl border transition-all ${
+                className={`p-5 rounded-2xl border transition-all shadow-md ${
                   isTamperedBlock
-                    ? 'bg-red-950/80 border-red-500 glow-red'
-                    : 'bg-navy-900 border-slate-800 hover:border-cyan-500/30'
+                    ? 'bg-red-50/90 border-2 border-red-400'
+                    : 'bg-white/95 border-gray-200 hover:border-cyan-300 backdrop-blur-xl'
                 }`}
               >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-mono font-black bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/30">
+                    <span className="text-xs font-mono font-black bg-cyan-50 text-cyan-800 px-2 py-0.5 rounded border border-cyan-200 shadow-sm">
                       Block #{block.index}
                     </span>
-                    <span className="text-xs font-bold text-white">
+                    <span className="text-xs font-bold text-gray-900">
                       {block.index === 0 ? 'Genesis Node' : `Tourist Digital ID Record (${block.data?.touristId || 'TID-1024'})`}
                     </span>
                   </div>
 
-                  <span className="text-[10px] text-slate-400 font-mono">
+                  <span className="text-[10px] text-gray-500 font-mono font-medium">
                     Timestamp: {new Date(block.timestamp).toLocaleString()}
                   </span>
                 </div>
 
                 {/* Hashes */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-3 font-mono text-[11px]">
-                  <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Previous Block Hash</span>
-                    <span className="text-slate-400 break-all">{block.previousHash}</span>
+                  <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-200 shadow-sm">
+                    <span className="text-[10px] text-gray-500 uppercase font-bold block">Previous Block Hash</span>
+                    <span className="text-gray-700 break-all font-semibold">{block.previousHash}</span>
                   </div>
 
-                  <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Current Block SHA-256 Hash</span>
-                    <span className={`break-all font-bold ${isTamperedBlock ? 'text-red-400' : 'text-emerald-400'}`}>
+                  <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-200 shadow-sm">
+                    <span className="text-[10px] text-gray-500 uppercase font-bold block">Current Block SHA-256 Hash</span>
+                    <span className={`break-all font-black ${isTamperedBlock ? 'text-red-700' : 'text-emerald-700'}`}>
                       {block.hash}
                     </span>
                   </div>
                 </div>
 
                 {/* Block Data Metadata */}
-                <div className="bg-slate-800/40 p-3 rounded-xl border border-slate-700/60 text-xs space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Payload Verification Data</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-slate-300 text-[11px]">
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs space-y-1 shadow-sm">
+                  <span className="text-[10px] uppercase font-bold text-gray-500 block">Payload Verification Data</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-gray-700 text-[11px]">
                     <div>
-                      <span>Status: </span>
-                      <strong className={isTamperedBlock ? 'text-red-400 font-bold' : 'text-emerald-400'}>
+                      <span className="text-gray-500">Status: </span>
+                      <strong className={isTamperedBlock ? 'text-red-700 font-bold' : 'text-emerald-700 font-extrabold'}>
                         {block.data?.verificationStatus}
                       </strong>
                     </div>
                     <div>
-                      <span>Issuer: </span>
-                      <strong className="text-slate-200">{block.data?.issuer}</strong>
+                      <span className="text-gray-500">Issuer: </span>
+                      <strong className="text-gray-900 font-semibold">{block.data?.issuer}</strong>
                     </div>
                     <div className="truncate font-mono">
-                      <span>Digital ID Hash: </span>
-                      <strong className="text-cyan-400">{block.data?.digitalIdHash?.substring(0, 16)}...</strong>
+                      <span className="text-gray-500">Digital ID Hash: </span>
+                      <strong className="text-cyan-800 font-bold">{block.data?.digitalIdHash?.substring(0, 16)}...</strong>
                     </div>
                   </div>
                 </div>

@@ -251,7 +251,7 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
   };
 
   return (
-    <div className="relative w-full h-[92vh] min-h-[650px] overflow-hidden rounded-3xl border-2 border-emerald-500/30 shadow-2xl bg-navy-950">
+    <div className="relative w-full h-[92vh] min-h-[650px] overflow-hidden rounded-3xl border-2 border-emerald-500/20 shadow-xl bg-slate-100">
       
       {/* Map Camera Controller Sync */}
       <MapContainer
@@ -321,10 +321,10 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
           )}
         >
           <Popup>
-            <div className="p-2 space-y-1 text-xs text-slate-100">
-              <span className="font-bold block text-emerald-400">{touristPos.name || 'Tourist Position'}</span>
-              <p>Lat: {touristPos.lat.toFixed(4)}, Lng: {touristPos.lng.toFixed(4)}</p>
-              <p className="font-semibold text-amber-400">Risk Score: {riskScore}/100 ({riskLevel})</p>
+            <div className="p-2 space-y-1 text-xs text-gray-900">
+              <span className="font-bold block text-emerald-700">{touristPos.name || 'Tourist Position'}</span>
+              <p className="text-gray-600">Lat: {touristPos.lat.toFixed(4)}, Lng: {touristPos.lng.toFixed(4)}</p>
+              <p className="font-semibold text-amber-800">Risk Score: {riskScore}/100 ({riskLevel})</p>
             </div>
           </Popup>
         </Marker>
@@ -333,34 +333,48 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
         {currentScene >= 11 && (
           <Marker position={POLICE_STATION_LOC} icon={createCinematicIcon('#3B82F6', true, '🚓')}>
             <Popup>
-              <div className="p-2 text-xs">
-                <span className="font-bold text-blue-400">Patrol Unit #4 (Assam Police)</span>
-                <p className="text-slate-300 font-semibold mt-1">Status: En Route to SOS Lock</p>
+              <div className="p-2 text-xs text-gray-900">
+                <span className="font-bold text-blue-700">Patrol Unit #4 (Assam Police)</span>
+                <p className="text-gray-600 font-semibold mt-1">Status: En Route to SOS Lock</p>
               </div>
             </Popup>
           </Marker>
         )}
       </MapContainer>
 
-      {/* Top Floating Overlay: Live GPS Telemetry Badge & Hero Branding */}
+      {/* Top Floating Overlay: Live GPS Telemetry Badge & Hero Branding - BRIGHT */}
       <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
         
         {/* Hero Branding Badge */}
-        <div className="pointer-events-auto bg-navy-900/90 backdrop-blur-xl border border-emerald-500/30 px-4 py-2 rounded-2xl shadow-2xl flex items-center space-x-3">
-          <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
+        <div
+          className="pointer-events-auto backdrop-blur-xl px-4 py-2 rounded-2xl shadow-xl flex items-center space-x-3"
+          style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            border: '1.5px solid rgba(16, 185, 129, 0.35)',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)'
+          }}
+        >
+          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
           <div>
-            <h2 className="text-sm font-black text-white tracking-wide">SAFE-TOUR CINEMATIC COMMAND ENGINE</h2>
-            <p className="text-[10px] font-semibold text-emerald-400 uppercase tracking-widest">
+            <h2 className="text-sm font-black text-gray-900 tracking-wide">SAFE-TOUR CINEMATIC COMMAND ENGINE</h2>
+            <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">
               Live GPS • Geo-Fence Containment • AI Risk Telemetry
             </p>
           </div>
         </div>
 
         {/* Live GPS Status Pill */}
-        <div className="pointer-events-auto bg-navy-900/90 backdrop-blur-xl border border-slate-700/60 px-3.5 py-2 rounded-2xl shadow-xl flex items-center space-x-3">
+        <div
+          className="pointer-events-auto backdrop-blur-xl px-3.5 py-2 rounded-2xl shadow-xl flex items-center space-x-3"
+          style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            border: '1.5px solid rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)'
+          }}
+        >
           <div className="flex items-center space-x-2">
-            <span className={`w-2.5 h-2.5 rounded-full ${isLiveGps ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-            <span className="text-xs font-bold text-white">
+            <span className={`w-2.5 h-2.5 rounded-full ${isLiveGps ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+            <span className="text-xs font-black text-gray-800">
               {isLiveGps ? '🟢 LIVE GPS' : '🟡 DEMO MODE'}
             </span>
           </div>
@@ -370,58 +384,68 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
               if (isLiveGps) stopTracking();
               else startTracking();
             }}
-            className="px-2.5 py-1 text-[11px] font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition-colors"
+            className="px-2.5 py-1 text-[11px] font-bold rounded-xl bg-gray-100 hover:bg-gray-200 text-emerald-700 border border-gray-200 transition-colors shadow-sm"
           >
             {isLiveGps ? 'Switch to Demo' : 'Enable Real GPS'}
           </button>
 
           <button
             onClick={() => setFollowMe(!followMe)}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-xl transition-colors ${
-              followMe ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-300 border border-slate-700'
+            className={`px-2.5 py-1 text-[11px] font-bold rounded-xl transition-colors shadow-sm ${
+              followMe ? 'bg-emerald-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
             }`}
           >
-            {followMe ? '🎯 Camera Locks GPS' : 'Follow Me'}
+            {followMe ? '🎯 Camera Locked' : 'Follow Me'}
           </button>
         </div>
       </div>
 
-      {/* Active Story Alert Card Overlay */}
+      {/* Active Story Alert Card Overlay - BRIGHT */}
       {activeAlert && (
         <div className="absolute top-20 left-4 z-10 max-w-md w-full pointer-events-auto transition-all animate-bounce-short">
-          <div className={`p-4 rounded-2xl backdrop-blur-xl border-2 shadow-2xl space-y-2 ${
-            activeAlert.type === 'WARNING'
-              ? 'bg-yellow-950/90 border-yellow-500/50 text-yellow-200'
-              : activeAlert.type === 'BREACH' || activeAlert.type === 'SOS' || activeAlert.type === 'CRITICAL'
-              ? 'bg-red-950/95 border-red-500/60 text-red-100'
-              : activeAlert.type === 'RESPONSE'
-              ? 'bg-blue-950/90 border-blue-500/50 text-blue-100'
-              : activeAlert.type === 'RESOLVED' || activeAlert.type === 'SAFE'
-              ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-100'
-              : 'bg-navy-900/90 border-emerald-500/30 text-slate-100'
-          }`}>
+          <div
+            className={`p-4 rounded-2xl backdrop-blur-xl border-2 shadow-2xl space-y-2 ${
+              activeAlert.type === 'WARNING'
+                ? 'bg-amber-50/95 border-amber-400 text-amber-950'
+                : activeAlert.type === 'BREACH' || activeAlert.type === 'SOS' || activeAlert.type === 'CRITICAL'
+                ? 'bg-red-50/95 border-red-500 text-red-950'
+                : activeAlert.type === 'RESPONSE'
+                ? 'bg-blue-50/95 border-blue-400 text-blue-950'
+                : activeAlert.type === 'RESOLVED' || activeAlert.type === 'SAFE'
+                ? 'bg-emerald-50/95 border-emerald-400 text-emerald-950'
+                : 'bg-white/95 border-gray-300 text-gray-900'
+            }`}
+            style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.12)' }}
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-wider flex items-center space-x-2">
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="w-4 h-4 text-orange-500" />
                 <span>{activeAlert.title}</span>
               </span>
-              <span className="text-[10px] font-mono font-bold bg-slate-900/60 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-mono font-bold bg-white/80 border border-gray-200 px-2 py-0.5 rounded text-gray-700">
                 Scene {currentScene}/13
               </span>
             </div>
-            <p className="text-xs font-medium leading-relaxed">{activeAlert.msg}</p>
+            <p className="text-xs font-semibold leading-relaxed">{activeAlert.msg}</p>
           </div>
         </div>
       )}
 
-      {/* AI Risk Score Gauge Overlay (Right Floating) */}
-      <div className="absolute top-20 right-4 z-10 pointer-events-auto bg-navy-900/90 backdrop-blur-xl border border-slate-800 p-4 rounded-2xl shadow-2xl space-y-2 w-48">
+      {/* AI Risk Score Gauge Overlay (Right Floating) - BRIGHT */}
+      <div
+        className="absolute top-20 right-4 z-10 pointer-events-auto backdrop-blur-xl p-4 rounded-2xl shadow-xl space-y-2 w-48"
+        style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          border: '1.5px solid rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)'
+        }}
+      >
         <div className="flex items-center justify-between text-xs">
-          <span className="font-extrabold text-slate-300 uppercase tracking-wider">AI Risk Meter</span>
+          <span className="font-extrabold text-gray-600 uppercase tracking-wider">AI Risk Meter</span>
           <span className={`font-black px-2 py-0.5 rounded text-[10px] ${
-            riskLevel === 'CRITICAL' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-            riskLevel === 'HIGH' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
-            'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+            riskLevel === 'CRITICAL' ? 'bg-red-100 text-red-700 border border-red-200' :
+            riskLevel === 'HIGH' ? 'bg-orange-100 text-orange-700 border border-orange-200' :
+            'bg-emerald-100 text-emerald-700 border border-emerald-200'
           }`}>
             {riskLevel}
           </span>
@@ -429,10 +453,10 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
 
         <div className="relative pt-1">
           <div className="flex mb-1 items-center justify-between text-xs">
-            <span className="text-2xl font-black text-white">{riskScore}</span>
-            <span className="text-[10px] text-slate-400 font-bold">/ 100</span>
+            <span className="text-2xl font-black text-gray-900">{riskScore}</span>
+            <span className="text-[10px] text-gray-400 font-bold">/ 100</span>
           </div>
-          <div className="overflow-hidden h-2.5 text-xs flex rounded-full bg-slate-800 border border-slate-700">
+          <div className="overflow-hidden h-2.5 text-xs flex rounded-full bg-gray-100 border border-gray-200">
             <div
               style={{ width: `${riskScore}%` }}
               className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ${
@@ -443,18 +467,24 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
         </div>
 
         {responseEta && (
-          <div className="pt-2 border-t border-slate-800 text-[11px] text-blue-300 font-bold flex items-center justify-between">
+          <div className="pt-2 border-t border-gray-100 text-[11px] text-blue-700 font-bold flex items-center justify-between">
             <span>Response ETA:</span>
-            <span className="bg-blue-900/60 px-2 py-0.5 rounded text-blue-400 border border-blue-500/30">{responseEta}</span>
+            <span className="bg-blue-50 px-2 py-0.5 rounded text-blue-700 border border-blue-200 font-mono">{responseEta}</span>
           </div>
         )}
       </div>
 
-      {/* Bottom Floating Control Bar: 13-Scene Judge Demo Player */}
-      <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-auto bg-navy-900/95 backdrop-blur-2xl border-2 border-emerald-500/40 p-3 sm:p-4 rounded-3xl shadow-2xl space-y-3">
-        
+      {/* Bottom Floating Control Bar: 13-Scene Judge Demo Player - BRIGHT */}
+      <div
+        className="absolute bottom-4 left-4 right-4 z-10 pointer-events-auto backdrop-blur-2xl p-3.5 sm:p-4 rounded-3xl shadow-2xl space-y-3"
+        style={{
+          background: 'rgba(255, 255, 255, 0.96)',
+          border: '2px solid rgba(16, 185, 129, 0.35)',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.12)'
+        }}
+      >
         {/* Timeline Scene Indicators */}
-        <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center justify-between gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {[
             '1. India', '2. Mumbai', '3. Route', '4. Delhi', '5. NE Arrive', 
             '6. Moving', '7. 300m Warn', '8. Breach', '9. AI Risk', '10. SOS Lock', 
@@ -471,8 +501,8 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
                 }}
                 className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all whitespace-nowrap ${
                   isActive
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-lg scale-105 font-black'
-                    : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md scale-105 font-black'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
                 }`}
               >
                 {label}
@@ -482,12 +512,11 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
         </div>
 
         {/* Master Playback & Scenario Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-800/80 pt-2.5">
-          
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-2.5">
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all flex items-center space-x-1.5"
+              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5"
             >
               {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               <span>{isPlaying ? 'Pause Demo' : '▶ Start 3D Cinematic Demo'}</span>
@@ -495,7 +524,7 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
 
             <button
               onClick={handleNext}
-              className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition-colors flex items-center space-x-1"
+              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-xl border border-gray-200 transition-colors flex items-center space-x-1 shadow-sm"
             >
               <span>Next Scene</span>
               <SkipForward className="w-3.5 h-3.5" />
@@ -503,15 +532,15 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
 
             <button
               onClick={handleRestart}
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl border border-slate-700 transition-colors"
+              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 transition-colors shadow-sm"
               title="Restart Demo"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="text-[11px] text-slate-400 font-semibold hidden lg:block">
-            SIH Judge Evaluator Mode: <span className="text-emerald-400">13-Scene Automated Storyboard Active</span>
+          <div className="text-[11px] text-gray-500 font-semibold hidden lg:block">
+            SIH Judge Evaluator Mode: <span className="text-emerald-700 font-bold">13-Scene Automated Storyboard Active</span>
           </div>
         </div>
       </div>

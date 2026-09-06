@@ -59,58 +59,63 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto select-none font-sans">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-navy-950 border border-slate-700/80 rounded-3xl max-w-4xl w-full p-6 space-y-6 shadow-2xl relative text-white"
+        className="rounded-3xl max-w-4xl w-full p-6 space-y-6 shadow-2xl relative text-gray-900"
+        style={{
+          background: 'rgba(255, 255, 255, 0.98)',
+          border: '1.5px solid rgba(239, 68, 68, 0.35)',
+          boxShadow: '0 25px 70px rgba(0, 0, 0, 0.15)'
+        }}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header Badge & Title */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 p-0.5 shadow-lg flex items-center justify-center">
-              <div className="w-full h-full bg-navy-950 rounded-[14px] flex items-center justify-center">
-                <Radio className="w-6 h-6 text-amber-400 animate-pulse" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-500 p-0.5 shadow-md flex items-center justify-center">
+              <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
+                <Radio className="w-6 h-6 text-red-500 animate-pulse" />
               </div>
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-xl font-extrabold tracking-tight">
+                <h2 className="text-xl font-black text-gray-900 tracking-tight">
                   Offline Ghost-Mesh Rescue Protocol
                 </h2>
-                <span className="text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 px-2.5 py-0.5 rounded-full border border-rose-500/30 uppercase">
+                <span className="text-[10px] font-mono font-bold bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full border border-red-200 uppercase">
                   Zero Network / 0-Bar SOS
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-gray-500 font-medium">
                 Peer-to-Peer BLE 5.3 & Wi-Fi Direct Multi-Hop Relay for Mountain Trails & Remote Valleys
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
-            <SignalZero className="w-4 h-4 text-rose-400 shrink-0" />
-            <span className="text-[11px] font-mono text-slate-300">Carrier Signal: <strong className="text-rose-400">0% (DEAD ZONE)</strong></span>
+          <div className="flex items-center space-x-2 bg-red-50 px-3 py-1.5 rounded-xl border border-red-200">
+            <SignalZero className="w-4 h-4 text-red-600 shrink-0" />
+            <span className="text-[11px] font-mono text-gray-700 font-semibold">Carrier Signal: <strong className="text-red-600 font-bold">0% (DEAD ZONE)</strong></span>
           </div>
         </div>
 
         {/* Interactive Mesh Topology Visualization */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
-              <Share2 className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs font-bold text-gray-700 uppercase tracking-wider flex items-center space-x-1.5">
+              <Share2 className="w-4 h-4 text-violet-600" />
               <span>Live P2P Mesh Hop Architecture (Dzukou Valley Corridor)</span>
             </span>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
+            <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
               AES-256 Encrypted Packets
             </span>
           </div>
@@ -120,61 +125,61 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
             
             {/* Node 1: Stranded Tourist */}
             <div className={`p-3.5 rounded-2xl border transition-all ${
-              activeStep >= 1 ? 'bg-rose-950/40 border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.3)]' : 'bg-slate-800/60 border-slate-700'
+              activeStep >= 1 ? 'bg-rose-50 border-rose-300 shadow-md' : 'bg-white border-gray-200'
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold text-rose-400 uppercase">Node 1: Origin</span>
+                <span className="text-[10px] font-bold text-rose-700 uppercase">Node 1: Origin</span>
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
               </div>
-              <span className="text-xs font-extrabold block text-white">Rohan Verma (TID-1024)</span>
-              <span className="text-[10px] text-slate-400 block font-mono">📍 Dzukou Gorge (25.5684° N)</span>
-              <div className="mt-2 text-[10px] font-mono bg-slate-900/90 p-1.5 rounded text-rose-300 flex items-center space-x-1">
-                <WifiOff className="w-3 h-3 text-rose-400" />
+              <span className="text-xs font-black block text-gray-900">Rohan Verma (TID-1024)</span>
+              <span className="text-[10px] text-gray-500 block font-mono">📍 Dzukou Gorge (25.5684° N)</span>
+              <div className="mt-2 text-[10px] font-mono bg-white p-1.5 rounded-lg border border-gray-200 text-rose-700 font-bold flex items-center space-x-1">
+                <WifiOff className="w-3 h-3 text-rose-500" />
                 <span>Cellular: 0 Bars</span>
               </div>
             </div>
 
             {/* Node 2: Peer Hiker 1 */}
             <div className={`p-3.5 rounded-2xl border transition-all ${
-              activeStep >= 2 ? 'bg-amber-950/40 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 'bg-slate-800/60 border-slate-700'
+              activeStep >= 2 ? 'bg-amber-50 border-amber-300 shadow-md' : 'bg-white border-gray-200'
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold text-amber-400 uppercase">Node 2: Relay 1</span>
-                <span className={`w-2.5 h-2.5 rounded-full ${activeStep >= 1 ? 'bg-amber-400 animate-pulse' : 'bg-slate-600'}`}></span>
+                <span className="text-[10px] font-bold text-amber-700 uppercase">Node 2: Relay 1</span>
+                <span className={`w-2.5 h-2.5 rounded-full ${activeStep >= 1 ? 'bg-amber-500 animate-pulse' : 'bg-gray-300'}`}></span>
               </div>
-              <span className="text-xs font-extrabold block text-white">Hiker (Priya S.)</span>
-              <span className="text-[10px] text-slate-400 block font-mono">Distance: 85m away</span>
-              <div className="mt-2 text-[10px] font-mono bg-slate-900/90 p-1.5 rounded text-amber-300">
+              <span className="text-xs font-black block text-gray-900">Hiker (Priya S.)</span>
+              <span className="text-[10px] text-gray-500 block font-mono">Distance: 85m away</span>
+              <div className="mt-2 text-[10px] font-mono bg-white p-1.5 rounded-lg border border-gray-200 text-amber-800 font-bold">
                 Protocol: BLE 5.3 Coded PHY
               </div>
             </div>
 
             {/* Node 3: Trek Guide 2 */}
             <div className={`p-3.5 rounded-2xl border transition-all ${
-              activeStep >= 3 ? 'bg-cyan-950/40 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-slate-800/60 border-slate-700'
+              activeStep >= 3 ? 'bg-cyan-50 border-cyan-300 shadow-md' : 'bg-white border-gray-200'
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold text-cyan-400 uppercase">Node 3: Relay 2</span>
-                <span className={`w-2.5 h-2.5 rounded-full ${activeStep >= 2 ? 'bg-cyan-400 animate-pulse' : 'bg-slate-600'}`}></span>
+                <span className="text-[10px] font-bold text-cyan-700 uppercase">Node 3: Relay 2</span>
+                <span className={`w-2.5 h-2.5 rounded-full ${activeStep >= 2 ? 'bg-cyan-500 animate-pulse' : 'bg-gray-300'}`}></span>
               </div>
-              <span className="text-xs font-extrabold block text-white">Guide (Tashi D.)</span>
-              <span className="text-[10px] text-slate-400 block font-mono">Distance: 115m away</span>
-              <div className="mt-2 text-[10px] font-mono bg-slate-900/90 p-1.5 rounded text-cyan-300">
+              <span className="text-xs font-black block text-gray-900">Guide (Tashi D.)</span>
+              <span className="text-[10px] text-gray-500 block font-mono">Distance: 115m away</span>
+              <div className="mt-2 text-[10px] font-mono bg-white p-1.5 rounded-lg border border-gray-200 text-cyan-800 font-bold">
                 Protocol: Wi-Fi Direct Peer Hop
               </div>
             </div>
 
             {/* Node 4: Forest Ranger Post / Internet Gateway */}
             <div className={`p-3.5 rounded-2xl border transition-all ${
-              dispatchResult ? 'bg-emerald-950/50 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-slate-800/60 border-slate-700'
+              dispatchResult ? 'bg-emerald-50 border-emerald-400 shadow-md' : 'bg-white border-gray-200'
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold text-emerald-400 uppercase">Node 4: Gateway</span>
-                <span className={`w-2.5 h-2.5 rounded-full ${dispatchResult ? 'bg-emerald-400' : 'bg-slate-600'}`}></span>
+                <span className="text-[10px] font-bold text-emerald-700 uppercase">Node 4: Gateway</span>
+                <span className={`w-2.5 h-2.5 rounded-full ${dispatchResult ? 'bg-emerald-500' : 'bg-gray-300'}`}></span>
               </div>
-              <span className="text-xs font-extrabold block text-white">Forest Ranger Station</span>
-              <span className="text-[10px] text-slate-400 block font-mono">Uplink: 4G / Satellite</span>
-              <div className="mt-2 text-[10px] font-mono bg-slate-900/90 p-1.5 rounded text-emerald-300">
+              <span className="text-xs font-black block text-gray-900">Forest Ranger Station</span>
+              <span className="text-[10px] text-gray-500 block font-mono">Uplink: 4G / Satellite</span>
+              <div className="mt-2 text-[10px] font-mono bg-white p-1.5 rounded-lg border border-gray-200 text-emerald-800 font-bold">
                 Status: {dispatchResult ? '112 ERSS CONNECTED 🟢' : 'Listening...'}
               </div>
             </div>
@@ -184,16 +189,16 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
           {/* Hop Progress Animation Bar */}
           {isRelaying && (
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-slate-300 font-mono">
+              <div className="flex items-center justify-between text-xs text-gray-700 font-mono">
                 <span className="flex items-center space-x-1.5">
-                  <Zap className="w-4 h-4 text-amber-400 animate-bounce" />
+                  <Zap className="w-4 h-4 text-amber-500 animate-bounce" />
                   <span>Hopping encrypted distress packets across offline peer mesh...</span>
                 </span>
-                <span className="text-amber-400 font-bold">Hop {activeStep} of 3</span>
+                <span className="text-amber-700 font-bold">Hop {activeStep} of 3</span>
               </div>
-              <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-400"
+                  className="h-full bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-500"
                   initial={{ width: '0%' }}
                   animate={{ width: activeStep === 1 ? '33%' : activeStep === 2 ? '66%' : '100%' }}
                   transition={{ duration: 0.8 }}
@@ -208,61 +213,61 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/70 via-navy-900 to-emerald-950/70 border border-emerald-500/50 space-y-3"
+            className="p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 space-y-3"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-                <span className="text-sm font-extrabold text-white">
+                <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                <span className="text-sm font-black text-emerald-950">
                   Distress Relay Confirmed: Mountain Rescue Unit Dispatched!
                 </span>
               </div>
-              <span className="text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/40">
+              <span className="text-xs font-mono font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300">
                 ETA: ~{dispatchResult.uplinkConfirmation.etaMinutes} mins
               </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-              <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">ERSS-112 Ticket</span>
-                <span className="text-emerald-400 font-bold">{dispatchResult.uplinkConfirmation.erss112Ticket}</span>
+              <div className="bg-white p-2.5 rounded-xl border border-emerald-200 shadow-sm">
+                <span className="text-[10px] text-gray-500 block font-semibold">ERSS-112 Ticket</span>
+                <span className="text-emerald-700 font-bold">{dispatchResult.uplinkConfirmation.erss112Ticket}</span>
               </div>
-              <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Assigned Unit</span>
-                <span className="text-slate-200 font-bold">{dispatchResult.uplinkConfirmation.assignedRescueTeam}</span>
+              <div className="bg-white p-2.5 rounded-xl border border-emerald-200 shadow-sm">
+                <span className="text-[10px] text-gray-500 block font-semibold">Assigned Unit</span>
+                <span className="text-gray-900 font-bold">{dispatchResult.uplinkConfirmation.assignedRescueTeam}</span>
               </div>
-              <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Relay Gateway Node</span>
-                <span className="text-slate-200 font-bold">{dispatchResult.uplinkConfirmation.gatewayNode}</span>
+              <div className="bg-white p-2.5 rounded-xl border border-emerald-200 shadow-sm">
+                <span className="text-[10px] text-gray-500 block font-semibold">Relay Gateway Node</span>
+                <span className="text-gray-900 font-bold">{dispatchResult.uplinkConfirmation.gatewayNode}</span>
               </div>
-              <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                <span className="text-[10px] text-slate-400 block">Total Hops & Latency</span>
-                <span className="text-cyan-400 font-bold">{dispatchResult.totalHops} Hops (71ms)</span>
+              <div className="bg-white p-2.5 rounded-xl border border-emerald-200 shadow-sm">
+                <span className="text-[10px] text-gray-500 block font-semibold">Total Hops & Latency</span>
+                <span className="text-cyan-700 font-bold">{dispatchResult.totalHops} Hops (71ms)</span>
               </div>
             </div>
           </motion.div>
         )}
 
         {/* Acoustic Ultrasonic / Infrasonic Audio Beacon Widget */}
-        <div className="bg-navy-900 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="bg-purple-50/70 border border-purple-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-              isUltrasonicActive ? 'bg-purple-500/20 text-purple-400 border border-purple-500 animate-pulse' : 'bg-slate-800 text-slate-400'
+              isUltrasonicActive ? 'bg-purple-600 text-white shadow-md animate-pulse' : 'bg-white text-purple-600 border border-purple-200'
             }`}>
               <Volume2 className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                <span className="text-xs font-bold text-gray-900 uppercase tracking-wider">
                   Acoustic High-Frequency Sound Beacon (18.5 kHz)
                 </span>
                 <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                  isUltrasonicActive ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-slate-800 text-slate-400'
+                  isUltrasonicActive ? 'bg-purple-100 text-purple-700 border border-purple-300' : 'bg-white text-gray-600 border border-gray-200'
                 }`}>
                   {isUltrasonicActive ? 'EMITTING SONAR PULSE' : 'OFFLINE STANDBY'}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-gray-600 mt-0.5 leading-relaxed">
                 Emits inaudible ultrasonic audio pulses via smartphone speaker detectable by rescue search dogs & ranger microphones up to 350 meters in thick fog.
               </p>
             </div>
@@ -270,10 +275,10 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
 
           <button
             onClick={() => setIsUltrasonicActive(!isUltrasonicActive)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 shadow-sm ${
               isUltrasonicActive
-                ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-lg shadow-purple-600/30'
-                : 'bg-slate-800 text-purple-300 hover:bg-slate-700 border border-purple-500/30'
+                ? 'bg-purple-600 text-white hover:bg-purple-700 shadow-md'
+                : 'bg-white text-purple-700 hover:bg-purple-50 border border-purple-300'
             }`}
           >
             {isUltrasonicActive ? '🔊 Stop Sonar Pulse' : '📡 Arm Ultrasonic Pulse'}
@@ -282,8 +287,8 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-          <div className="text-[11px] text-slate-400 flex items-center space-x-1.5">
-            <Cpu className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="text-[11px] text-gray-500 font-medium flex items-center space-x-1.5">
+            <Cpu className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Encrypted using Curve25519 asymmetric cryptography. Zero cellular network required.</span>
           </div>
 
@@ -291,7 +296,7 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
             {dispatchResult && (
               <button
                 onClick={resetSimulator}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
+                className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-colors border border-gray-200"
               >
                 Reset Simulator
               </button>
@@ -300,10 +305,10 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
             <button
               disabled={isRelaying}
               onClick={handleTriggerMeshSOS}
-              className={`w-full sm:w-auto px-6 py-2.5 rounded-xl font-extrabold text-xs transition-all flex items-center justify-center space-x-2 shadow-xl ${
+              className={`w-full sm:w-auto px-6 py-2.5 rounded-xl font-black text-xs transition-all flex items-center justify-center space-x-2 shadow-lg ${
                 isRelaying
                   ? 'bg-amber-600 text-white animate-pulse'
-                  : 'bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white'
+                  : 'bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white hover:scale-105 active:scale-95'
               }`}
             >
               <Radio className="w-4 h-4" />

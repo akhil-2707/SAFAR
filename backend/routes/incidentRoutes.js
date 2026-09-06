@@ -6,9 +6,11 @@ const {
   getIncidents,
   getIncidentById,
   createIncident,
-  updateIncidentStatus
+  updateIncidentStatus,
+  getEmergencyServices
 } = require('../controllers/incidentController');
 
+router.get('/emergency-services', getEmergencyServices);
 router.post('/sos', triggerSOS);
 router.post('/sos/cancel', cancelSOS);
 router.get('/', getIncidents);

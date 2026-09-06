@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { 
   ShieldCheck, MapPin, Cpu, Lock, AlertOctagon, Activity, Users, 
   FileCheck, CheckCircle2, ArrowRight, Phone, ShieldAlert, Sparkles, 
@@ -9,348 +9,450 @@ import {
 import CinematicHeroMap from '../components/CinematicHeroMap';
 import SafarLogo from '../components/SafarLogo';
 
-// Motion transition variants
+// Motion Variants
 const fadeInUp = {
-  hidden: { y: 25, opacity: 0 },
+  hidden: { y: 30, opacity: 0 },
   visible: (delay = 0) => ({
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }
+    y: 0, opacity: 1,
+    transition: { duration: 0.65, delay, ease: [0.16, 1, 0.3, 1] }
   })
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.1 }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } }
 };
+
+// 3D tilt card
+function TiltCard({ children, className = '' }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useTransform(y, [-60, 60], [6, -6]);
+  const rotateY = useTransform(x, [-60, 60], [-6, 6]);
+
+  return (
+    <motion.div
+      className={`perspective-wrapper ${className}`}
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        x.set(e.clientX - rect.left - rect.width / 2);
+        y.set(e.clientY - rect.top - rect.height / 2);
+      }}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+    >
+      <motion.div className="tilt-card" style={{ rotateX, rotateY }}>
+        {children}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Animated floating background orb
+const Orb = ({ color, size, x, y, delay = 0 }) => (
+  <motion.div
+    className="absolute rounded-full pointer-events-none"
+    style={{ width: size, height: size, background: color, filter: 'blur(60px)', left: x, top: y, opacity: 0.5 }}
+    animate={{ y: [0, -40, 0], x: [0, 20, 0], scale: [1, 1.1, 1] }}
+    transition={{ duration: 7 + delay, repeat: Infinity, ease: 'easeInOut', delay }}
+  />
+);
 
 export default function LandingPage({ onScenarioTrigger }) {
   return (
-    <div className="space-y-16 pb-20 select-none font-sans overflow-hidden">
-      
-      {/* 🟢 Real-time Live Security Ticker Ribbon */}
-      <div className="bg-slate-950/90 border-b border-slate-800/80 py-2 px-4 backdrop-blur-md overflow-hidden">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs font-mono">
-          <div className="flex items-center space-x-2 text-emerald-400 font-bold">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
-            <span className="hidden sm:inline">NATIONAL DEFENSE SENTINEL:</span>
-            <span className="text-white">OPERATIONAL</span>
-          </div>
+    <div className="pb-20 select-none overflow-hidden" style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}>
 
-          <div className="hidden md:flex items-center space-x-6 text-[11px] text-slate-400">
-            <span className="flex items-center space-x-1.5">
-              <Radio className="w-3.5 h-3.5 text-cyan-400" />
-              <span>GHOST-MESH RELAY: <strong className="text-cyan-300">0-SIGNAL RESCUE READY</strong></span>
-            </span>
-            <span className="text-slate-600">•</span>
-            <span className="flex items-center space-x-1.5">
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
-              <span>SHA-256 DIGITAL ID: <strong className="text-amber-300">TAMPER-PROOF LEDGER</strong></span>
-            </span>
-            <span className="text-slate-600">•</span>
-            <span className="flex items-center space-x-1.5">
-              <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-              <span>POLICE CAD: <strong className="text-rose-300">112 ERSS LINKED</strong></span>
-            </span>
-          </div>
-
-          <div className="text-[11px] text-amber-400 font-bold">
-            SIH 2026 OFFICIAL MATRIX
-          </div>
+      {/* 🌈 Animated Ticker Ribbon */}
+      <div className="relative overflow-hidden py-2.5 px-4"
+        style={{
+          background: 'linear-gradient(135deg, rgba(249,115,22,0.1), rgba(139,92,246,0.1), rgba(16,185,129,0.08))',
+          borderBottom: '1px solid rgba(249,115,22,0.2)',
+        }}>
+        <div className="ticker-wrap">
+          <motion.div
+            className="flex items-center space-x-10 text-xs font-bold whitespace-nowrap"
+            animate={{ x: ['100vw', '-100%'] }}
+            transition={{ duration: 35, repeat: Infinity, ease: 'linear' }}
+          >
+            {[
+              { icon: '🛡️', text: 'NATIONAL DEFENSE SENTINEL: OPERATIONAL', color: '#10b981' },
+              { icon: '📡', text: 'GHOST-MESH RELAY: 0-SIGNAL RESCUE READY', color: '#8b5cf6' },
+              { icon: '🔒', text: 'SHA-256 DIGITAL ID: TAMPER-PROOF LEDGER', color: '#f97316' },
+              { icon: '🚨', text: 'POLICE CAD: 112 ERSS LINKED', color: '#ef4444' },
+              { icon: '🛰️', text: 'SATELLITE CORRIDORS: LIVE TRACKING ACTIVE', color: '#3b82f6' },
+              { icon: '🇮🇳', text: 'SIH 2026 — MINISTRY OF TOURISM, GOVT OF INDIA', color: '#f97316' },
+            ].map((item, i) => (
+              <span key={i} className="flex items-center space-x-2" style={{ color: item.color }}>
+                <span>{item.icon}</span>
+                <span>{item.text}</span>
+                <span className="text-gray-300">•</span>
+              </span>
+            ))}
+          </motion.div>
         </div>
       </div>
 
-      {/* 🌟 MAJESTIC S.A.F.A.R. HERO SECTION */}
-      <section className="relative pt-6 pb-16 border-b border-slate-800/70 bg-gradient-to-b from-[#030712] via-[#050b18] to-[#030712] overflow-hidden">
-        
-        {/* Ambient Glowing Orbs */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-gradient-to-r from-orange-500/10 via-blue-600/10 to-emerald-500/10 blur-[130px] pointer-events-none rounded-full" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/8 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/8 rounded-full blur-[140px] pointer-events-none" />
+      {/* ✨ HERO SECTION */}
+      <section className="relative pt-10 pb-20 overflow-hidden hero-gradient">
+        {/* Background Orbs */}
+        <Orb color="rgba(249,115,22,0.55)" size={500} x="-10%" y="-10%" delay={0} />
+        <Orb color="rgba(139,92,246,0.45)" size={600} x="60%" y="-5%" delay={2} />
+        <Orb color="rgba(16,185,129,0.4)" size={450} x="30%" y="50%" delay={1} />
+        <Orb color="rgba(59,130,246,0.35)" size={350} x="80%" y="60%" delay={3} />
+
+        {/* Particle grid overlay */}
+        <div className="absolute inset-0 pointer-events-none opacity-30"
+          style={{
+            backgroundImage: 'radial-gradient(rgba(139,92,246,0.3) 1px, transparent 1px)',
+            backgroundSize: '36px 36px',
+          }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-            className="flex flex-col items-center text-center space-y-7"
-          >
-            
-            {/* S.A.F.A.R. Official Emblem with Concentric Compass Ring */}
-            <motion.div
-              variants={fadeInUp}
-              custom={0}
-              className="relative p-2"
-            >
-              <div className="relative group cursor-pointer">
+          <motion.div initial="hidden" animate="visible" variants={staggerContainer}
+            className="flex flex-col items-center text-center space-y-8">
+
+            {/* Emblem */}
+            <motion.div variants={fadeInUp} custom={0} className="relative">
+              <motion.div
+                className="w-28 h-28 rounded-full mx-auto flex items-center justify-center relative"
+                animate={{ boxShadow: ['0 0 30px rgba(249,115,22,0.4)', '0 0 60px rgba(139,92,246,0.5)', '0 0 40px rgba(16,185,129,0.4)', '0 0 30px rgba(249,115,22,0.4)'] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                style={{ background: 'rgba(255,255,255,0.9)', border: '2px solid rgba(249,115,22,0.3)' }}
+              >
+                {/* Outer spin ring */}
+                <motion.div className="absolute -inset-4 rounded-full"
+                  style={{ border: '2px dashed rgba(249,115,22,0.4)' }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }} />
+                <motion.div className="absolute -inset-8 rounded-full"
+                  style={{ border: '1.5px solid rgba(139,92,246,0.25)' }}
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 30, repeat: Infinity, ease: 'linear' }} />
                 <SafarLogo size="hero" showText={false} animated={true} />
-              </div>
+              </motion.div>
             </motion.div>
 
-            {/* Title & Official Expansion */}
-            <div className="space-y-3 max-w-4xl mx-auto">
-              
-              {/* National Authority Badge */}
-              <motion.div
-                variants={fadeInUp}
-                custom={0.1}
-                className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-amber-500/30 text-xs font-extrabold text-amber-300 shadow-xl backdrop-blur-xl"
-              >
-                <span className="text-sm">🇮🇳</span>
-                <span className="tracking-wide">GOVERNMENT OF INDIA • MINISTRY OF TOURISM</span>
-                <span className="text-slate-500">•</span>
-                <span className="text-emerald-400">SMART INDIA HACKATHON 2026</span>
-              </motion.div>
+            {/* Badge */}
+            <motion.div variants={fadeInUp} custom={0.1}
+              className="inline-flex items-center space-x-2 px-5 py-2 rounded-full text-xs font-bold shadow-lg"
+              style={{
+                background: 'rgba(255,255,255,0.9)',
+                border: '1.5px solid rgba(249,115,22,0.35)',
+                backdropFilter: 'blur(10px)',
+                color: '#ea580c',
+              }}>
+              <span className="text-base">🇮🇳</span>
+              <span className="tracking-widest">GOVERNMENT OF INDIA • MINISTRY OF TOURISM</span>
+              <span className="text-gray-300">•</span>
+              <span style={{ color: '#7c3aed' }}>SMART INDIA HACKATHON 2026</span>
+            </motion.div>
 
-              {/* Main Brand Title */}
-              <motion.h1
-                variants={fadeInUp}
-                custom={0.2}
-                className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight text-white drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
+            {/* Title */}
+            <div className="space-y-3 max-w-5xl mx-auto">
+              <motion.h1 variants={fadeInUp} custom={0.2}
+                className="text-6xl sm:text-8xl lg:text-9xl font-black tracking-tight relative"
+                style={{
+                  background: 'linear-gradient(135deg, #f97316 0%, #8b5cf6 40%, #10b981 70%, #3b82f6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  backgroundSize: '200% 200%',
+                  textShadow: 'none',
+                }}
               >
-                S.A.F.A.R.
+                <motion.span
+                  animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+                  style={{ display: 'block', backgroundSize: '200% 200%' }}
+                >
+                  S.A.F.A.R.
+                </motion.span>
               </motion.h1>
 
-              {/* Subtitle with Glowing Tricolor Gradient */}
-              <motion.p
-                variants={fadeInUp}
-                custom={0.3}
-                className="text-lg sm:text-2xl lg:text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-slate-100 to-emerald-400 max-w-3xl mx-auto tracking-tight"
-              >
-                Smart AI Framework for Assured & Responsible Tourism
+              <motion.p variants={fadeInUp} custom={0.3}
+                className="text-xl sm:text-3xl font-extrabold text-gray-700 max-w-4xl mx-auto">
+                Smart AI Framework for{' '}
+                <span style={{ color: '#f97316' }}>Assured</span> &{' '}
+                <span style={{ color: '#8b5cf6' }}>Responsible</span> Tourism
               </motion.p>
 
-              {/* Mission Statement */}
-              <motion.p
-                variants={fadeInUp}
-                custom={0.4}
-                className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto pt-1 leading-relaxed font-normal"
-              >
-                Autonomous tourist safety grid featuring <strong className="text-emerald-300 font-semibold">MaxZoom 22 satellite corridors</strong>, <strong className="text-amber-300 font-semibold">zero-network Ghost-Mesh rescue</strong>, and <strong className="text-cyan-300 font-semibold">tamper-proof cryptographic digital passes</strong> across India.
+              <motion.p variants={fadeInUp} custom={0.4}
+                className="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+                Autonomous tourist safety grid featuring{' '}
+                <strong className="text-emerald-600">MaxZoom 22 satellite corridors</strong>,{' '}
+                <strong className="text-orange-600">zero-network Ghost-Mesh rescue</strong>, and{' '}
+                <strong className="text-violet-600">tamper-proof cryptographic digital passes</strong> across India.
               </motion.p>
             </div>
 
-            {/* Interactive Call to Action Buttons */}
-            <motion.div
-              variants={fadeInUp}
-              custom={0.5}
-              className="flex flex-wrap items-center justify-center gap-3.5 pt-2"
-            >
-              <Link
-                to="/register"
-                className="px-7 py-3.5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm rounded-2xl shadow-2xl shadow-orange-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2"
-              >
-                <ShieldCheck className="w-5 h-5 text-slate-950" />
-                <span>Issue Digital Tourist Pass</span>
-                <ArrowRight className="w-4 h-4 text-slate-950 ml-1" />
-              </Link>
+            {/* CTA Buttons */}
+            <motion.div variants={fadeInUp} custom={0.5}
+              className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }}>
+                <Link to="/register"
+                  className="px-8 py-4 text-white font-black text-sm rounded-2xl flex items-center space-x-2 relative overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, #f97316, #8b5cf6)',
+                    backgroundSize: '200% 200%',
+                    boxShadow: '0 8px 30px rgba(139,92,246,0.4)',
+                  }}>
+                  <motion.span className="absolute inset-0 rounded-2xl"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }}
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
+                  <ShieldCheck className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">Issue Digital Tourist Pass</span>
+                  <ArrowRight className="w-4 h-4 relative z-10" />
+                </Link>
+              </motion.div>
 
-              <Link
-                to="/tourist-dashboard"
-                className="px-6 py-3.5 bg-slate-900/90 hover:bg-slate-800 text-emerald-300 font-bold text-sm rounded-2xl border border-emerald-500/30 hover:border-emerald-500/60 transition-all shadow-xl backdrop-blur-xl flex items-center space-x-2"
-              >
-                <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span>Tourist Safety Hub</span>
-              </Link>
+              <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }}>
+                <Link to="/tourist-dashboard"
+                  className="px-7 py-4 font-bold text-sm rounded-2xl flex items-center space-x-2 border-2"
+                  style={{
+                    background: 'rgba(255,255,255,0.9)',
+                    border: '2px solid rgba(16,185,129,0.4)',
+                    color: '#059669',
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 8px 25px rgba(16,185,129,0.15)',
+                  }}>
+                  <Activity className="w-4 h-4" />
+                  <span>Tourist Safety Hub</span>
+                </Link>
+              </motion.div>
 
-              <Link
-                to="/authority-dashboard"
-                className="px-6 py-3.5 bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold text-sm rounded-2xl border border-slate-700 hover:border-slate-500 transition-all shadow-xl backdrop-blur-xl flex items-center space-x-2"
-              >
-                <Compass className="w-4 h-4 text-cyan-400" />
-                <span>Authority Command Desk</span>
-              </Link>
+              <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }}>
+                <Link to="/authority-dashboard"
+                  className="px-7 py-4 font-bold text-sm rounded-2xl flex items-center space-x-2"
+                  style={{
+                    background: 'rgba(255,255,255,0.9)',
+                    border: '2px solid rgba(139,92,246,0.4)',
+                    color: '#7c3aed',
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 8px 25px rgba(139,92,246,0.15)',
+                  }}>
+                  <Compass className="w-4 h-4" />
+                  <span>Authority Command Desk</span>
+                </Link>
+              </motion.div>
             </motion.div>
 
-            {/* 4 Interactive Feature KPI Pills */}
-            <motion.div 
-              variants={fadeInUp}
-              custom={0.6}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 pt-6 max-w-4xl w-full"
-            >
-              <div className="p-4 rounded-2xl pro-glass-card text-left space-y-1">
-                <span className="text-2xl sm:text-3xl font-black text-amber-400 block font-mono">100%</span>
-                <span className="text-xs text-slate-200 font-bold block">Dynamic Geo-Fencing</span>
-                <span className="text-[10px] text-slate-400">Acoustic Pre-Entry Warning</span>
-              </div>
-              
-              <div className="p-4 rounded-2xl pro-glass-card text-left space-y-1">
-                <span className="text-2xl sm:text-3xl font-black text-cyan-400 block font-mono">&lt; 3.8m</span>
-                <span className="text-xs text-slate-200 font-bold block">Emergency Dispatch</span>
-                <span className="text-[10px] text-slate-400">112 ERSS Police Handshake</span>
-              </div>
-
-              <div className="p-4 rounded-2xl pro-glass-card text-left space-y-1">
-                <span className="text-2xl sm:text-3xl font-black text-emerald-400 block font-mono">SHA-256</span>
-                <span className="text-xs text-slate-200 font-bold block">Blockchain Credential</span>
-                <span className="text-[10px] text-slate-400">Zero-Trust QR Verification</span>
-              </div>
-
-              <div className="p-4 rounded-2xl pro-glass-card text-left space-y-1">
-                <span className="text-2xl sm:text-3xl font-black text-rose-400 block font-mono">0-Bars</span>
-                <span className="text-xs text-slate-200 font-bold block">Ghost-Mesh P2P</span>
-                <span className="text-[10px] text-slate-400">Offline BLE Hop Relay</span>
-              </div>
+            {/* KPI Pills */}
+            <motion.div variants={fadeInUp} custom={0.65}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 max-w-4xl w-full">
+              {[
+                { value: '100%', label: 'Dynamic Geo-Fencing', sub: 'Acoustic Pre-Entry Warning', color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.25)' },
+                { value: '< 3.8m', label: 'Emergency Dispatch', sub: '112 ERSS Police Handshake', color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.25)' },
+                { value: 'SHA-256', label: 'Blockchain ID', sub: 'Zero-Trust QR Verify', color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)' },
+                { value: '0-Bars', label: 'Ghost-Mesh P2P', sub: 'Offline BLE Hop Relay', color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)' },
+              ].map((kpi, i) => (
+                <TiltCard key={i}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 + i * 0.1 }}
+                    whileHover={{ scale: 1.03 }}
+                    className="p-5 rounded-2xl text-left space-y-1.5 cursor-pointer"
+                    style={{ background: kpi.bg, border: `1.5px solid ${kpi.border}`, backdropFilter: 'blur(8px)' }}
+                  >
+                    <span className="text-2xl sm:text-3xl font-black block font-mono" style={{ color: kpi.color }}>
+                      {kpi.value}
+                    </span>
+                    <span className="text-sm font-bold text-gray-700 block">{kpi.label}</span>
+                    <span className="text-xs text-gray-400">{kpi.sub}</span>
+                  </motion.div>
+                </TiltCard>
+              ))}
             </motion.div>
-
           </motion.div>
         </div>
       </section>
 
-      {/* 🗺️ 3D CINEMATIC INTERACTIVE STORY MAP SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/90 p-4 rounded-3xl border border-slate-800 backdrop-blur-xl shadow-2xl">
-          <div className="space-y-1">
-            <div className="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[10px] font-bold text-amber-300 uppercase tracking-widest">
+      {/* 🗺️ INTERACTIVE MAP SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-5">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.6 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-3xl"
+          style={{
+            background: 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(16px)',
+            border: '1.5px solid rgba(249,115,22,0.2)',
+            boxShadow: '0 8px 30px rgba(249,115,22,0.1)',
+          }}>
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.25)' }}>
+              <Sparkles className="w-3.5 h-3.5 text-orange-500" />
+              <span className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">
                 S.A.F.A.R. High-Definition Satellite Telemetry Engine
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white">
-              Interactive 3D Corridor Map & High-Zoom Satellite Tiles (MaxZoom 22)
+            <h2 className="text-xl sm:text-2xl font-black text-gray-900">
+              Interactive 3D Corridor Map & Satellite Tiles{' '}
+              <span className="text-violet-600">(MaxZoom 22)</span>
             </h2>
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
-            <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center space-x-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <motion.span
+              animate={{ opacity: [1, 0.5, 1] }} transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-xs font-bold px-3 py-2 rounded-xl flex items-center space-x-2"
+              style={{
+                background: 'rgba(16,185,129,0.1)',
+                border: '1.5px solid rgba(16,185,129,0.35)',
+                color: '#059669',
+              }}>
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>LIVE GPS RADAR ACTIVE</span>
-            </span>
+            </motion.span>
           </div>
-        </div>
+        </motion.div>
 
-        {/* 100vh High-Performance Cinematic Map Engine */}
-        <div className="rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }} transition={{ duration: 0.5 }}
+          className="rounded-3xl overflow-hidden"
+          style={{ border: '2px solid rgba(139,92,246,0.2)', boxShadow: '0 20px 60px rgba(139,92,246,0.12)' }}>
           <CinematicHeroMap onScenarioTrigger={onScenarioTrigger} />
-        </div>
+        </motion.div>
       </section>
 
-      {/* 🚨 CRITICAL CHALLENGES IN INDIAN TOURISM (Why S.A.F.A.R. Wins) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-2.5">
-          <span className="text-xs font-extrabold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+      {/* 🚨 WHY SAFAR WINS */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.6 }}
+          className="text-center space-y-3">
+          <span className="text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest"
+            style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)', color: '#ea580c' }}>
             Solving Real National Safety Challenges
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-white">Why Conventional Travel Apps Fail in India</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-xs sm:text-sm">
-            India's most breathtaking tourism destinations—from high-altitude Himalayan passes to dense tropical valleys—suffer from zero cellular coverage, abrupt landslides, and counterfeit permits.
+          <h2 className="text-3xl sm:text-5xl font-black text-gray-900">
+            Why Conventional Apps{' '}
+            <span style={{ color: '#ef4444' }}>Fail</span> in India
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto text-sm">
+            India's most breathtaking destinations suffer from zero coverage, abrupt landslides, and counterfeit permits.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <SignalZero className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">Zero-Network Dead Zones</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Over 60% of trekking trails in remote mountains have zero cellular coverage. S.A.F.A.R. bridges this gap using autonomous multi-hop peer-to-peer Ghost-Mesh signals without internet.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
-              <AlertOctagon className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">Abrupt Terrain Hazards</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Landslides, flash floods, and wildlife crossings happen in seconds. S.A.F.A.R. issues dynamic 300m/150m proximity warnings before a tourist enters danger zones.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Lock className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">Unverified Touts & Scams</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Foreign and domestic travelers are frequently exploited by fake guides. S.A.F.A.R.'s blockchain pass and marketplace guarantee verified government credentials.
-            </p>
-          </div>
-
+          {[
+            { icon: SignalZero, color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.25)', title: 'Zero-Network Dead Zones', desc: "Over 60% of trekking trails in remote mountains have zero cellular coverage. S.A.F.A.R. bridges this using autonomous multi-hop Ghost-Mesh signals.", delay: 0 },
+            { icon: AlertOctagon, color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.25)', title: 'Abrupt Terrain Hazards', desc: 'Landslides, flash floods, and wildlife crossings happen in seconds. S.A.F.A.R. issues dynamic 300m/150m proximity warnings before breach.', delay: 0.1 },
+            { icon: Lock, color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)', title: 'Unverified Touts & Scams', desc: "Travelers are frequently exploited by fake guides. S.A.F.A.R.'s blockchain pass guarantees verified government credentials.", delay: 0.2 },
+          ].map((card, i) => {
+            const Icon = card.icon;
+            return (
+              <TiltCard key={i}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }} transition={{ delay: card.delay, duration: 0.6 }}
+                  whileHover={{ y: -5 }}
+                  className="p-7 rounded-3xl space-y-4 h-full"
+                  style={{
+                    background: `linear-gradient(135deg, ${card.bg}, rgba(255,255,255,0.95))`,
+                    border: `1.5px solid ${card.border}`,
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: `0 8px 30px ${card.bg}`,
+                  }}>
+                  <motion.div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                    style={{ background: card.bg, border: `1.5px solid ${card.border}` }}
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, delay: i * 1.5 }}
+                  >
+                    <Icon className="w-7 h-7" style={{ color: card.color }} />
+                  </motion.div>
+                  <h3 className="text-xl font-black text-gray-900">{card.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{card.desc}</p>
+                </motion.div>
+              </TiltCard>
+            );
+          })}
         </div>
       </section>
 
-      {/* 🛡️ ARCHITECTURAL MODULES GRID */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-2.5">
-          <span className="text-xs font-extrabold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+      {/* 🛡️ ARCHITECTURE MODULES */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.6 }}
+          className="text-center space-y-3">
+          <span className="text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest"
+            style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)', color: '#7c3aed' }}>
             6 Architectural Pillars
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-white">Complete S.A.F.A.R. Protection Matrix</h2>
-        </div>
+          <h2 className="text-3xl sm:text-5xl font-black text-gray-900">
+            Complete S.A.F.A.R.{' '}
+            <span style={{ color: '#8b5cf6' }}>Protection Matrix</span>
+          </h2>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <Radio className="w-8 h-8 text-amber-400" />
-            <h3 className="font-bold text-white text-base">Offline Ghost-Mesh Rescue</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              BLE 5.3 & Wi-Fi Direct multi-hop packet relay allows stranded tourists with zero network to reach forest ranger stations and dispatch rescue teams.
-            </p>
-          </div>
+          {[
+            { icon: Radio, color: '#f97316', title: 'Offline Ghost-Mesh Rescue', desc: 'BLE 5.3 & Wi-Fi Direct multi-hop packet relay allows stranded tourists with zero network to reach forest ranger stations.', delay: 0 },
+            { icon: MapPin, color: '#8b5cf6', title: 'Dynamic Geo-Fencing', desc: 'High-precision polygon corridor containment with 300m approach and 150m imminent boundary audio-visual alerts before breach.', delay: 0.07 },
+            { icon: Cpu, color: '#10b981', title: 'Explainable AI Risk Scoring', desc: 'Transparent 0–100 risk score evaluating terrain gradient, route deviation, time of day, and self-learning post-incident retraining.', delay: 0.14 },
+            { icon: Phone, color: '#ef4444', title: '112 India ERSS Live Gateway', desc: 'Direct API handshake with National Emergency Response Support System for automated PCR patrol dispatch and ETA calculation.', delay: 0.21 },
+            { icon: FileCheck, color: '#3b82f6', title: 'Blockchain Digital ID', desc: 'SHA-256 cryptographic registration for tourists and certified operators, preventing identity fraud and providing instant verification.', delay: 0.28 },
+            { icon: Lock, color: '#ec4899', title: 'DPDP Act 2023 Privacy Center', desc: 'Comprehensive consent management, data minimization policy, and 1-click cryptographic data erasure guaranteeing traveler privacy.', delay: 0.35 },
+          ].map((mod, i) => {
+            const Icon = mod.icon;
+            return (
+              <TiltCard key={i}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30, scale: 0.96 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ delay: mod.delay, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -6 }}
+                  className="p-7 rounded-3xl space-y-4 h-full relative overflow-hidden"
+                  style={{
+                    background: 'rgba(255,255,255,0.88)',
+                    backdropFilter: 'blur(12px)',
+                    border: `1.5px solid ${mod.color}30`,
+                    boxShadow: `0 8px 30px ${mod.color}12`,
+                  }}
+                >
+                  {/* Gradient orb in card */}
+                  <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
+                    style={{ background: `${mod.color}12`, filter: 'blur(20px)' }} />
 
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <MapPin className="w-8 h-8 text-blue-400" />
-            <h3 className="font-bold text-white text-base">Dynamic Geo-Fencing</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              High-precision polygon corridor containment with 300m approach and 150m imminent boundary audio-visual alerts before breach occurs.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <Cpu className="w-8 h-8 text-emerald-400" />
-            <h3 className="font-bold text-white text-base">Explainable AI Risk Scoring</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Transparent 0–100 risk score diagnostics evaluating terrain gradient, route deviation, time of day, and self-learning post-incident retraining.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <Phone className="w-8 h-8 text-rose-400" />
-            <h3 className="font-bold text-white text-base">112 India ERSS Live Gateway</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Direct API handshake with National Emergency Response Support System (ERSS-112) for automated PCR patrol dispatch and ETA calculation.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <FileCheck className="w-8 h-8 text-cyan-400" />
-            <h3 className="font-bold text-white text-base">Blockchain Digital ID</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              SHA-256 cryptographic registration for tourists and certified operators, preventing identity fraud and providing instant verification.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-3xl pro-glass-card space-y-3">
-            <Lock className="w-8 h-8 text-purple-400" />
-            <h3 className="font-bold text-white text-base">DPDP Act 2023 Privacy Center</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Comprehensive consent management, data minimization policy, and 1-click cryptographic data erasure guaranteeing traveler privacy rights.
-            </p>
-          </div>
-
+                  <motion.div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center relative z-10"
+                    style={{ background: `${mod.color}12`, border: `1.5px solid ${mod.color}35` }}
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <Icon className="w-7 h-7" style={{ color: mod.color }} />
+                  </motion.div>
+                  <h3 className="text-lg font-black text-gray-900 relative z-10">{mod.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed relative z-10">{mod.desc}</p>
+                </motion.div>
+              </TiltCard>
+            );
+          })}
         </div>
       </section>
 
       {/* 🏆 FOOTER */}
-      <footer className="border-t border-slate-800/80 pt-10 text-center text-xs text-slate-500 space-y-3">
-        <div className="flex items-center justify-center space-x-2">
+      <footer className="pt-12 pb-6 text-center space-y-4"
+        style={{ borderTop: '1px solid rgba(139,92,246,0.15)' }}>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="inline-flex items-center justify-center space-x-2">
           <SafarLogo size="xs" showSubtitle={false} />
-        </div>
-        <p className="font-medium text-slate-400">
+        </motion.div>
+        <p className="text-sm text-gray-500 font-medium">
           © 2026 S.A.F.A.R. | Smart AI Framework for Assured & Responsible Tourism
         </p>
-        <p className="text-[11px] text-slate-600">
+        <p className="text-xs text-gray-400">
           Developed for Smart India Hackathon 2026 | Ministry of Tourism, Govt. of India
         </p>
+        {/* Tricolor footer bar */}
+        <div className="h-1 max-w-xs mx-auto rounded-full"
+          style={{ background: 'linear-gradient(90deg, #f97316, #ffffff, #10b981)' }} />
       </footer>
-
     </div>
   );
 }

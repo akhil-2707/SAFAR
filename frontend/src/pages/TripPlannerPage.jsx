@@ -36,19 +36,19 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Header */}
-      <div className="bg-navy-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">
+      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-6 shadow-lg flex items-center justify-between backdrop-blur-xl">
         <div>
-          <h2 className="text-2xl font-black text-white">Tourist Trip Itinerary & Route Deviation Monitor</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-2xl font-black text-gray-900">Tourist Trip Itinerary & Route Deviation Monitor</h2>
+          <p className="text-xs text-gray-500 font-medium">
             Registered Itinerary Corridor & AI Route Deviation Anomaly Inspector
           </p>
         </div>
       </div>
 
       {message && (
-        <div className="p-3 bg-amber-950/60 border border-amber-500/40 rounded-xl text-amber-300 text-xs flex items-center justify-between">
+        <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-900 font-bold text-xs flex items-center justify-between shadow-sm">
           <span>{message}</span>
-          <button onClick={() => setMessage(null)} className="font-bold text-amber-400">✕</button>
+          <button onClick={() => setMessage(null)} className="font-bold text-amber-700">✕</button>
         </div>
       )}
 
@@ -57,41 +57,41 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
         
         {/* Form Details & Anomaly Simulation */}
         <div className="space-y-4">
-          <div className="bg-navy-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-            <h3 className="text-sm font-extrabold text-white flex items-center space-x-1.5">
-              <Navigation className="w-4 h-4 text-emerald-400" />
+          <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-5 shadow-lg space-y-4 backdrop-blur-xl">
+            <h3 className="text-sm font-extrabold text-gray-900 flex items-center space-x-2">
+              <Navigation className="w-4 h-4 text-emerald-600" />
               <span>Registered Travel Itinerary</span>
             </h3>
 
             <div className="space-y-3 text-xs">
-              <div className="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Starting Point</span>
-                <span className="font-bold text-white">{trip.startingLocation}</span>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-1 shadow-sm">
+                <span className="text-[10px] text-gray-500 uppercase font-bold block">Starting Point</span>
+                <span className="font-bold text-gray-900">{trip.startingLocation}</span>
               </div>
 
-              <div className="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Destination</span>
-                <span className="font-bold text-emerald-400">{trip.destination}</span>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-1 shadow-sm">
+                <span className="text-[10px] text-gray-500 uppercase font-bold block">Destination</span>
+                <span className="font-extrabold text-emerald-700">{trip.destination}</span>
               </div>
 
-              <div className="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Registered Travel Dates</span>
-                <span className="font-semibold text-slate-200">{trip.startDate} to {trip.endDate}</span>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-1 shadow-sm">
+                <span className="text-[10px] text-gray-500 uppercase font-bold block">Registered Travel Dates</span>
+                <span className="font-semibold text-gray-800">{trip.startDate} to {trip.endDate}</span>
               </div>
 
-              <div className="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 space-y-1">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Planned Waypoint Corridor</span>
-                <span className="font-mono text-slate-300 text-[11px] block">{trip.plannedRoute}</span>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-1 shadow-sm">
+                <span className="text-[10px] text-gray-500 uppercase font-bold block">Planned Waypoint Corridor</span>
+                <span className="font-mono text-gray-700 text-[11px] block">{trip.plannedRoute}</span>
               </div>
             </div>
 
             {/* Deviation Simulation Button */}
-            <div className="pt-2 border-t border-slate-800 space-y-2">
-              <span className="text-[10px] text-slate-400 uppercase font-bold block">SIH Evaluator Route Anomaly Test</span>
+            <div className="pt-2 border-t border-gray-100 space-y-2">
+              <span className="text-[10px] text-gray-500 uppercase font-bold block">SIH Evaluator Route Anomaly Test</span>
               <button
                 disabled={loading}
                 onClick={handleDeviate}
-                className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-1.5"
+                className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5"
               >
                 <AlertTriangle className="w-4 h-4" />
                 <span>{loading ? 'Simulating...' : 'Simulate 3.8 km Route Deviation'}</span>
@@ -102,7 +102,7 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
 
         {/* Map View showing Planned Route Polyline */}
         <div className="lg:col-span-2 space-y-2">
-          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+          <span className="text-xs font-bold text-gray-700 uppercase tracking-wider block">
             Itinerary Route Polyline & Live Location
           </span>
 

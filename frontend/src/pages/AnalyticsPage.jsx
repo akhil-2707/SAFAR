@@ -35,10 +35,10 @@ export default function AnalyticsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Header */}
-      <div className="bg-navy-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">
+      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-6 shadow-lg flex items-center justify-between backdrop-blur-xl">
         <div>
-          <h2 className="text-2xl font-black text-white">Authority Analytics & Intelligence</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-2xl font-black text-gray-900">Authority Analytics & Intelligence</h2>
+          <p className="text-xs text-gray-500 font-medium">
             Real-Time Statistical Insights on Incident Trends, Geo-Fence Breaches, and Emergency Response Times
           </p>
         </div>
@@ -46,24 +46,24 @@ export default function AnalyticsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-navy-900 border border-slate-800 space-y-1">
-          <span className="text-[10px] text-slate-400 uppercase font-extrabold block">Avg Emergency Response Time</span>
-          <span className="text-2xl font-black text-emerald-400">{overview.avgResponseTimeMinutes} mins</span>
+        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Avg Emergency Response Time</span>
+          <span className="text-2xl font-black text-emerald-700">{overview.avgResponseTimeMinutes} mins</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-navy-900 border border-slate-800 space-y-1">
-          <span className="text-[10px] text-slate-400 uppercase font-extrabold block">Total Monitored Tourists</span>
-          <span className="text-2xl font-black text-white">{overview.totalTourists}</span>
+        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Total Monitored Tourists</span>
+          <span className="text-2xl font-black text-gray-900">{overview.totalTourists}</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-navy-900 border border-slate-800 space-y-1">
-          <span className="text-[10px] text-slate-400 uppercase font-extrabold block">Geo-Fence Violations</span>
-          <span className="text-2xl font-black text-amber-400">{overview.geofenceViolations}</span>
+        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Geo-Fence Violations</span>
+          <span className="text-2xl font-black text-amber-800">{overview.geofenceViolations}</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-navy-900 border border-slate-800 space-y-1">
-          <span className="text-[10px] text-slate-400 uppercase font-extrabold block">Resolution Success Rate</span>
-          <span className="text-2xl font-black text-teal-300">94.2%</span>
+        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Resolution Success Rate</span>
+          <span className="text-2xl font-black text-teal-700">94.2%</span>
         </div>
       </div>
 
@@ -71,8 +71,8 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Daily Incident Trend Area Chart */}
-        <div className="bg-navy-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-300 block">
+        <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-5 shadow-lg space-y-4 backdrop-blur-xl">
+          <span className="text-xs font-extrabold uppercase tracking-wider text-gray-800 block">
             Weekly Incident & SOS Emergency Trend
           </span>
           <div className="h-64">
@@ -88,9 +88,9 @@ export default function AnalyticsPage() {
                     <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="day" stroke="#64748b" textAnchor="end" tick={{ fontSize: 10 }} />
-                <YAxis stroke="#64748b" tick={{ fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                <XAxis dataKey="day" stroke="#94a3b8" textAnchor="end" tick={{ fontSize: 10, fill: '#475569' }} />
+                <YAxis stroke="#94a3b8" tick={{ fontSize: 10, fill: '#475569' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                 <Area type="monotone" dataKey="incidents" stroke="#EF4444" fillOpacity={1} fill="url(#colorInc)" name="Incidents Reported" />
                 <Area type="monotone" dataKey="resolved" stroke="#10B981" fillOpacity={1} fill="url(#colorRes)" name="Incidents Resolved" />
               </AreaChart>
@@ -99,8 +99,8 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Incidents by Severity Pie Chart */}
-        <div className="bg-navy-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-300 block">
+        <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-5 shadow-lg space-y-4 backdrop-blur-xl">
+          <span className="text-xs font-extrabold uppercase tracking-wider text-gray-800 block">
             Incident Severity Breakdown
           </span>
           <div className="h-64 flex items-center justify-center">
@@ -121,7 +121,7 @@ export default function AnalyticsPage() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -129,16 +129,16 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Incidents by Category Bar Chart */}
-        <div className="bg-navy-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-300 block">
+        <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-5 shadow-lg space-y-4 backdrop-blur-xl">
+          <span className="text-xs font-extrabold uppercase tracking-wider text-gray-800 block">
             Incidents by Category Classification
           </span>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={incidentsByType}>
-                <XAxis dataKey="type" stroke="#64748b" tick={{ fontSize: 9 }} />
-                <YAxis stroke="#64748b" tick={{ fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                <XAxis dataKey="type" stroke="#94a3b8" tick={{ fontSize: 9, fill: '#475569' }} />
+                <YAxis stroke="#94a3b8" tick={{ fontSize: 10, fill: '#475569' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                 <Bar dataKey="count" fill="#3B82F6" radius={[6, 6, 0, 0]} name="Incident Count" />
               </BarChart>
             </ResponsiveContainer>
@@ -146,16 +146,16 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Tourist Risk Level Distribution Bar Chart */}
-        <div className="bg-navy-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-300 block">
+        <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-5 shadow-lg space-y-4 backdrop-blur-xl">
+          <span className="text-xs font-extrabold uppercase tracking-wider text-gray-800 block">
             Monitored Tourist Risk Distribution
           </span>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={riskDistribution}>
-                <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 10 }} />
-                <YAxis stroke="#64748b" tick={{ fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155' }} />
+                <XAxis dataKey="name" stroke="#94a3b8" tick={{ fontSize: 10, fill: '#475569' }} />
+                <YAxis stroke="#94a3b8" tick={{ fontSize: 10, fill: '#475569' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                 <Bar dataKey="value" fill="#10B981" radius={[6, 6, 0, 0]} name="Tourists Count" />
               </BarChart>
             </ResponsiveContainer>

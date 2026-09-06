@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polygon } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, Circle } from 'react-leaflet';
 import L from 'leaflet';
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -26,12 +26,12 @@ export default function MiniMap({
   title = "Location Preview",
   markerColor = "#10B981"
 }) {
-  const lat = center?.lat || 26.1445;
-  const lng = center?.lng || 91.7362;
+  const lat = (typeof center?.lat === 'number') ? center.lat : (Array.isArray(center) && typeof center[0] === 'number' ? center[0] : 26.1445);
+  const lng = (typeof center?.lng === 'number') ? center.lng : (Array.isArray(center) && typeof center[1] === 'number' ? center[1] : 91.7362);
 
   return (
-    <div className="w-full relative rounded-xl overflow-hidden border border-slate-700/80 shadow-md">
-      <div className="absolute top-2 left-2 z-20 bg-navy-900/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold text-slate-300 border border-slate-700">
+    <div className="w-full relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+      <div className="absolute top-2 left-2 z-20 bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-gray-800 border border-gray-200 shadow-sm">
         📍 {title}
       </div>
       <div style={{ height }}>
@@ -52,22 +52,58 @@ export default function MiniMap({
             maxNativeZoom={20}
           />
 
-          {geofences.map((gf) => (
-            <Polygon
-              key={gf.id}
-              positions={gf.coordinates}
-              pathOptions={{
-                color: gf.strokeColor || gf.color,
-                fillColor: gf.color,
-                fillOpacity: 0.2,
-                weight: 1.5
-              }}
-            />
-          ))}
+          {Array.isArray(geofences) && geofences.map((gf) => {
+            if (!gf) return null;
+
+            // Render Circle geofences (e.g. Taj Mahal heritage perimeter or danger areas)
+            if (gf.shape === 'CIRCLE' || (!gf.coordinates?.length && gf.center && gf.radiusMeters)) {
+              const cLat = typeof gf.center?.lat === 'number' ? gf.center.lat : (Array.isArray(gf.center) ? gf.center[0] : null);
+              const cLng = typeof gf.center?.lng === 'number' ? gf.center.lng : (Array.isArray(gf.center) ? gf.center[1] : null);
+              if (cLat == null || cLng == null) return null;
+              const radius = gf.radiusMeters || 500;
+
+              return (
+                <Circle
+                  key={gf.id || Math.random()}
+                  center={[cLat, cLng]}
+                  radius={radius}
+                  pathOptions={{
+                    color: gf.strokeColor || gf.color || '#EF4444',
+                    fillColor: gf.color || '#EF4444',
+                    fillOpacity: 0.25,
+                    weight: 1.5
+                  }}
+                />
+              );
+            }
+
+            // Render Polygon geofences safely with validated coordinates
+            if (Array.isArray(gf.coordinates) && gf.coordinates.length >= 3) {
+              const validPoints = gf.coordinates.filter(
+                (pt) => Array.isArray(pt) && pt.length >= 2 && typeof pt[0] === 'number' && typeof pt[1] === 'number'
+              );
+              if (validPoints.length < 3) return null;
+
+              return (
+                <Polygon
+                  key={gf.id || Math.random()}
+                  positions={validPoints}
+                  pathOptions={{
+                    color: gf.strokeColor || gf.color || '#10B981',
+                    fillColor: gf.color || '#10B981',
+                    fillOpacity: 0.2,
+                    weight: 1.5
+                  }}
+                />
+              );
+            }
+
+            return null;
+          })}
 
           <Marker position={[lat, lng]} icon={createMiniIcon(markerColor)}>
             <Popup>
-              <span className="text-xs font-bold text-white">Target Location</span>
+              <span className="text-xs font-bold text-gray-900">Target Location</span>
             </Popup>
           </Marker>
         </MapContainer>

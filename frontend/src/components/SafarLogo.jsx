@@ -65,15 +65,15 @@ export default function SafarLogo({
       {showText && (
         <div className="flex flex-col text-left">
           <div className="flex items-center space-x-1.5">
-            <span className={`font-black text-white ${currentSize.title} drop-shadow-sm font-['Plus_Jakarta_Sans',sans-serif]`}>
+            <span className={`font-black text-gray-900 ${currentSize.title} drop-shadow-sm font-['Plus_Jakarta_Sans',sans-serif]`}>
               S.A.F.A.R.
             </span>
-            <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-safar-saffron-500/15 text-safar-saffron-400 border border-safar-saffron-500/30">
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-orange-50 text-orange-700 border border-orange-200 shadow-sm">
               GOI
             </span>
           </div>
           {showSubtitle && (
-            <span className={`text-slate-400 font-medium ${currentSize.subtitle} leading-tight`}>
+            <span className={`text-gray-500 font-medium ${currentSize.subtitle} leading-tight`}>
               Smart AI Framework for Assured & Responsible Tourism
             </span>
           )}

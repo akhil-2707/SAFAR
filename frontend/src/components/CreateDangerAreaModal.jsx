@@ -74,10 +74,10 @@ const THREAT_LEVELS = [
     id: 'CAUTION',
     level: 'MEDIUM',
     label: 'Caution Advisory',
-    color: '#F59E0B',
-    bgColor: 'bg-yellow-950/60',
-    borderColor: 'border-yellow-500/60',
-    textColor: 'text-yellow-400',
+    color: '#D97706',
+    bgColor: 'bg-amber-50',
+    borderColor: 'border-amber-300',
+    textColor: 'text-amber-800',
     badge: '🟡 Advisory',
     desc: 'Heavy fog, slippery terrain, or moderate congestion. Advisory warning sent to tourists.'
   },
@@ -85,10 +85,10 @@ const THREAT_LEVELS = [
     id: 'HIGH_RISK',
     level: 'HIGH',
     label: 'High Risk Hazard',
-    color: '#F97316',
-    bgColor: 'bg-orange-950/60',
-    borderColor: 'border-orange-500/60',
-    textColor: 'text-orange-400',
+    color: '#EA580C',
+    bgColor: 'bg-orange-50',
+    borderColor: 'border-orange-300',
+    textColor: 'text-orange-800',
     badge: '🟠 High Hazard',
     desc: 'Steep cliff, wild animal crossing, or flash-flood buffer. Increases tourist risk index by +40%.'
   },
@@ -96,10 +96,10 @@ const THREAT_LEVELS = [
     id: 'RESTRICTED',
     level: 'CRITICAL',
     label: 'Critical No-Entry Zone',
-    color: '#EF4444',
-    bgColor: 'bg-red-950/70',
-    borderColor: 'border-red-500',
-    textColor: 'text-red-400',
+    color: '#DC2626',
+    bgColor: 'bg-red-50',
+    borderColor: 'border-red-300',
+    textColor: 'text-red-800',
     badge: '🔴 Strict No-Entry',
     desc: 'Landslide, avalanche, or military border breach. Triggers acoustic siren on tourist phone & logs incident.'
   }
@@ -300,57 +300,64 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
   const areaSqKm = ((Math.PI * Math.pow(radiusMeters, 2)) / 1000000).toFixed(2);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto select-none font-sans">
-      <div className="bg-slate-950 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto select-none font-sans">
+      <div
+        className="rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150 relative text-gray-900"
+        style={{
+          background: 'rgba(255, 255, 255, 0.98)',
+          border: '1.5px solid rgba(249, 115, 22, 0.3)',
+          boxShadow: '0 25px 70px rgba(0, 0, 0, 0.15)'
+        }}
+      >
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 rounded-2xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center text-red-600 shrink-0">
               <ShieldAlert className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-white flex items-center space-x-2">
+              <h2 className="text-xl font-black text-gray-900 flex items-center space-x-2">
                 <span>Set Danger Zone / Threat Perimeter</span>
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-gray-500 font-medium">
                 Search any Indian destination, set the hazard radius & threat level to protect tourists
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-xl bg-gray-100 text-gray-400 hover:text-gray-700 hover:bg-gray-200 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 bg-red-950/60 border border-red-500/40 rounded-xl text-red-300 text-xs flex items-center space-x-2">
-            <AlertTriangle className="w-4 h-4 shrink-0 text-red-400" />
+          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center space-x-2">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           
-          {/* 🌟 1. SMART INDIA LOCATION SEARCH (Requested by User) */}
+          {/* 🌟 1. SMART INDIA LOCATION SEARCH */}
           <div className="relative space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs text-slate-300 font-extrabold flex items-center space-x-1.5">
-                <Search className="w-3.5 h-3.5 text-emerald-400" />
+              <label className="text-xs text-gray-700 font-extrabold flex items-center space-x-1.5">
+                <Search className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Search Location in India *</span>
               </label>
-              <span className="text-[10px] text-slate-400 font-mono">
+              <span className="text-[10px] text-gray-400 font-mono">
                 All-India Cities, Passes, Temples & Forests
               </span>
             </div>
 
             {/* Search Input Box */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <Search className="w-4 h-4 text-emerald-400" />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <Search className="w-4 h-4 text-emerald-600" />
               </div>
               <input
                 ref={searchInputRef}
@@ -359,17 +366,17 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
                 onFocus={() => { if (searchResults.length > 0) setShowSearchDropdown(true); }}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Type any place in India (e.g. Manali, Kedarnath, Kaziranga, Cherrapunji, Tawang, Leh, Goa...)"
-                className="w-full pl-9 pr-10 py-2.5 bg-slate-900/90 border border-slate-700/80 focus:border-emerald-400 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-400 shadow-inner"
+                className="w-full pl-9 pr-10 py-2.5 bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:bg-white rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-sm"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center space-x-1">
                 {isSearching && (
-                  <Loader2 className="w-4 h-4 text-emerald-400 animate-spin" />
+                  <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
                 )}
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => { setSearchQuery(''); setSearchResults([]); }}
-                    className="text-slate-400 hover:text-white"
+                    className="text-gray-400 hover:text-gray-700"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -381,11 +388,11 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
             {showSearchDropdown && searchResults.length > 0 && (
               <div 
                 ref={dropdownRef}
-                className="absolute left-0 right-0 top-full mt-1.5 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 max-h-60 overflow-y-auto divide-y divide-slate-800/80 p-1 backdrop-blur-xl"
+                className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 max-h-60 overflow-y-auto divide-y divide-gray-100 p-1 backdrop-blur-xl"
               >
-                <div className="px-3 py-1.5 text-[10px] font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                <div className="px-3 py-1.5 text-[10px] font-mono text-gray-400 uppercase tracking-wider flex items-center justify-between">
                   <span>Search Matches</span>
-                  <span className="text-emerald-400 font-bold">{searchResults.length} Found</span>
+                  <span className="text-emerald-600 font-bold">{searchResults.length} Found</span>
                 </div>
 
                 {searchResults.map((result, idx) => (
@@ -393,25 +400,25 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
                     key={`${result.name}-${idx}`}
                     type="button"
                     onClick={() => handleSelectLocation(result)}
-                    className="w-full p-2.5 rounded-xl hover:bg-slate-800 text-left transition-colors flex items-center justify-between group"
+                    className="w-full p-2.5 rounded-xl hover:bg-gray-50 text-left transition-colors flex items-center justify-between group"
                   >
                     <div className="flex items-start space-x-2.5 min-w-0 pr-2">
-                      <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                      <MapPin className="w-4 h-4 text-amber-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                       <div className="truncate">
-                        <div className="text-xs font-bold text-slate-100 truncate group-hover:text-emerald-300">
+                        <div className="text-xs font-bold text-gray-900 truncate group-hover:text-emerald-700">
                           {result.name}
                         </div>
-                        <div className="text-[10px] text-slate-400 truncate">
+                        <div className="text-[10px] text-gray-500 truncate">
                           {result.subtitle}
                         </div>
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="text-[10px] font-mono text-slate-400 block">
+                      <span className="text-[10px] font-mono text-gray-400 block">
                         {result.lat.toFixed(2)}°, {result.lng.toFixed(2)}°
                       </span>
                       {result.isLocal && (
-                        <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950/80 px-1 rounded border border-emerald-500/30">
+                        <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1 rounded border border-emerald-200">
                           Verified Spot
                         </span>
                       )}
@@ -422,13 +429,13 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
             )}
 
             {/* Currently Active Selected Location Badge */}
-            <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs">
+            <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between text-xs">
               <div className="flex items-center space-x-2 min-w-0 pr-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
-                <span className="text-slate-400 text-[11px]">Selected Epicenter:</span>
-                <strong className="text-white truncate">{center.name}</strong>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                <span className="text-gray-500 text-[11px]">Selected Epicenter:</span>
+                <strong className="text-gray-900 truncate font-bold">{center.name}</strong>
               </div>
-              <span className="font-mono text-cyan-400 text-[11px] font-bold shrink-0">
+              <span className="font-mono text-emerald-700 text-[11px] font-bold shrink-0">
                 {customLat}° N, {customLng}° E
               </span>
             </div>
@@ -436,7 +443,7 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
 
           {/* 2. Zone Name */}
           <div>
-            <label className="text-xs text-slate-300 font-bold block mb-1">
+            <label className="text-xs text-gray-700 font-bold block mb-1">
               Danger Zone Title *
             </label>
             <input
@@ -445,13 +452,13 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Solang Valley Avalanche Risk, Kaziranga Elephant Crossing"
-              className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none"
+              className="w-full bg-gray-50 border border-gray-200 focus:border-emerald-500 focus:bg-white rounded-xl p-2.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none shadow-sm"
             />
           </div>
 
           {/* 3. Threat Level Selection */}
           <div>
-            <label className="text-xs text-slate-300 font-bold block mb-2">
+            <label className="text-xs text-gray-700 font-bold block mb-2">
               Select Threat Level / Risk Severity *
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -464,16 +471,16 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
                     onClick={() => handleThreatChange(t)}
                     className={`p-3 rounded-2xl border text-left transition-all relative ${
                       isSelected
-                        ? `${t.bgColor} ${t.borderColor} ring-2 ring-emerald-400/40 shadow-lg`
-                        : 'bg-slate-900/60 border-slate-800/80 hover:border-slate-700'
+                        ? `${t.bgColor} ${t.borderColor} ring-2 ring-emerald-500/30 shadow-md`
+                        : 'bg-gray-50/70 border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className={`text-xs font-black ${t.textColor}`}>{t.badge}</span>
-                      {isSelected && <Check className="w-4 h-4 text-emerald-400" />}
+                      {isSelected && <Check className="w-4 h-4 text-emerald-600" />}
                     </div>
-                    <div className="text-[11px] font-bold text-white leading-tight">{t.label}</div>
-                    <div className="text-[10px] text-slate-400 mt-1 leading-snug">{t.desc}</div>
+                    <div className="text-[11px] font-extrabold text-gray-900 leading-tight">{t.label}</div>
+                    <div className="text-[10px] text-gray-500 mt-1 leading-snug">{t.desc}</div>
                   </button>
                 );
               })}
@@ -481,17 +488,17 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
           </div>
 
           {/* 4. Threat Radius Slider & Presets */}
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-3">
+          <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-xs font-extrabold text-slate-200 block">
+                <label className="text-xs font-extrabold text-gray-800 block">
                   Threat Perimeter Radius (Meters)
                 </label>
-                <span className="text-[11px] text-slate-400">
-                  Coverage Area: <strong className="text-emerald-400 font-mono">~{areaSqKm} km²</strong>
+                <span className="text-[11px] text-gray-500">
+                  Coverage Area: <strong className="text-emerald-700 font-mono">~{areaSqKm} km²</strong>
                 </span>
               </div>
-              <span className="text-base font-black font-mono text-amber-400 bg-slate-950 px-3 py-1 rounded-xl border border-slate-800">
+              <span className="text-base font-black font-mono text-orange-700 bg-white px-3 py-1 rounded-xl border border-gray-200 shadow-sm">
                 {radiusMeters >= 1000 ? `${(radiusMeters / 1000).toFixed(1)} km` : `${radiusMeters} m`}
               </span>
             </div>
@@ -504,11 +511,11 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
               step="50"
               value={radiusMeters}
               onChange={(e) => setRadiusMeters(Number(e.target.value))}
-              className="w-full accent-emerald-400 cursor-pointer h-2 bg-slate-950 rounded-lg"
+              className="w-full accent-orange-500 cursor-pointer h-2 bg-gray-200 rounded-lg"
             />
 
             {/* Radius Quick Presets */}
-            <div className="flex items-center space-x-2 text-[11px] font-semibold text-slate-400 pt-1">
+            <div className="flex items-center space-x-2 text-[11px] font-semibold text-gray-500 pt-1">
               <span>Quick Presets:</span>
               {[250, 500, 1000, 2000, 5000].map((r) => (
                 <button
@@ -517,8 +524,8 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
                   onClick={() => setRadiusMeters(r)}
                   className={`px-2 py-0.5 rounded-lg border text-[10px] font-bold transition-colors ${
                     radiusMeters === r
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
-                      : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
+                      ? 'bg-orange-100 text-orange-800 border-orange-300'
+                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   {r >= 1000 ? `${r / 1000}km` : `${r}m`}
@@ -529,7 +536,7 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
 
           {/* 5. Warning Broadcast Message to Tourists */}
           <div>
-            <label className="text-xs text-slate-300 font-bold block mb-1">
+            <label className="text-xs text-gray-700 font-bold block mb-1">
               Acoustic & Screen Warning Message (Broadcast to Tourists)
             </label>
             <input
@@ -537,23 +544,27 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
               required
               value={alertMessage}
               onChange={(e) => setAlertMessage(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-gray-50 border border-gray-200 focus:bg-white rounded-xl p-2.5 text-xs text-gray-900 focus:outline-none focus:border-emerald-500 shadow-sm"
             />
           </div>
 
           {/* Modal Actions */}
-          <div className="pt-2 flex items-center justify-end space-x-3 border-t border-slate-800">
+          <div className="pt-2 flex items-center justify-end space-x-3 border-t border-gray-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white text-xs font-bold border border-slate-800 transition-colors"
+              className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold border border-gray-200 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white text-xs font-black shadow-xl transition-all flex items-center space-x-2"
+              className="px-5 py-2.5 rounded-xl text-white text-xs font-black shadow-lg transition-all flex items-center space-x-2 hover:scale-105 active:scale-95"
+              style={{
+                background: 'linear-gradient(135deg, #ef4444, #f97316)',
+                boxShadow: '0 4px 15px rgba(239, 68, 68, 0.35)'
+              }}
             >
               <Radio className="w-4 h-4 animate-pulse" />
               <span>{loading ? 'Deploying Danger Zone...' : 'Deploy Danger Zone & Threat Radius'}</span>
@@ -566,3 +577,4 @@ export default function CreateDangerAreaModal({ isOpen, onClose, onCreated }) {
     </div>
   );
 }
+

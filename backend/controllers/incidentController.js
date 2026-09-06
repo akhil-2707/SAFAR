@@ -270,7 +270,21 @@ function updateIncidentStatus(req, res) {
     message: `Incident ${id} updated to ${status || 'new parameters'}`,
     incident: updated
   });
-}
+};
+
+const getEmergencyServices = (req, res) => {
+  try {
+    const services = dbStore.get('emergencyServices') || [];
+    return res.json({
+      success: true,
+      count: services.length,
+      emergencyServices: services,
+      services
+    });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
 
 module.exports = {
   triggerSOS,
@@ -278,5 +292,6 @@ module.exports = {
   getIncidents,
   getIncidentById,
   createIncident,
-  updateIncidentStatus
+  updateIncidentStatus,
+  getEmergencyServices
 };
