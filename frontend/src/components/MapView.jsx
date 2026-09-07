@@ -231,6 +231,7 @@ export default function MapView({
   );
   const [showZones, setShowZones] = useState(true);
   const [showServices, setShowServices] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [locatingUser, setLocatingUser] = useState(false);
 
   // Check if current tourist is a predefined demo tourist (Ayodhya, Katra, Taj Mahal, etc.)
