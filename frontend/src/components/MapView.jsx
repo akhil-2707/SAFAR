@@ -389,6 +389,60 @@ export default function MapView({
     }
   };
 
+  const handleFindRealTimeLocation = () => {
+    setLocatingUser(true);
+    if (currentLocation && typeof currentLocation.lat === 'number') {
+      setMapCenter({ lat: currentLocation.lat, lng: currentLocation.lng });
+      setMapZoom(16);
+    }
+
+    if (!navigator.geolocation) {
+      setLocatingUser(false);
+      setGeoStatus('unsupported');
+      setGeoErrorMsg('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocatingUser(false);
+        const { latitude, longitude, accuracy, heading, speed } = position.coords;
+        const liveGps = {
+          lat: latitude,
+          lng: longitude,
+          accuracy: Math.round(accuracy || 10),
+          heading: heading || 0,
+          speed: speed ? Math.round(speed * 3.6 * 10) / 10 : 0,
+          timestamp: position.timestamp
+        };
+        setCurrentLocation(liveGps);
+        setMapCenter({ lat: latitude, lng: longitude });
+        setMapZoom(16);
+        setGeoStatus('granted');
+        setGeoErrorMsg(null);
+        if (onRealTimeLocationFound) {
+          onRealTimeLocationFound({
+            ...liveGps,
+            address: 'My Real-Time Device Location',
+            isLiveGps: true,
+            speedKmH: liveGps.speed
+          });
+        }
+      },
+      (err) => {
+        setLocatingUser(false);
+        if (currentLocation && typeof currentLocation.lat === 'number') {
+          setMapCenter({ lat: currentLocation.lat, lng: currentLocation.lng });
+          setMapZoom(16);
+        } else {
+          setGeoStatus('denied');
+          setGeoErrorMsg('Location access is required to show your current location.');
+        }
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  };
+
   // 4. Dynamic Geographic Distance between Current Location and Destination
   const calculatedDistanceKm = (currentLocation && destination && typeof currentLocation.lat === 'number' && typeof destination.lat === 'number')
     ? calculateHaversineDistanceKm(currentLocation.lat, currentLocation.lng, destination.lat, destination.lng)
