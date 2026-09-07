@@ -3,13 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Navbar from './components/Navbar';
-import DemoControlPanel from './components/DemoControlPanel';
 import BottomDock from './components/BottomDock';
 
 import LandingPage from './pages/LandingPage';
 import TouristDashboard from './pages/TouristDashboard';
 import TouristRegister from './pages/TouristRegister';
 import LoginPage from './pages/LoginPage';
+import TouristVerifyPage from './pages/TouristVerifyPage';
 import VerifyDigitalIdPage from './pages/VerifyDigitalIdPage';
 import AuthorityDashboard from './pages/AuthorityDashboard';
 import GeoFenceManagementPage from './pages/GeoFenceManagementPage';
@@ -40,12 +40,14 @@ export default function App() {
   });
   const [showMeshModal, setShowMeshModal] = useState(false);
 
-  const [currentUser, setCurrentUser] = useState({
-    id: 'usr_tourist_ayodhya',
-    name: 'Ananya Mishra',
-    email: 'ananya.mishra@example.com',
-    role: 'TOURIST',
-    touristId: 'TID-1035'
+  // Authenticated user recovered from localStorage or initialized as null
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('safar_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
   });
 
   const [touristProfile, setTouristProfile] = useState(null);
@@ -57,36 +59,73 @@ export default function App() {
   const [emergencyServices, setEmergencyServices] = useState([]);
   const [activeSosIncident, setActiveSosIncident] = useState(null);
 
-  // Initial Data Fetch
+  // Initial Authentication & Data Recovery on Refresh
   useEffect(() => {
-    fetchInitialData();
+    initAppSession();
   }, []);
 
-  const fetchInitialData = async () => {
+  const initAppSession = async () => {
+    const token = localStorage.getItem('safar_token');
+    let verifiedUser = null;
+
+    if (token) {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+          verifiedUser = data.user;
+          setCurrentUser(data.user);
+          localStorage.setItem('safar_user', JSON.stringify(data.user));
+          if (data.tourist) setTouristProfile(data.tourist);
+          if (data.digitalId) setDigitalId(data.digitalId);
+        } else {
+          // Token is expired or invalid: clear session
+          localStorage.removeItem('safar_token');
+          localStorage.removeItem('safar_user');
+          setCurrentUser(null);
+          setTouristProfile(null);
+          setDigitalId(null);
+        }
+      } catch (err) {
+        console.error('Session verification error:', err);
+      }
+    } else {
+      // No token found: do NOT auto-assign any default identity
+      setCurrentUser(null);
+      setTouristProfile(null);
+      setDigitalId(null);
+    }
+
+    await fetchInitialData(verifiedUser);
+  };
+
+  const fetchInitialData = async (activeUser) => {
     try {
+      const token = localStorage.getItem('safar_token');
+      const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+
       // 1. Fetch Tourists
-      const resT = await fetch('/api/tourists');
+      const resT = await fetch('/api/tourists', { headers: authHeaders });
       const dataT = await resT.json();
       if (dataT.success) {
         setAllTourists(dataT.tourists);
-        setTouristProfile((prev) => {
-          if (prev && prev.touristId) {
-            return dataT.tourists.find((t) => t.touristId === prev.touristId) || prev;
-          }
-          return dataT.tourists.find((t) => t.touristId === 'TID-1035') || dataT.tourists[0];
-        });
+        const targetUser = activeUser || currentUser;
+        if (targetUser && targetUser.touristId) {
+          const myProfile = dataT.tourists.find((t) => t.touristId === targetUser.touristId);
+          if (myProfile) setTouristProfile(myProfile);
+        }
       }
 
-      // 2. Fetch Digital ID
-      setDigitalId((prev) => {
-        if (!prev) {
-          fetch('/api/digital-id/TID-1035')
-            .then((r) => r.json())
-            .then((d) => { if (d.success) setDigitalId(d.digitalId); })
-            .catch(() => {});
-        }
-        return prev;
-      });
+      // 2. Fetch Digital ID if authenticated
+      const targetUser = activeUser || currentUser;
+      if (targetUser && targetUser.touristId) {
+        fetch(`/api/digital-id/${targetUser.touristId}`, { headers: authHeaders })
+          .then((r) => r.json())
+          .then((d) => { if (d.success) setDigitalId(d.digitalId); })
+          .catch(() => {});
+      }
 
       // 3. Fetch Geo-Fences
       const resG = await fetch('/api/geofences');
@@ -94,12 +133,13 @@ export default function App() {
       if (dataG.success) setGeofences(dataG.geofences);
 
       // 4. Fetch Incidents
-      const resI = await fetch('/api/incidents');
+      const resI = await fetch('/api/incidents', { headers: authHeaders });
       const dataI = await resI.json();
       if (dataI.success) {
         setIncidents(dataI.incidents);
+        const myTid = targetUser?.touristId;
         const sosInc = dataI.incidents.find(
-          (i) => (i.touristId === (currentUser.touristId || 'TID-1035')) && i.type === 'SOS Emergency' && i.status !== 'RESOLVED'
+          (i) => myTid && i.touristId === myTid && i.type === 'SOS Emergency' && i.status !== 'RESOLVED'
         );
         setActiveSosIncident(sosInc || null);
       }
@@ -115,10 +155,36 @@ export default function App() {
       if (dataE.success && dataE.emergencyServices) {
         setEmergencyServices(dataE.emergencyServices);
       }
-
     } catch (err) {
       console.error('Fetch Error:', err);
     }
+  };
+
+  // Login Success Handler: Persists user and token to localStorage
+  const handleLoginSuccess = (authData) => {
+    if (authData?.token) {
+      localStorage.setItem('safar_token', authData.token);
+    }
+    if (authData?.user) {
+      localStorage.setItem('safar_user', JSON.stringify(authData.user));
+      setCurrentUser(authData.user);
+    }
+    if (authData?.tourist) {
+      setTouristProfile(authData.tourist);
+    }
+    if (authData?.digitalId) {
+      setDigitalId(authData.digitalId);
+    }
+  };
+
+  // Logout Handler: Cleans up all storage and state
+  const handleLogout = () => {
+    localStorage.removeItem('safar_token');
+    localStorage.removeItem('safar_user');
+    setCurrentUser(null);
+    setTouristProfile(null);
+    setDigitalId(null);
+    setActiveSosIncident(null);
   };
 
   // Quick Tourist Select for Live Demo (Ayodhya, Jammu, Taj Mahal, Real-Time Location)
@@ -138,13 +204,16 @@ export default function App() {
     }
     if (!target) return;
     setTouristProfile(target);
-    setCurrentUser((prev) => ({
-      ...prev,
+    const updatedUser = {
+      id: target.id || `usr_${target.touristId}`,
       name: target.fullName,
       email: target.email,
       touristId: target.touristId,
       role: 'TOURIST'
-    }));
+    };
+    setCurrentUser(updatedUser);
+    localStorage.setItem('safar_user', JSON.stringify(updatedUser));
+
     try {
       const res = await fetch(`/api/digital-id/${targetTouristId}`);
       const data = await res.json();
@@ -174,33 +243,44 @@ export default function App() {
   // Quick Role Switcher for Evaluators
   const handleSwitchUser = (role) => {
     if (role === 'AUTHORITY') {
-      setCurrentUser({
+      const authUser = {
         id: 'usr_auth_01',
         name: 'Dr. Ananya Sharma',
         email: 'authority@safetour.gov.in',
         role: 'AUTHORITY',
         department: 'S.A.F.A.R. Central Command Desk'
-      });
+      };
+      setCurrentUser(authUser);
+      localStorage.setItem('safar_user', JSON.stringify(authUser));
     } else {
-      const defaultTourist = allTourists.find((t) => t.touristId === 'TID-1035') || allTourists[0];
-      if (defaultTourist) setTouristProfile(defaultTourist);
-      setCurrentUser({
-        id: 'usr_tourist_ayodhya',
-        name: defaultTourist?.fullName || 'Ananya Mishra',
-        email: defaultTourist?.email || 'ananya.mishra@example.com',
-        role: 'TOURIST',
-        touristId: defaultTourist?.touristId || 'TID-1035'
-      });
+      const defaultTourist = touristProfile || allTourists[0];
+      if (defaultTourist) {
+        setTouristProfile(defaultTourist);
+        const touristUser = {
+          id: defaultTourist.id || `usr_${defaultTourist.touristId}`,
+          name: defaultTourist.fullName,
+          email: defaultTourist.email,
+          role: 'TOURIST',
+          touristId: defaultTourist.touristId
+        };
+        setCurrentUser(touristUser);
+        localStorage.setItem('safar_user', JSON.stringify(touristUser));
+      }
     }
   };
 
   // Location update handler
   const handleUpdateLocation = async (lat, lng, address, speedKmH, headingDeg, isLiveGps) => {
     try {
-      const activeTid = touristProfile?.touristId || currentUser?.touristId || 'TID-1035';
+      const activeTid = touristProfile?.touristId || currentUser?.touristId;
+      if (!activeTid) return;
+      const token = localStorage.getItem('safar_token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
       const res = await fetch('/api/tourists/location', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ 
           touristId: activeTid, 
           lat, 
@@ -318,14 +398,6 @@ export default function App() {
     }
   };
 
-  // Login handler
-  const handleLoginSuccess = (loginData) => {
-    setCurrentUser(loginData.user);
-    if (loginData.tourist) setTouristProfile(loginData.tourist);
-    if (loginData.digitalId) setDigitalId(loginData.digitalId);
-    fetchInitialData();
-  };
-
   return (
     <Router>
       <AppContent
@@ -357,6 +429,7 @@ export default function App() {
         handleUpdateIncidentStatus={handleUpdateIncidentStatus}
         handleMarkRead={handleMarkRead}
         handleLoginSuccess={handleLoginSuccess}
+        handleLogout={handleLogout}
         fetchInitialData={fetchInitialData}
       />
     </Router>
@@ -392,6 +465,7 @@ function AppContent({
   handleUpdateIncidentStatus,
   handleMarkRead,
   handleLoginSuccess,
+  handleLogout,
   fetchInitialData,
 }) {
   const location = useLocation();
@@ -410,7 +484,7 @@ function AppContent({
       {/* Navbar */}
       <Navbar
         currentUser={currentUser}
-        onLogout={() => setCurrentUser(null)}
+        onLogout={handleLogout}
         notifications={notifications}
         onMarkRead={handleMarkRead}
         onOpenMeshModal={() => setShowMeshModal(true)}
@@ -421,12 +495,6 @@ function AppContent({
       <OfflineGhostMeshModal
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
-      />
-
-      {/* Floating SIH Evaluator Demo Control Panel */}
-      <DemoControlPanel
-        onTriggerScenario={handleTriggerScenario}
-        onSwitchUser={handleSwitchUser}
       />
 
       {/* Bottom Dock — iPhone-style tab navigation for tourists */}
@@ -452,7 +520,7 @@ function AppContent({
               className="page-transition-container"
             >
               <Routes location={location}>
-                <Route path="/" element={<LandingPage onScenarioTrigger={handleTriggerScenario} />} />
+                <Route path="/" element={<LandingPage onScenarioTrigger={handleTriggerScenario} onSwitchUser={handleSwitchUser} />} />
 
                 <Route
                   path="/register"
@@ -497,11 +565,11 @@ function AppContent({
                     />
                   }
                 />
+                
+                {/* Dedicated Tourist QR Verification Pages */}
+                <Route path="/tourist/verify/:touristId" element={<TouristVerifyPage />} />
+                <Route path="/verify-id/:id" element={<TouristVerifyPage />} />
                 <Route path="/verify-id" element={<Navigate to="/digital-id" replace />} />
-                <Route
-                  path="/verify-id/:id"
-                  element={<VerifyDigitalIdPage />}
-                />
 
                 {/* 3. Dedicated Emergency SOS Mission Cockpit */}
                 <Route

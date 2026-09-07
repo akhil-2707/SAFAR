@@ -10,7 +10,7 @@ export default function DigitalIdCard({ digitalId, tourist }) {
   const idStr = digitalId?.touristId || tourist?.touristId || 'TID-1024';
   const status = digitalId?.verificationStatus || 'VERIFIED';
   const hash = digitalId?.digitalIdHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
-  const qrUrl = digitalId?.qrCodeData || `https://safetour.gov.in/verify-id/${idStr}`;
+  const qrUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://safetour.gov.in'}/tourist/verify/${idStr}?hash=${hash.substring(0, 16)}`;
   const validity = `${tourist?.travelStartDate || '2026-08-10'} to ${tourist?.travelEndDate || '2026-08-20'}`;
 
   return (
@@ -97,7 +97,7 @@ export default function DigitalIdCard({ digitalId, tourist }) {
 
         {/* Verification Link Button */}
         <Link
-          to={`/verify-id/${idStr}`}
+          to={`/tourist/verify/${idStr}?hash=${hash.substring(0, 16)}`}
           className="w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-2 border border-emerald-200 shadow-sm"
         >
           <span>Verify Digital ID on Ledger</span>

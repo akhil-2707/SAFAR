@@ -471,6 +471,9 @@ function getInitialData() {
         phone: '+91 94150 00001',
         relation: 'Father'
       },
+      bloodGroup: 'B+',
+      allergies: 'None reported',
+      medicalConditions: 'None',
       email: 'ananya.mishra@example.com',
       idProofType: 'Aadhaar Card',
       idVerificationStatus: 'VERIFIED',
@@ -497,6 +500,9 @@ function getInitialData() {
         phone: '+91 97960 00002',
         relation: 'Spouse'
       },
+      bloodGroup: 'O+',
+      allergies: 'Penicillin',
+      medicalConditions: 'Mild Altitude Sensitivity',
       email: 'vikas.chandel@example.com',
       idProofType: 'Aadhaar Card',
       idVerificationStatus: 'VERIFIED',
@@ -523,6 +529,9 @@ function getInitialData() {
         phone: '+91 98220 00003',
         relation: 'Father'
       },
+      bloodGroup: 'A+',
+      allergies: 'Peanuts, Sulfa drugs',
+      medicalConditions: 'None',
       email: 'sneha.k@example.com',
       idProofType: 'Driving License',
       idVerificationStatus: 'VERIFIED',
@@ -549,6 +558,9 @@ function getInitialData() {
         phone: '+91 98290 00004',
         relation: 'Brother'
       },
+      bloodGroup: 'O-',
+      allergies: 'None reported',
+      medicalConditions: 'None',
       email: 'kabir.rathore@example.com',
       idProofType: 'Passport',
       idVerificationStatus: 'VERIFIED',
@@ -575,6 +587,9 @@ function getInitialData() {
         phone: '+91 98390 00011',
         relation: 'Mother'
       },
+      bloodGroup: 'AB+',
+      allergies: 'Dust, Pollen',
+      medicalConditions: 'None',
       email: 'aarav.taj@example.com',
       idProofType: 'Aadhaar Card',
       idVerificationStatus: 'VERIFIED',

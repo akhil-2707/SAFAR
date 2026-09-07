@@ -268,14 +268,16 @@ export default function TouristDashboard({
           <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <span className="font-bold text-lg sm:text-2xl tracking-tight truncate max-w-[200px] sm:max-w-none" style={{ color: '#1C1C1E', letterSpacing: '-0.025em' }}>
-                {currentTourist?.fullName || 'Ananya Mishra'}
+                {currentTourist?.fullName || 'Tourist Safety Dashboard'}
               </span>
-              <span
-                className="text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-lg"
-                style={{ background: 'rgba(10,132,255,0.1)', color: '#0A84FF', border: '0.5px solid rgba(10,132,255,0.25)' }}
-              >
-                #{currentTourist?.touristId || 'TID-1035'}
-              </span>
+              {currentTourist?.touristId && (
+                <span
+                  className="text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-lg"
+                  style={{ background: 'rgba(10,132,255,0.1)', color: '#0A84FF', border: '0.5px solid rgba(10,132,255,0.25)' }}
+                >
+                  #{currentTourist.touristId}
+                </span>
+              )}
               <motion.span
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}

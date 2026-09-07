@@ -65,8 +65,8 @@ export default function DeadmanSwitch({
     setShowCheckInModal(false);
     setExpiredSosTriggered(false);
 
-    const touristName = tourist?.fullName || 'Ananya Mishra';
-    const contactEmail = tourist?.email || 'ananya.family@emergency.in';
+    const touristName = tourist?.fullName || 'Active Tourist';
+    const contactEmail = tourist?.email || 'emergency.contact@safetour.gov.in';
     const locationStr = tourist?.currentLocation?.address || 'Restricted Corridor Buffer';
 
     // Simulated automated emergency email dispatch
@@ -97,9 +97,9 @@ export default function DeadmanSwitch({
     setShowCheckInModal(false);
     setLastCheckInTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
 
-    const touristName = tourist?.fullName || 'Ananya Mishra';
+    const touristName = tourist?.fullName || 'Active Tourist';
     const emailData = {
-      to: tourist?.email || 'ananya.family@emergency.in',
+      to: tourist?.email || 'emergency.contact@safetour.gov.in',
       subject: `🟢 SAFAR Check-In: ${touristName} is SAFE (Deadman Timer Reset)`,
       timestamp: new Date().toLocaleTimeString(),
       location: tourist?.currentLocation?.address || 'Current Tracked Location',

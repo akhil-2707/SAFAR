@@ -266,10 +266,10 @@ export default function DeadmanSwitchPage({ tourist, onTriggerSos }) {
               </span>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Recipient: <strong>{tourist?.email || 'ananya.mishra@example.com'}</strong> & Emergency Kin.
+              Recipient: <strong>{tourist?.email || 'emergency.contact@safetour.gov.in'}</strong> & Emergency Kin.
             </p>
             <p className="text-[11px] font-mono text-gray-500">
-              "Subject: S.A.F.A.R. Alert - Low Network Check-in Pending for Ananya Mishra"
+              "Subject: S.A.F.A.R. Alert - Low Network Check-in Pending for {tourist?.fullName || 'Tourist'}"
             </p>
           </div>
 

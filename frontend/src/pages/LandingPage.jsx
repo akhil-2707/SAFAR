@@ -1,10 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { 
   ShieldCheck, MapPin, Cpu, Lock, AlertOctagon, Activity, Users, 
   FileCheck, CheckCircle2, ArrowRight, Phone, ShieldAlert, Sparkles, 
-  Navigation, Play, Eye, Radio, Compass, Zap, SignalZero, Globe, ChevronRight 
+  Navigation, Play, Eye, Radio, Compass, Zap, SignalZero, Globe, ChevronRight,
+  Route, FileCode, Loader2, UserCheck
 } from 'lucide-react';
 import CinematicHeroMap from '../components/CinematicHeroMap';
 import SafarLogo from '../components/SafarLogo';
@@ -57,7 +58,25 @@ const Orb = ({ color, size, x, y, delay = 0 }) => (
   />
 );
 
-export default function LandingPage({ onScenarioTrigger }) {
+export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
+  const navigate = useNavigate();
+  const [executingScenario, setExecutingScenario] = useState(null);
+
+  const handleScenarioClick = async (scenarioId, path) => {
+    setExecutingScenario(scenarioId);
+    try {
+      if (onScenarioTrigger) {
+        await onScenarioTrigger(scenarioId);
+      }
+      if (path) {
+        navigate(path);
+      }
+    } catch (err) {
+      console.error('Scenario execution failed:', err);
+    } finally {
+      setExecutingScenario(null);
+    }
+  };
   return (
     <div className="pb-20 select-none overflow-hidden" style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}>
 
@@ -313,6 +332,236 @@ export default function LandingPage({ onScenarioTrigger }) {
           className="rounded-3xl overflow-hidden"
           style={{ border: '2px solid rgba(139,92,246,0.2)', boxShadow: '0 20px 60px rgba(139,92,246,0.12)' }}>
           <CinematicHeroMap onScenarioTrigger={onScenarioTrigger} />
+        </motion.div>
+      </section>
+
+      {/* 🎯 SIH EVALUATOR GUIDED SCENARIO SECTION (INLINE BELOW INDIAN MAP) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="p-6 sm:p-8 rounded-3xl relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.96), rgba(249,250,251,0.94))',
+            border: '2px solid rgba(139,92,246,0.3)',
+            boxShadow: '0 20px 60px rgba(139,92,246,0.12), 0 4px 20px rgba(0,0,0,0.04)',
+            backdropFilter: 'blur(20px)'
+          }}
+        >
+          {/* Top Header */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-gray-100 pb-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full"
+                style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)' }}>
+                <Sparkles className="w-4 h-4 text-orange-600 animate-spin-slow" />
+                <span className="text-[11px] font-black text-orange-600 uppercase tracking-widest">
+                  SIH 2026 EVALUATOR LAB • GUIDED TESTBED
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+                SIH Evaluator Guided Scenarios & Live Triggers
+              </h2>
+              <p className="text-sm text-gray-600 max-w-2xl font-medium">
+                Execute real-time edge cases with 1-click: trigger buffer warnings, geo-fence breaches, automated 112 ERSS police patrol dispatch, and cryptographic blockchain pass validation.
+              </p>
+            </div>
+
+            {/* Quick Role Switches */}
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <button
+                onClick={() => {
+                  if (onSwitchUser) onSwitchUser('TOURIST');
+                  navigate('/tourist-dashboard');
+                }}
+                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'rgba(16,185,129,0.12)',
+                  border: '1.5px solid rgba(16,185,129,0.4)',
+                  color: '#047857'
+                }}
+              >
+                <UserCheck className="w-4 h-4" />
+                <span>Tourist Safety Hub</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (onSwitchUser) onSwitchUser('AUTHORITY');
+                  navigate('/authority-dashboard');
+                }}
+                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'rgba(139,92,246,0.12)',
+                  border: '1.5px solid rgba(139,92,246,0.4)',
+                  color: '#6d28d9'
+                }}
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Command Desk</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Scenario Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-6">
+            {[
+              {
+                id: '1',
+                title: '1. Safe Location',
+                tag: 'STANDARD CORRIDOR',
+                desc: 'Set tourist in verified safe corridor. AI Risk Score < 15 with nominal green status.',
+                icon: CheckCircle2,
+                color: '#10b981',
+                bg: 'rgba(16,185,129,0.06)',
+                border: 'rgba(16,185,129,0.25)',
+                path: '/tourist-dashboard'
+              },
+              {
+                id: 'APPROACH_300M',
+                title: '2. Approach 300m',
+                tag: 'PRE-ENTRY BUFFER',
+                desc: 'Advance to 300m buffer from restricted zone. Triggers amber caution and acoustic banner.',
+                icon: Navigation,
+                color: '#f59e0b',
+                bg: 'rgba(245,158,11,0.06)',
+                border: 'rgba(245,158,11,0.25)',
+                path: '/tourist-dashboard'
+              },
+              {
+                id: 'APPROACH_150M',
+                title: '3. Approach 150m',
+                tag: 'IMMINENT HAZARD',
+                desc: 'Move to 150m from perimeter. Fires urgent orange warning pulse and tactile vibration.',
+                icon: ShieldAlert,
+                color: '#ea580c',
+                bg: 'rgba(234,88,12,0.06)',
+                border: 'rgba(234,88,12,0.25)',
+                path: '/tourist-dashboard'
+              },
+              {
+                id: '2',
+                title: '4. Geo-Fence Breach',
+                tag: 'ZONE BREACH',
+                desc: 'Simulate entry into Kamakhya Restricted Polygon. Risk Score jumps to 92 (Critical).',
+                icon: AlertOctagon,
+                color: '#ef4444',
+                bg: 'rgba(239,68,68,0.06)',
+                border: 'rgba(239,68,68,0.25)',
+                path: '/tourist-dashboard'
+              },
+              {
+                id: '3',
+                title: '5. Route Deviation',
+                tag: 'AI ANOMALY',
+                desc: 'Trajectory shift beyond permissible variance. Flags automated abnormal route alert.',
+                icon: Route,
+                color: '#8b5cf6',
+                bg: 'rgba(139,92,246,0.06)',
+                border: 'rgba(139,92,246,0.25)',
+                path: '/tourist-dashboard'
+              },
+              {
+                id: '4',
+                title: '6. Trigger 112 SOS',
+                tag: 'EMERGENCY CAD',
+                desc: 'Broadcast panic telemetry packet. Initiates 112 ERSS handshake, calculates PCR ETA.',
+                icon: Phone,
+                color: '#e11d48',
+                bg: 'rgba(225,29,72,0.06)',
+                border: 'rgba(225,29,72,0.25)',
+                path: '/tourist-dashboard'
+              },
+              {
+                id: '5',
+                title: '7. Blockchain Verify',
+                tag: 'SHA-256 PASS',
+                desc: 'Validate tourist digital ID against immutable ledger and confirm zero tampering.',
+                icon: FileCode,
+                color: '#0284c7',
+                bg: 'rgba(2,132,199,0.06)',
+                border: 'rgba(2,132,199,0.25)',
+                path: '/blockchain-ledger'
+              },
+              {
+                id: '6',
+                title: '8. Tampering Test',
+                tag: 'ZERO-TRUST AUDIT',
+                desc: 'Simulate corrupted cryptographic hash on digital ID. System flags invalid block.',
+                icon: ShieldAlert,
+                color: '#db2777',
+                bg: 'rgba(219,39,119,0.06)',
+                border: 'rgba(219,39,119,0.25)',
+                path: '/blockchain-ledger'
+              }
+            ].map((scen) => {
+              const Icon = scen.icon;
+              const isExecuting = executingScenario === scen.id;
+
+              return (
+                <motion.div
+                  key={scen.id}
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="p-4 rounded-2xl flex flex-col justify-between space-y-3 cursor-pointer transition-all"
+                  style={{
+                    background: scen.bg,
+                    border: `1.5px solid ${scen.border}`,
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.03)'
+                  }}
+                  onClick={() => handleScenarioClick(scen.id, scen.path)}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: `${scen.color}15`, border: `1px solid ${scen.border}` }}
+                      >
+                        <Icon className="w-5 h-5" style={{ color: scen.color }} />
+                      </div>
+                      <span
+                        className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md"
+                        style={{ background: `${scen.color}15`, color: scen.color }}
+                      >
+                        {scen.tag}
+                      </span>
+                    </div>
+
+                    <h4 className="text-sm font-black text-gray-900 leading-tight">
+                      {scen.title}
+                    </h4>
+                    <p className="text-xs text-gray-600 leading-relaxed font-medium">
+                      {scen.desc}
+                    </p>
+                  </div>
+
+                  <button
+                    disabled={isExecuting}
+                    className="w-full py-2 px-3 rounded-xl text-xs font-black flex items-center justify-center space-x-1.5 transition-all text-white shadow-sm"
+                    style={{
+                      background: isExecuting
+                        ? '#9ca3af'
+                        : `linear-gradient(135deg, ${scen.color}, #4b5563)`,
+                      boxShadow: `0 4px 12px ${scen.color}30`
+                    }}
+                  >
+                    {isExecuting ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Simulating...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Execute Scenario</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                </motion.div>
+              );
+            })}
+          </div>
         </motion.div>
       </section>
 

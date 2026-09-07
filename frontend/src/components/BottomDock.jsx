@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, CreditCard, Siren, Banknote, Phone, Clock, ShieldCheck } from 'lucide-react';
+import { Map, CreditCard, Siren, Banknote, Phone } from 'lucide-react';
 
 const SPRING = { type: 'spring', stiffness: 380, damping: 28 };
 
@@ -24,8 +24,6 @@ const TOURIST_ROUTES = [
 
 export default function BottomDock({ currentUser, onTriggerSos }) {
   const location = useLocation();
-  const [sosPressed, setSosPressed] = useState(false);
-  const [dismissDeadmanPill, setDismissDeadmanPill] = useState(false);
 
   // Only render on designated tourist routes
   if (!currentUser || currentUser.role !== 'TOURIST' || !TOURIST_ROUTES.includes(location.pathname)) {
@@ -45,41 +43,9 @@ export default function BottomDock({ currentUser, onTriggerSos }) {
       transition={{ delay: 0.2, ...SPRING }}
       className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-center pb-2 sm:pb-4 px-2 sm:px-6 pointer-events-none pb-safe"
     >
-      {/* Mini Floating Deadman's Switch Pill above Dock — Only on tourist dashboard, dismissible */}
-      {location.pathname === '/tourist-dashboard' && !dismissDeadmanPill && (
-        <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={SPRING}
-          className="pointer-events-auto mb-1.5 sm:mb-2 max-w-[calc(100vw-32px)] flex items-center gap-1"
-        >
-          <Link
-            to="/deadman-switch"
-            className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold flex items-center gap-1.5 shadow-md backdrop-blur-xl transition-transform hover:scale-105 active:scale-95"
-            style={{
-              background: 'rgba(255,255,255,0.95)',
-              border: '0.5px solid rgba(94,92,230,0.3)',
-              color: '#5E5CE6',
-              boxShadow: '0 2px 10px rgba(94,92,230,0.15)',
-            }}
-          >
-            <Clock className="w-3 h-3 text-indigo-600 animate-spin-slow shrink-0" />
-            <span className="truncate">Deadman Switch: <strong>Armed (2h)</strong></span>
-            <span className="text-[9px] bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded font-mono hidden xs:inline">15m Check-in</span>
-          </Link>
-          <button
-            onClick={() => setDismissDeadmanPill(true)}
-            className="w-4 h-4 rounded-full bg-white/90 border border-gray-200 text-gray-400 hover:text-gray-700 flex items-center justify-center text-[9px] shadow-xs"
-            title="Dismiss"
-          >
-            ✕
-          </button>
-        </motion.div>
-      )}
-
       {/* Dock Bar */}
       <motion.div
-        className="dock-container pointer-events-auto flex items-end justify-between px-2 sm:px-3 pt-1.5 sm:pt-2 pb-1.5 sm:pb-2 gap-1 w-[calc(100vw-24px)] xs:w-[calc(100vw-32px)] sm:w-full max-w-[400px] shadow-xl"
+        className="dock-container pointer-events-auto flex items-end justify-between px-3 sm:px-4 pt-1.5 sm:pt-2 pb-1.5 sm:pb-2 gap-1 w-[calc(100vw-24px)] xs:w-[calc(100vw-32px)] sm:w-full max-w-[420px] shadow-2xl rounded-[2.5rem] bg-white/95 border border-slate-200/80 backdrop-blur-xl"
       >
         {tabs.map((tab) => (
           tab.isSos

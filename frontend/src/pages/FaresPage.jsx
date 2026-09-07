@@ -16,6 +16,7 @@ const CITY_TARIFFS = {
     perKmAuto: 10.5,
     perKmERickshaw: 7.0,
     perKmCab: 16.0,
+    perKmBike: 6.0,
     nightSurchargePercent: 25,
     typicalScamMultiplier: 2.8,
     popularRoutes: [
@@ -31,6 +32,7 @@ const CITY_TARIFFS = {
     perKmAuto: 12.0,
     perKmERickshaw: 8.5,
     perKmCab: 18.5,
+    perKmBike: 7.0,
     nightSurchargePercent: 25,
     typicalScamMultiplier: 2.5,
     popularRoutes: [
@@ -46,6 +48,7 @@ const CITY_TARIFFS = {
     perKmAuto: 11.0,
     perKmERickshaw: 8.0,
     perKmCab: 17.0,
+    perKmBike: 6.5,
     nightSurchargePercent: 25,
     typicalScamMultiplier: 3.2,
     popularRoutes: [
@@ -61,6 +64,7 @@ const CITY_TARIFFS = {
     perKmAuto: 11.0,
     perKmERickshaw: 8.0,
     perKmCab: 18.0,
+    perKmBike: 6.0,
     nightSurchargePercent: 25,
     typicalScamMultiplier: 2.2,
     popularRoutes: [
@@ -76,6 +80,7 @@ const CITY_TARIFFS = {
     perKmAuto: 11.5,
     perKmERickshaw: 8.0,
     perKmCab: 17.5,
+    perKmBike: 6.5,
     nightSurchargePercent: 20,
     typicalScamMultiplier: 2.4,
     popularRoutes: [
@@ -88,7 +93,7 @@ const CITY_TARIFFS = {
 
 export default function FaresPage({ tourist }) {
   const [selectedCityKey, setSelectedCityKey] = useState('AYODHYA');
-  const [vehicleType, setVehicleType] = useState('AUTO'); // AUTO, ERICKSHAW, CAB
+  const [vehicleType, setVehicleType] = useState('ERICKSHAW'); // ERICKSHAW, AUTO, BIKE, CAB
   const [distanceKm, setDistanceKm] = useState(6.5);
   const [isNight, setIsNight] = useState(false);
   const [luggageCount, setLuggageCount] = useState(1);
@@ -96,13 +101,24 @@ export default function FaresPage({ tourist }) {
 
   const city = CITY_TARIFFS[selectedCityKey] || CITY_TARIFFS.AYODHYA;
 
-  // Compute Govt Fare
+  // Compute Govt Fare with canonical vehicle matching
+  const normType = (vehicleType || '').toUpperCase().replace(/[^A-Z]/g, '');
   let ratePerKm = city.perKmAuto;
-  if (vehicleType === 'ERICKSHAW') ratePerKm = city.perKmERickshaw;
-  if (vehicleType === 'CAB') ratePerKm = city.perKmCab;
+  let vehicleBaseFare = city.baseFare;
+
+  if (normType.includes('RICK') || normType.includes('ERICK')) {
+    ratePerKm = city.perKmERickshaw || 7.0;
+    vehicleBaseFare = Math.round(city.baseFare * 0.55); // E-Rickshaw base ~₹16
+  } else if (normType.includes('BIKE')) {
+    ratePerKm = city.perKmBike || 6.0;
+    vehicleBaseFare = Math.round(city.baseFare * 0.5); // Bike base ~₹15
+  } else if (normType.includes('CAB')) {
+    ratePerKm = city.perKmCab || 16.0;
+    vehicleBaseFare = Math.round(city.baseFare * 1.6); // Cab base ~₹48-64
+  }
 
   const extraKm = Math.max(0, distanceKm - city.baseKm);
-  let baseCalc = city.baseFare + extraKm * ratePerKm;
+  let baseCalc = vehicleBaseFare + extraKm * ratePerKm;
   if (luggageCount > 1) {
     baseCalc += (luggageCount - 1) * 10; // 10 Rs per heavy luggage
   }
@@ -168,11 +184,12 @@ export default function FaresPage({ tourist }) {
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2">
             Select Vehicle Mode
           </label>
-          <div className="grid grid-cols-1 xs:grid-cols-3 gap-2.5 sm:gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
             {[
-              { id: 'AUTO', label: 'Auto-Rickshaw', icon: '🛺', rate: `₹${city.perKmAuto}/km` },
-              { id: 'ERICKSHAW', label: 'E-Rickshaw', icon: '⚡', rate: `₹${city.perKmERickshaw}/km` },
-              { id: 'CAB', label: 'Taxi / Cab', icon: '🚕', rate: `₹${city.perKmCab}/km` },
+              { id: 'ERICKSHAW', label: 'E-Rickshaw', icon: '⚡', rate: `₹${city.perKmERickshaw}/km`, desc: 'Eco & Short Travel' },
+              { id: 'AUTO', label: 'Auto-Rickshaw', icon: '🛺', rate: `₹${city.perKmAuto}/km`, desc: 'Standard City Meter' },
+              { id: 'BIKE', label: 'Bike-Taxi', icon: '🏍️', rate: `₹${city.perKmBike}/km`, desc: 'Fast Solo Ride' },
+              { id: 'CAB', label: 'Taxi / Cab', icon: '🚕', rate: `₹${city.perKmCab}/km`, desc: 'AC Comfort Car' },
             ].map((v) => {
               const active = vehicleType === v.id;
               return (
@@ -184,15 +201,17 @@ export default function FaresPage({ tourist }) {
                   onClick={() => setVehicleType(v.id)}
                   className="p-3 sm:p-3.5 rounded-2xl text-left transition-all relative overflow-hidden"
                   style={{
-                    background: active ? 'rgba(255,159,10,0.12)' : 'rgba(120,120,128,0.06)',
-                    border: active ? '1.5px solid #FF9F0A' : '0.5px solid rgba(60,60,67,0.12)',
+                    background: active ? 'rgba(255,159,10,0.14)' : 'rgba(120,120,128,0.06)',
+                    border: active ? '2px solid #FF9F0A' : '0.5px solid rgba(60,60,67,0.12)',
+                    boxShadow: active ? '0 4px 15px rgba(255,159,10,0.2)' : 'none'
                   }}
                 >
                   <span className="text-xl sm:text-2xl block mb-1">{v.icon}</span>
-                  <span className="text-xs font-bold block" style={{ color: active ? '#CC7A00' : '#1C1C1E' }}>
+                  <span className="text-xs font-bold block truncate" style={{ color: active ? '#CC7A00' : '#1C1C1E' }}>
                     {v.label}
                   </span>
                   <span className="text-[10px] text-gray-500 font-mono block mt-0.5">{v.rate}</span>
+                  <span className="text-[9px] text-gray-400 block truncate mt-0.5">{v.desc}</span>
                 </motion.button>
               );
             })}
@@ -292,10 +311,15 @@ export default function FaresPage({ tourist }) {
         <div className="p-6 rounded-3xl bg-gradient-to-br from-emerald-50/80 via-white to-amber-50/80 border-2 border-emerald-300/70 shadow-lg space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200/60 pb-3">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                Govt Regulated Tariff Estimate
-              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  Govt Regulated Tariff Estimate
+                </span>
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-200">
+                  {normType.includes('RICK') ? '⚡ E-Rickshaw' : normType.includes('BIKE') ? '🏍️ Bike-Taxi' : normType.includes('CAB') ? '🚕 Taxi / Cab' : '🛺 Auto'}
+                </span>
+              </div>
               <h3 className="text-3xl font-black text-gray-900 font-mono mt-1">
                 ₹{govtFare} <span className="text-xs font-normal text-gray-500 font-sans">INR</span>
               </h3>
@@ -312,7 +336,7 @@ export default function FaresPage({ tourist }) {
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-xs pt-1">
+          <div className="flex items-center justify-between text-xs pt-1 flex-wrap gap-2">
             <span className="text-gray-600 font-medium">
               💡 By insisting on meter or pre-fixed govt rate, you save:
             </span>
@@ -320,6 +344,13 @@ export default function FaresPage({ tourist }) {
               Save ₹{savedAmount} (approx {(city.typicalScamMultiplier * 100 - 100).toFixed(0)}%)
             </span>
           </div>
+
+          {normType.includes('RICK') && (
+            <div className="text-[11px] text-emerald-800 bg-emerald-100/60 p-2.5 rounded-xl border border-emerald-200 flex items-center gap-2">
+              <span>⚡</span>
+              <span><strong>E-Rickshaw Shared Route Tip:</strong> Short-distance rides within 3 km commonly operate on seat-sharing at ₹15–₹25 per passenger. Full private vehicle hire is metered at ₹{city.perKmERickshaw}/km.</span>
+            </div>
+          )}
         </div>
       </div>
 

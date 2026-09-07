@@ -37,7 +37,7 @@ export default function RedZonePreEntryBanner({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             touristId: activeTid,
-            touristName: tourist?.fullName || 'Ananya Mishra',
+            touristName: tourist?.fullName || 'Active Tourist',
             zoneName: proximityWarning?.zoneName || 'Kamrup Restricted Border Buffer (Red Zone)',
             lat: tourist?.currentLocation?.lat || 26.2800,
             lng: tourist?.currentLocation?.lng || 91.5200,

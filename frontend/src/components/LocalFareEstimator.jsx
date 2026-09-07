@@ -5,53 +5,69 @@ import { Calculator, ShieldCheck, MapPin, Car, AlertCircle, ArrowRight, CheckCir
 const DESTINATION_FARES = {
   ayodhya: {
     cityName: '🛕 Ayodhya Dham (Uttar Pradesh)',
+    baseFareERickshaw: 15,
+    perKmERickshaw: 7.0,
     baseFareAuto: 30,
     perKmAuto: 11,
     baseFareCab: 60,
     perKmCab: 15,
+    baseFareBike: 15,
+    perKmBike: 6.0,
     eRickshawShared: '₹15 - ₹25 per passenger',
     commonRoutes: [
-      { from: 'Ayodhya Cantt Railway Station', to: 'Ram Janmabhoomi Complex', distKm: 7.2, autoFare: '₹70 - ₹90', cabFare: '₹220 - ₹260' },
-      { from: 'Maharishi Valmiki Airport (AYJ)', to: 'Ram Mandir / Dharamshala', distKm: 12.5, autoFare: '₹130 - ₹160', cabFare: '₹350 - ₹420' },
-      { from: 'Hanuman Garhi', to: 'Saryu River Ghats (Naya Ghat)', distKm: 2.5, autoFare: '₹30 - ₹45', cabFare: '₹120 - ₹150' },
+      { from: 'Ayodhya Cantt Railway Station', to: 'Ram Janmabhoomi Complex', distKm: 7.2, eRickFare: '₹55 - ₹70', autoFare: '₹70 - ₹90', cabFare: '₹220 - ₹260' },
+      { from: 'Maharishi Valmiki Airport (AYJ)', to: 'Ram Mandir / Dharamshala', distKm: 12.5, eRickFare: '₹90 - ₹120', autoFare: '₹130 - ₹160', cabFare: '₹350 - ₹420' },
+      { from: 'Hanuman Garhi', to: 'Saryu River Ghats (Naya Ghat)', distKm: 2.5, eRickFare: '₹20 - ₹30', autoFare: '₹30 - ₹45', cabFare: '₹120 - ₹150' },
     ]
   },
   jammu: {
     cityName: '🏔️ Jammu & Katra (Vaishno Devi)',
+    baseFareERickshaw: 20,
+    perKmERickshaw: 8.5,
     baseFareAuto: 40,
     perKmAuto: 14,
     baseFareCab: 80,
     perKmCab: 18,
+    baseFareBike: 20,
+    perKmBike: 7.0,
     eRickshawShared: '₹20 - ₹30 flat within Katra',
     commonRoutes: [
-      { from: 'Jammu Tawi Railway Station', to: 'Katra Base Camp', distKm: 48.0, autoFare: '₹140 - ₹180 (Shared bus/jeep)', cabFare: '₹850 - ₹1100 (Prepaid Cab)' },
-      { from: 'Katra Bus Stand', to: 'Banganga / Helipad Gate', distKm: 3.2, autoFare: '₹40 - ₹60', cabFare: '₹150 - ₹180' },
-      { from: 'Jammu Airport (IXJ)', to: 'Raghunath Temple Jammu', distKm: 6.8, autoFare: '₹80 - ₹110', cabFare: '₹250 - ₹300' },
+      { from: 'Jammu Tawi Railway Station', to: 'Katra Base Camp', distKm: 48.0, eRickFare: '₹120 (Local zone)', autoFare: '₹140 - ₹180 (Shared)', cabFare: '₹850 - ₹1100 (Prepaid Cab)' },
+      { from: 'Katra Bus Stand', to: 'Banganga / Helipad Gate', distKm: 3.2, eRickFare: '₹30 - ₹45', autoFare: '₹40 - ₹60', cabFare: '₹150 - ₹180' },
+      { from: 'Jammu Airport (IXJ)', to: 'Raghunath Temple Jammu', distKm: 6.8, eRickFare: '₹60 - ₹80', autoFare: '₹80 - ₹110', cabFare: '₹250 - ₹300' },
     ]
   },
   tajmahal: {
     cityName: '🕌 Agra (Taj Mahal Heritage Circuit)',
+    baseFareERickshaw: 18,
+    perKmERickshaw: 8.0,
     baseFareAuto: 35,
     perKmAuto: 12,
     baseFareCab: 70,
     perKmCab: 16,
+    baseFareBike: 18,
+    perKmBike: 6.5,
     eRickshawShared: '₹15 - ₹20 shared near monument',
     commonRoutes: [
-      { from: 'Agra Cantt Railway Station', to: 'Taj Mahal East Gate', distKm: 6.5, autoFare: '₹70 - ₹95', cabFare: '₹220 - ₹270' },
-      { from: 'Taj Mahal Complex', to: 'Agra Fort (UNESCO)', distKm: 3.1, autoFare: '₹40 - ₹55', cabFare: '₹130 - ₹160' },
-      { from: 'Agra Fort', to: 'Mehtab Bagh (Sunset View)', distKm: 7.8, autoFare: '₹80 - ₹110', cabFare: '₹240 - ₹290' },
+      { from: 'Agra Cantt Railway Station', to: 'Taj Mahal East Gate', distKm: 6.5, eRickFare: '₹55 - ₹75', autoFare: '₹70 - ₹95', cabFare: '₹220 - ₹270' },
+      { from: 'Taj Mahal Complex', to: 'Agra Fort (UNESCO)', distKm: 3.1, eRickFare: '₹25 - ₹40', autoFare: '₹40 - ₹55', cabFare: '₹130 - ₹160' },
+      { from: 'Agra Fort', to: 'Mehtab Bagh (Sunset View)', distKm: 7.8, eRickFare: '₹65 - ₹85', autoFare: '₹80 - ₹110', cabFare: '₹240 - ₹290' },
     ]
   },
   general: {
     cityName: '🇮🇳 Pan-India Tourist Standard (MoRTH Rates)',
+    baseFareERickshaw: 15,
+    perKmERickshaw: 7.5,
     baseFareAuto: 30,
     perKmAuto: 12,
     baseFareCab: 60,
     perKmCab: 16,
+    baseFareBike: 15,
+    perKmBike: 6.0,
     eRickshawShared: '₹15 - ₹25 standard',
     commonRoutes: [
-      { from: 'Nearest City Transit Terminal', to: 'Primary Tourism Hub', distKm: 5.0, autoFare: '₹55 - ₹75', cabFare: '₹180 - ₹220' },
-      { from: 'City Center Hub', to: 'State Heritage Monument', distKm: 8.5, autoFare: '₹95 - ₹125', cabFare: '₹280 - ₹340' },
+      { from: 'Nearest City Transit Terminal', to: 'Primary Tourism Hub', distKm: 5.0, eRickFare: '₹40 - ₹60', autoFare: '₹55 - ₹75', cabFare: '₹180 - ₹220' },
+      { from: 'City Center Hub', to: 'State Heritage Monument', distKm: 8.5, eRickFare: '₹70 - ₹95', autoFare: '₹95 - ₹125', cabFare: '₹280 - ₹340' },
     ]
   }
 };
@@ -65,29 +81,82 @@ export default function LocalFareEstimator({ currentTourist }) {
 
   const [selectedCity, setSelectedCity] = useState(initialRegion);
   const [distanceKm, setDistanceKm] = useState(5);
-  const [vehicleType, setVehicleType] = useState('AUTO'); // 'AUTO' | 'ERIKSHAW' | 'CAB'
+  const [vehicleType, setVehicleType] = useState('ERICKSHAW'); // 'ERICKSHAW' | 'AUTO' | 'BIKE' | 'CAB'
   const [showDriverCard, setShowDriverCard] = useState(false);
 
   const cityConfig = DESTINATION_FARES[selectedCity] || DESTINATION_FARES.general;
 
-  // Calculate estimated fair fare
-  const computeFare = (dist, type) => {
+  // Calculate estimated fair fare with canonical matching
+  const computeFare = (dist, rawType) => {
     const numDist = parseFloat(dist) || 1;
-    if (type === 'ERIKSHAW') {
-      if (numDist <= 3) return { min: 20, max: 30, text: '₹20 - ₹30 (Shared) / ₹80 Private' };
-      return { min: 30, max: 50, text: '₹30 - ₹50 (Shared) / ₹120 Private' };
-    }
-    if (type === 'AUTO') {
-      const base = cityConfig.baseFareAuto;
-      const min = Math.round(base + (numDist - 1.5 > 0 ? (numDist - 1.5) * cityConfig.perKmAuto : 0));
+    const type = (rawType || '').toUpperCase().replace(/[^A-Z]/g, '');
+
+    // ⚡ E-Rickshaw canonical matching (ERICKSHAW, E-RICKSHAW, ERICK, RICKSHAW)
+    if (type.includes('RICK') || type.includes('ERICK')) {
+      const base = cityConfig.baseFareERickshaw || 15;
+      const perKm = cityConfig.perKmERickshaw || 7.5;
+      const extraKm = Math.max(0, numDist - 1.5);
+      const min = Math.round(base + extraKm * perKm);
       const max = Math.round(min * 1.25);
-      return { min, max, text: `₹${min} - ₹${max}` };
+      const sharedFare = numDist <= 3 ? '₹15 - ₹25' : numDist <= 8 ? '₹25 - ₹40' : '₹45 - ₹60';
+      return { 
+        min, 
+        max, 
+        text: `₹${min} - ₹${max}`, 
+        sharedText: `${sharedFare} (Shared/Seat)`,
+        vehicleLabel: 'E-Rickshaw (ई-रिक्शा)',
+        rateInfo: `₹${perKm}/km after 1.5km base ₹${base}`
+      };
     }
-    // CAB
-    const base = cityConfig.baseFareCab;
-    const min = Math.round(base + (numDist - 2 > 0 ? (numDist - 2) * cityConfig.perKmCab : 0));
+
+    // 🏍️ Bike-Taxi matching (BIKE, MOTO)
+    if (type.includes('BIKE') || type.includes('MOTO')) {
+      const base = cityConfig.baseFareBike || 15;
+      const perKm = cityConfig.perKmBike || 6.0;
+      const extraKm = Math.max(0, numDist - 1.0);
+      const min = Math.round(base + extraKm * perKm);
+      const max = Math.round(min * 1.2);
+      return {
+        min,
+        max,
+        text: `₹${min} - ₹${max}`,
+        sharedText: 'Solo Bike Pilot',
+        vehicleLabel: 'Bike-Taxi (बाइक टैक्सी)',
+        rateInfo: `₹${perKm}/km after 1km base ₹${base}`
+      };
+    }
+
+    // 🛺 Auto matching (AUTO)
+    if (type.includes('AUTO')) {
+      const base = cityConfig.baseFareAuto || 30;
+      const perKm = cityConfig.perKmAuto || 11;
+      const extraKm = Math.max(0, numDist - 1.5);
+      const min = Math.round(base + extraKm * perKm);
+      const max = Math.round(min * 1.25);
+      return { 
+        min, 
+        max, 
+        text: `₹${min} - ₹${max}`,
+        sharedText: 'Full Auto Metered',
+        vehicleLabel: 'Auto-Rickshaw (ऑटो)',
+        rateInfo: `₹${perKm}/km after 1.5km base ₹${base}`
+      };
+    }
+
+    // 🚕 Cab matching (CAB, TAXI)
+    const base = cityConfig.baseFareCab || 60;
+    const perKm = cityConfig.perKmCab || 16;
+    const extraKm = Math.max(0, numDist - 2.0);
+    const min = Math.round(base + extraKm * perKm);
     const max = Math.round(min * 1.25);
-    return { min, max, text: `₹${min} - ₹${max}` };
+    return { 
+      min, 
+      max, 
+      text: `₹${min} - ₹${max}`,
+      sharedText: 'Private Sedan/Hatchback',
+      vehicleLabel: 'Taxi / Cab (टैक्सी/कैब)',
+      rateInfo: `₹${perKm}/km after 2km base ₹${base}`
+    };
   };
 
   const currentFare = computeFare(distanceKm, vehicleType);
@@ -106,14 +175,14 @@ export default function LocalFareEstimator({ currentTourist }) {
           <div>
             <div className="flex items-center space-x-2">
               <h3 className="text-base font-black text-gray-900">
-                Local Transport Budget & Auto Fare Guide
+                Local Transport Budget & Fare Guide
               </h3>
               <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
                 Govt Regulated
               </span>
             </div>
             <p className="text-xs text-gray-500 font-medium">
-              Official Auto, E-Rickshaw & Taxi anti-scam rate card for tourists.
+              Official E-Rickshaw, Auto, Bike-Taxi & Cab anti-scam rate card for tourists.
             </p>
           </div>
         </div>
@@ -139,7 +208,17 @@ export default function LocalFareEstimator({ currentTourist }) {
           <span className="text-[11px] font-bold text-gray-600 uppercase tracking-wide block">
             1. Select Vehicle Type
           </span>
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+            <button
+              onClick={() => setVehicleType('ERICKSHAW')}
+              className={`py-2 px-1 rounded-xl text-xs font-bold transition-all border ${
+                vehicleType === 'ERICKSHAW'
+                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                  : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+              }`}
+            >
+              ⚡ E-Rick
+            </button>
             <button
               onClick={() => setVehicleType('AUTO')}
               className={`py-2 px-1 rounded-xl text-xs font-bold transition-all border ${
@@ -151,14 +230,14 @@ export default function LocalFareEstimator({ currentTourist }) {
               🛺 Auto
             </button>
             <button
-              onClick={() => setVehicleType('ERIKSHAW')}
+              onClick={() => setVehicleType('BIKE')}
               className={`py-2 px-1 rounded-xl text-xs font-bold transition-all border ${
-                vehicleType === 'ERIKSHAW'
-                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                vehicleType === 'BIKE'
+                  ? 'bg-sky-600 text-white border-sky-700 shadow-sm'
                   : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
               }`}
             >
-              🔋 E-Rick
+              🏍️ Bike
             </button>
             <button
               onClick={() => setVehicleType('CAB')}
@@ -168,7 +247,7 @@ export default function LocalFareEstimator({ currentTourist }) {
                   : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
               }`}
             >
-              🚕 Taxi/Cab
+              🚕 Cab
             </button>
           </div>
         </div>
@@ -197,15 +276,25 @@ export default function LocalFareEstimator({ currentTourist }) {
 
         {/* Calculated Official Price Card */}
         <div className="p-3 bg-white rounded-2xl border-2 border-amber-300/80 shadow-sm text-center space-y-1">
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
-            Regulated Fair Fare
-          </span>
+          <div className="flex items-center justify-center gap-1.5">
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
+              Regulated Fair Fare
+            </span>
+            <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-orange-100 text-orange-800">
+              {currentFare.vehicleLabel.split(' ')[0]}
+            </span>
+          </div>
           <div className="text-2xl font-black text-amber-900 tracking-tight">
             {currentFare.text}
           </div>
+          {currentFare.sharedText && (
+            <span className="text-[10px] text-emerald-700 font-bold block">
+              {currentFare.sharedText}
+            </span>
+          )}
           <button
             onClick={() => setShowDriverCard(true)}
-            className="text-[11px] font-bold text-orange-600 hover:text-orange-800 underline block mx-auto"
+            className="text-[11px] font-bold text-orange-600 hover:text-orange-800 underline block mx-auto pt-0.5"
           >
             📱 Show Driver Card (चालक को दिखाएं)
           </button>
@@ -239,7 +328,8 @@ export default function LocalFareEstimator({ currentTourist }) {
                 </div>
               </div>
 
-              <div className="pt-1 border-t border-slate-200/60 flex justify-between items-center text-[11px]">
+              <div className="pt-1.5 border-t border-slate-200/60 flex flex-wrap justify-between items-center text-[10px] sm:text-[11px] gap-1">
+                <span className="text-gray-600 font-medium">⚡ E-Rick: <strong className="text-emerald-700">{rt.eRickFare || '₹40 - ₹60'}</strong></span>
                 <span className="text-gray-600 font-medium">🛺 Auto: <strong className="text-amber-900">{rt.autoFare}</strong></span>
                 <span className="text-gray-600 font-medium">🚕 Cab: <strong className="text-violet-900">{rt.cabFare.split(' ')[0]}</strong></span>
               </div>
@@ -277,8 +367,16 @@ export default function LocalFareEstimator({ currentTourist }) {
               <div className="p-4 bg-amber-50 rounded-2xl border border-amber-300 text-amber-950 space-y-1">
                 <span className="text-xs font-bold uppercase tracking-wider block">उचित सरकारी दर:</span>
                 <span className="text-4xl font-black tracking-tight">{currentFare.text}</span>
-                <span className="text-[11px] text-gray-600 block pt-1">
-                  (वाहन: {vehicleType === 'AUTO' ? 'ऑटो रिक्शा' : vehicleType === 'ERIKSHAW' ? 'ई-रिक्शा' : 'टैक्सी/कैब'})
+                <span className="text-[11px] text-gray-700 font-semibold block pt-1">
+                  (वाहन: {currentFare.vehicleLabel})
+                </span>
+                {currentFare.sharedText && (
+                  <span className="text-[10px] text-emerald-800 font-mono block">
+                    {currentFare.sharedText}
+                  </span>
+                )}
+                <span className="text-[9px] text-gray-500 block pt-0.5">
+                  दर नियम: {currentFare.rateInfo}
                 </span>
               </div>
 

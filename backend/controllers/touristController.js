@@ -1,5 +1,7 @@
+const jwt = require('jsonwebtoken');
 const { dbStore } = require('../config/db');
 const { calculateTouristRisk } = require('../services/aiRiskEngine');
+const { JWT_SECRET } = require('../middleware/authMiddleware');
 
 function getAllTourists(req, res) {
   const tourists = dbStore.get('tourists');
@@ -21,6 +23,35 @@ function getAllTourists(req, res) {
 
 function getTouristById(req, res) {
   const { id } = req.params;
+
+  // Authorization check: Verify JWT identity to prevent cross-user data exposure
+  let authUser = req.user;
+  if (!authUser && req.headers['authorization']) {
+    try {
+      const token = req.headers['authorization'].split(' ')[1];
+      if (token) {
+        authUser = jwt.verify(token, JWT_SECRET);
+      }
+    } catch (e) {
+      // Invalid/expired token
+    }
+  }
+
+  // If user is authenticated as TOURIST, enforce strict tenant boundary
+  if (authUser && authUser.role === 'TOURIST') {
+    const isOwnProfile = 
+      authUser.touristId === id || 
+      authUser.id === id || 
+      (authUser.touristId && authUser.touristId.toLowerCase() === id.toLowerCase());
+    
+    if (!isOwnProfile) {
+      return res.status(403).json({
+        success: false,
+        error: 'Forbidden: Access denied. You can only view your own authorized profile.'
+      });
+    }
+  }
+
   const tourist = dbStore.findOne('tourists', (t) => t.id === id || t.touristId === id);
 
   if (!tourist) {
@@ -48,7 +79,21 @@ function getTouristById(req, res) {
 function updateLocation(req, res) {
   const { touristId, lat, lng, address, speedKmH, headingDeg, isLiveGps } = req.body;
 
-  const targetTouristId = touristId || (req.user ? req.user.touristId : 'TID-1024');
+  let authUser = req.user;
+  if (!authUser && req.headers['authorization']) {
+    try {
+      const token = req.headers['authorization'].split(' ')[1];
+      if (token) {
+        authUser = jwt.verify(token, JWT_SECRET);
+      }
+    } catch (e) {}
+  }
+
+  let targetTouristId = touristId || (authUser ? authUser.touristId : 'TID-1035');
+  // If user is logged in as tourist, enforce their own touristId
+  if (authUser && authUser.role === 'TOURIST' && authUser.touristId) {
+    targetTouristId = authUser.touristId;
+  }
   const tourist = dbStore.findOne('tourists', (t) => t.touristId === targetTouristId || t.id === targetTouristId);
 
   if (!tourist) {

@@ -67,10 +67,10 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
     window.print();
   };
 
-  const activeTid = currentTourist?.touristId || 'TID-1035';
-  const fullName = currentTourist?.fullName || digitalId?.fullName || 'Ananya Mishra';
-  const qrUrl = digitalId?.qrCodeData || `${window.location.origin}/verify-id/${activeTid}`;
+  const activeTid = currentTourist?.touristId || digitalId?.touristId || 'TID-1035';
+  const fullName = currentTourist?.fullName || digitalId?.fullName || 'Verified Tourist';
   const shaHash = digitalId?.digitalIdHash || '8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4';
+  const qrUrl = `${window.location.origin}/tourist/verify/${activeTid}?hash=${shaHash.substring(0, 16)}`;
 
   return (
     <motion.div
@@ -236,6 +236,13 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
                 <span className="text-[9px] font-mono font-bold text-gray-500 uppercase tracking-wider text-center">
                   Scan to Authenticate
                 </span>
+                <Link
+                  to={`/tourist/verify/${activeTid}?hash=${shaHash.substring(0, 16)}`}
+                  className="text-[9px] font-bold text-blue-600 hover:text-blue-800 underline flex items-center gap-1 mt-0.5"
+                >
+                  <span>Open Verification Page</span>
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </Link>
               </div>
             </div>
 

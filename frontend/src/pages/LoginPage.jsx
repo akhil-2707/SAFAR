@@ -13,7 +13,7 @@ export default function LoginPage({ onLoginSuccess }) {
   const [activeTab, setActiveTab] = useState('1CLICK'); // '1CLICK' | 'PASSWORD' | 'OTP'
 
   // Email OTP States (optional fallback)
-  const [email, setEmail] = useState('ananya.mishra@example.com');
+  const [email, setEmail] = useState('');
   const [otpStep, setOtpStep] = useState('EMAIL'); // 'EMAIL' | 'VERIFY'
   const [otpCode, setOtpCode] = useState('');
   const [demoOtp, setDemoOtp] = useState('');
@@ -21,7 +21,7 @@ export default function LoginPage({ onLoginSuccess }) {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   // Standard Password State
-  const [password, setPassword] = useState('tourist123');
+  const [password, setPassword] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(null);
@@ -438,7 +438,7 @@ export default function LoginPage({ onLoginSuccess }) {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="e.g. ananya.mishra@example.com"
+                        placeholder="e.g. tourist@example.com"
                         className="w-full rounded-2xl pl-10 pr-4 py-3 text-sm text-gray-900 font-medium focus:outline-none"
                         style={{ background: 'rgba(255,247,237,0.8)', border: '1.5px solid rgba(251,146,60,0.4)' }}
                       />
