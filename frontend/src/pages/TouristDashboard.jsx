@@ -35,6 +35,90 @@ const itemVariants = {
   }
 };
 
+// Geometric helpers for red-zone distance & point-in-polygon
+function calculateHaversineMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function isPointInPolygonClient(lat, lng, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i][0], yi = poly[i][1];
+    const xj = poly[j][0], yj = poly[j][1];
+    const intersect = yi > lng !== yj > lng && lat < ((xj - xi) * (lng - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+function getDistToSegmentMeters(px, py, x1, y1, x2, y2) {
+  const A = px - x1, B = py - y1, C = x2 - x1, D = y2 - y1;
+  const dot = A * C + B * D;
+  const lenSq = C * C + D * D;
+  let param = -1;
+  if (lenSq !== 0) param = dot / lenSq;
+  let xx, yy;
+  if (param < 0) { xx = x1; yy = y1; }
+  else if (param > 1) { xx = x2; yy = y2; }
+  else { xx = x1 + param * C; yy = y1 + param * D; }
+  return calculateHaversineMeters(px, py, xx, yy);
+}
+
+function getMinPolygonDistMeters(lat, lng, poly) {
+  let minDist = Infinity;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const p1 = poly[i];
+    const p2 = poly[j];
+    const d = getDistToSegmentMeters(lat, lng, p1[0], p1[1], p2[0], p2[1]);
+    if (d < minDist) minDist = d;
+  }
+  return Math.round(minDist);
+}
+
+// Destination coordinates lookup
+function getDestinationCoords(tourist) {
+  if (tourist?.destinationLat && tourist?.destinationLng) {
+    return {
+      lat: tourist.destinationLat,
+      lng: tourist.destinationLng,
+      name: tourist.destination || 'Selected Destination',
+      address: tourist.destination || 'Primary Tourist Circuit'
+    };
+  }
+  const destStr = (tourist?.destination || '').toLowerCase();
+  if (destStr.includes('ayodhya') || tourist?.touristId === 'TID-1035') {
+    return { lat: 26.7922, lng: 82.1998, name: tourist?.destination || 'Ayodhya Ram Janmabhoomi Complex', address: 'Ayodhya Safe Heritage Circuit, UP' };
+  }
+  if (destStr.includes('jammu') || destStr.includes('katra') || destStr.includes('vaishno') || tourist?.touristId === 'TID-1036') {
+    return { lat: 32.9934, lng: 74.9328, name: tourist?.destination || 'Katra Vaishno Devi Shrine', address: 'Jammu Pilgrim Safe Track, J&K' };
+  }
+  if (destStr.includes('taj') || destStr.includes('agra') || tourist?.touristId === 'TID-1039') {
+    return { lat: 27.1751, lng: 78.0421, name: tourist?.destination || 'Taj Mahal Complex', address: 'Taj Safe Heritage Promenade, Agra' };
+  }
+  if (destStr.includes('kamrup') || destStr.includes('tawang') || tourist?.touristId === 'TID-1027') {
+    return { lat: 26.2800, lng: 91.5200, name: tourist?.destination || 'Kamrup Restricted Zone', address: 'Kamrup International Border Buffer' };
+  }
+  if (destStr.includes('kaziranga') || tourist?.touristId === 'TID-1026') {
+    return { lat: 26.5775, lng: 93.1711, name: tourist?.destination || 'Kaziranga Safari Lodge', address: 'Kaziranga National Park Corridor' };
+  }
+  if (destStr.includes('cherrapunji') || destStr.includes('shillong') || tourist?.touristId === 'TID-1025') {
+    return { lat: 25.2986, lng: 91.7321, name: tourist?.destination || 'Cherrapunji Falls Viewpoint', address: 'Meghalaya Tourism Corridor' };
+  }
+  return {
+    lat: 26.1445,
+    lng: 91.7362,
+    name: tourist?.destination || 'Guwahati Safe Tourist Corridor',
+    address: tourist?.destination || 'Assam Tourism Circuit'
+  };
+}
+
 export default function TouristDashboard({
   tourist,
   allTourists = [],
@@ -52,6 +136,17 @@ export default function TouristDashboard({
   const { t } = useLanguage();
   const [currentTourist, setCurrentTourist] = useState(tourist);
   const [loading, setLoading] = useState(false);
+
+  // Distinguish between predefined Demo tourists and newly registered / real tourists
+  const isDemoTourist = Boolean(
+    currentTourist?.isDemo || (
+      currentTourist?.touristId &&
+      ['TID-1024','TID-1025','TID-1026','TID-1027','TID-1028','TID-1035','TID-1036','TID-1037','TID-1038','TID-1039'].includes(currentTourist.touristId) &&
+      !currentTourist.isRealUser
+    )
+  );
+  const isRealUser = Boolean(!isDemoTourist || currentTourist?.isRealUser);
+
   const [useLiveGpsMode, setUseLiveGpsMode] = useState(false);
   const [isAutoWandering, setIsAutoWandering] = useState(false);
   const [showMeshModal, setShowMeshModal] = useState(false);
@@ -64,14 +159,21 @@ export default function TouristDashboard({
 
   const { coords, isLive, permissionStatus, error: gpsError, startTracking, stopTracking } = useBrowserGeolocation();
 
+  // If real registered user, auto-prompt and activate live GPS tracking
   useEffect(() => {
     setCurrentTourist(tourist);
-    // If tourist changed, cancel previous wandering interval
+    if (tourist && (!tourist.isDemo || tourist.isRealUser) && !isDemoTourist) {
+      setUseLiveGpsMode(true);
+      startTracking();
+    } else if (isDemoTourist && !useLiveGpsMode) {
+      stopTracking();
+    }
+
     if (isAutoWandering && wanderIntervalRef.current) {
       clearInterval(wanderIntervalRef.current);
       setIsAutoWandering(false);
     }
-  }, [tourist]);
+  }, [tourist?.touristId, isRealUser, isDemoTourist]);
 
   // Live generative-AI explanation layer. Deterministic risk engine remains the source of truth; AI explains signals.
   useEffect(() => {
@@ -233,6 +335,59 @@ export default function TouristDashboard({
   const proxWarn = currentTourist?.riskAnalysis?.proximityWarning;
   const isLiveGpsActive = (useLiveGpsMode && isLive) || isAutoWandering;
   const currentSpeed = currentTourist?.currentLocation?.speedKmH || 0;
+
+  // Geofence Red Zone & Hazard Proximity Containment
+  const checkRedZoneContainment = () => {
+    const lat = (useLiveGpsMode && coords?.lat) ? coords.lat : currentTourist?.currentLocation?.lat;
+    const lng = (useLiveGpsMode && coords?.lng) ? coords.lng : currentTourist?.currentLocation?.lng;
+    if (!lat || !lng || !geofences || geofences.length === 0) {
+      return { inRedZone: false, tier: 'SAFE', zoneName: null, distanceMeters: Infinity };
+    }
+
+    for (const gf of geofences) {
+      if (gf.type === 'RESTRICTED' || gf.type === 'HIGH_RISK' || gf.type === 'DANGER') {
+        if (gf.shape === 'CIRCLE' && gf.center && gf.radiusMeters) {
+          const cLat = gf.center.lat || (Array.isArray(gf.center) ? gf.center[0] : 26.1445);
+          const cLng = gf.center.lng || (Array.isArray(gf.center) ? gf.center[1] : 91.7362);
+          const dist = calculateHaversineMeters(lat, lng, cLat, cLng);
+          if (dist <= gf.radiusMeters) {
+            return { inRedZone: true, tier: 'BREACH', zoneName: gf.name, distanceMeters: 0 };
+          } else if (dist <= gf.radiusMeters + 300) {
+            return { inRedZone: true, tier: 'APPROACH', zoneName: gf.name, distanceMeters: Math.round(dist - gf.radiusMeters) };
+          }
+        }
+        if (gf.coordinates && gf.coordinates.length > 2) {
+          if (isPointInPolygonClient(lat, lng, gf.coordinates)) {
+            return { inRedZone: true, tier: 'BREACH', zoneName: gf.name, distanceMeters: 0 };
+          }
+          const dist = getMinPolygonDistMeters(lat, lng, gf.coordinates);
+          if (dist <= 300) {
+            return { inRedZone: true, tier: 'APPROACH', zoneName: gf.name, distanceMeters: dist };
+          }
+        }
+      }
+    }
+    return { inRedZone: false, tier: 'SAFE', zoneName: null, distanceMeters: Infinity };
+  };
+
+  const redZoneStatus = checkRedZoneContainment();
+  const backendProximityWarning = currentTourist?.riskAnalysis?.proximityWarning;
+  const isDangerZoneActive = Boolean(
+    redZoneStatus.inRedZone ||
+    currentTourist?.riskLevel === 'CRITICAL' ||
+    currentTourist?.riskLevel === 'HIGH' ||
+    !!backendProximityWarning
+  );
+  const activeProximityWarning = proxWarn || (redZoneStatus.inRedZone ? {
+    zoneName: redZoneStatus.zoneName,
+    distanceMeters: redZoneStatus.distanceMeters,
+    tier: redZoneStatus.tier,
+    message: redZoneStatus.tier === 'BREACH'
+      ? `🔴 NO ENTRY RESTRICTED ZONE: Unauthorized entry into ${redZoneStatus.zoneName}.`
+      : `⚠️ PRE-ENTRY WARNING: Approaching ${redZoneStatus.zoneName} (${redZoneStatus.distanceMeters}m).`
+  } : null);
+
+  const destinationData = getDestinationCoords(currentTourist);
 
   return (
     <motion.div
@@ -404,9 +559,48 @@ export default function TouristDashboard({
       {/* 🔴 High-Definition Red-Zone Pre-Entry Floating Motion Banner (Govt Synchronized Deadman) */}
       <RedZonePreEntryBanner
         tourist={currentTourist}
-        proximityWarning={proxWarn}
-        isDangerZone={currentTourist?.riskLevel === 'CRITICAL' || currentTourist?.riskLevel === 'HIGH'}
+        proximityWarning={activeProximityWarning}
+        isDangerZone={isDangerZoneActive}
       />
+
+      {/* 🚨 Ghost-Mesh Relay Auto-Engaged Banner (when entering or approaching Red Zone) */}
+      {isDangerZoneActive && (
+        <motion.div
+          initial={{ opacity: 0, y: -8, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          className="p-3.5 sm:p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg border relative overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(139, 92, 246, 0.08))',
+            border: '1.5px solid rgba(239, 68, 68, 0.35)',
+            boxShadow: '0 8px 30px rgba(239, 68, 68, 0.12)'
+          }}
+        >
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0 border border-red-200">
+              <Radio className="w-5 h-5 text-red-600 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-black text-red-700 uppercase tracking-wider">
+                  🚨 Ghost-Mesh Relay Auto-Engaged (0-Signal Protocol)
+                </span>
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+              </div>
+              <p className="text-[11px] text-gray-700 font-semibold leading-tight mt-0.5">
+                Restricted Red Zone hazard proximity detected ({redZoneStatus.zoneName || 'Border Buffer'}). Deadman switch is armed & peer-to-peer mesh packets are broadcasting.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowMeshModal(true)}
+            className="px-3.5 py-2 rounded-xl text-xs font-black text-white bg-gradient-to-r from-red-600 to-violet-600 hover:from-red-500 hover:to-violet-500 transition-all shadow-md shrink-0 flex items-center space-x-1.5 cursor-pointer"
+          >
+            <Radio className="w-3.5 h-3.5" />
+            <span>Open Mesh Radar</span>
+          </button>
+        </motion.div>
+      )}
 
       {/* Main Grid: Left Column (2 cols) & Right Column (1 col) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -457,17 +651,13 @@ export default function TouristDashboard({
             </div>
 
             <MapView
-              destination={{
-                lat: currentTourist?.destinationLat || currentTourist?.currentLocation?.lat || 26.7922,
-                lng: currentTourist?.destinationLng || currentTourist?.currentLocation?.lng || 82.1998,
-                name: currentTourist?.destination || currentTourist?.currentLocation?.address || 'Ayodhya Ram Janmabhoomi Complex',
-                address: currentTourist?.currentLocation?.address || 'Ayodhya Safe Heritage Circuit, Uttar Pradesh'
-              }}
+              destination={destinationData}
               tourists={allTourists && allTourists.length > 0 ? allTourists : (currentTourist ? [currentTourist] : [])}
               geofences={geofences}
               selectedTourist={currentTourist}
               emergencyServices={emergencyServices}
               height="h-[340px] xs:h-[380px] sm:h-[460px] md:h-[500px]"
+              showLiveUserLocation={isRealUser || useLiveGpsMode}
             />
           </motion.div>
 
@@ -475,7 +665,7 @@ export default function TouristDashboard({
           <motion.div variants={itemVariants}>
             <DeadmanSwitch
               tourist={currentTourist}
-              isDangerZone={currentTourist?.riskLevel === 'CRITICAL' || currentTourist?.riskLevel === 'HIGH' || !!proxWarn}
+              isDangerZone={isDangerZoneActive}
               isLowNetwork={false}
               onTriggerSos={onTriggerSos}
             />
@@ -661,6 +851,8 @@ export default function TouristDashboard({
       <OfflineGhostMeshModal
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
+        tourist={currentTourist}
+        isRedZoneTriggered={isDangerZoneActive}
       />
     </motion.div>
   );

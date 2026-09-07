@@ -45,7 +45,9 @@ function registerTourist(req, res) {
       email,
       password: passwordHash,
       role: 'TOURIST',
-      touristId
+      touristId,
+      isDemo: false,
+      isRealUser: true
     });
 
     // 2. Default initial location (Guwahati Safe Zone)
@@ -55,6 +57,8 @@ function registerTourist(req, res) {
     const newTourist = dbStore.insert('tourists', {
       touristId,
       fullName,
+      isDemo: false,
+      isRealUser: true,
       dob: dob || '1998-05-15',
       gender: gender || 'Other',
       nationality: nationality || 'Indian',
@@ -121,7 +125,7 @@ function registerTourist(req, res) {
       success: true,
       message: 'Tourist registered and Digital Tourist ID minted on Prototype Blockchain Ledger',
       token,
-      user: { id: newUser.id, name: fullName, email, role: 'TOURIST', touristId },
+      user: { id: newUser.id, name: fullName, email, role: 'TOURIST', touristId, isDemo: false, isRealUser: true },
       tourist: newTourist,
       digitalId: newDigitalId
     });
@@ -173,7 +177,9 @@ function login(req, res) {
         email: user.email,
         role: user.role,
         department: user.department,
-        touristId: user.touristId
+        touristId: user.touristId,
+        isDemo: user.isDemo ?? (touristProfile?.isDemo ?? false),
+        isRealUser: user.isRealUser ?? (touristProfile?.isRealUser ?? (user.role === 'TOURIST' && !touristProfile?.isDemo))
       },
       tourist: touristProfile,
       digitalId
@@ -199,7 +205,15 @@ function getMe(req, res) {
 
   return res.json({
     success: true,
-    user: { id: user.id, name: user.name, email: user.email, role: user.role, touristId: user.touristId },
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      touristId: user.touristId,
+      isDemo: user.isDemo ?? (touristProfile?.isDemo ?? false),
+      isRealUser: user.isRealUser ?? (touristProfile?.isRealUser ?? (user.role === 'TOURIST' && !touristProfile?.isDemo))
+    },
     tourist: touristProfile,
     digitalId
   });

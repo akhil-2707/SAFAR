@@ -631,6 +631,17 @@ function getInitialData() {
     }
   ];
 
+  // Set isDemo and isRealUser flags on seed tourists
+  tourists.forEach((t) => {
+    if (t.touristId === 'TID-REAL') {
+      t.isDemo = false;
+      t.isRealUser = true;
+    } else {
+      t.isDemo = true;
+      t.isRealUser = false;
+    }
+  });
+
   // Digital IDs with SHA-256 Hashes
   const digitalIds = tourists.map((t) => {
     const rawString = `${t.touristId}:${t.fullName}:${t.dob}:${t.nationality}:${t.idProofType}`;

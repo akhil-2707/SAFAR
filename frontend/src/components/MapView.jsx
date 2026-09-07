@@ -231,8 +231,26 @@ export default function MapView({
   );
   const [showZones, setShowZones] = useState(true);
   const [showServices, setShowServices] = useState(true);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [locatingUser, setLocatingUser] = useState(false);
+
+  // Check if current tourist is a predefined demo tourist (Ayodhya, Katra, Taj Mahal, etc.)
+  const isDemoTourist = Boolean(
+    selectedTourist?.isDemo || (
+      selectedTourist?.touristId &&
+      ['TID-1024','TID-1025','TID-1026','TID-1027','TID-1028','TID-1035','TID-1036','TID-1037','TID-1038','TID-1039'].includes(selectedTourist.touristId) &&
+      !selectedTourist.isRealUser
+    )
+  );
+
+  // Only auto-request device geolocation for real users / new registrations or explicit realtime mode
+  const shouldAutoTrackLiveGps = Boolean(
+    showLiveUserLocation && (
+      selectedTourist?.isRealUser ||
+      selectedTourist?.touristId === 'TID-REAL' ||
+      selectedRegion === 'realtime' ||
+      (!isDemoTourist && selectedTourist && selectedTourist.touristId)
+    )
+  );
 
   // 1. Separate State: Current User Live GPS Location
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -356,14 +374,14 @@ export default function MapView({
   };
 
   useEffect(() => {
-    if (!showLiveUserLocation) return;
+    if (!shouldAutoTrackLiveGps) return;
     const watchId = startLiveLocationTracking();
     return () => {
       if (watchId !== null && watchId !== undefined && navigator.geolocation) {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, [showLiveUserLocation]);
+  }, [shouldAutoTrackLiveGps]);
 
   const handleRegionChange = (regKey) => {
     setSelectedRegion(regKey);

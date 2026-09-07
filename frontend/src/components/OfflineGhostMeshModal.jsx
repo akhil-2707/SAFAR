@@ -7,7 +7,7 @@ import {
   Share2, MapPin, X, BatteryCharging, Battery, Radar, UserCheck, ShieldAlert
 } from 'lucide-react';
 
-export default function OfflineGhostMeshModal({ isOpen, onClose }) {
+export default function OfflineGhostMeshModal({ isOpen, onClose, tourist, isRedZoneTriggered = false }) {
   const [activeTab, setActiveTab] = useState('mesh'); // 'mesh' | 'solo_beacon'
   
   // Mesh Relay State
@@ -68,12 +68,15 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          touristId: 'TID-1024',
-          touristName: 'Rohan Verma',
-          bloodGroup: 'O+ Positive',
-          emergencyType: 'INJURED_IMMOBILE_IN_GORGE',
-          coords: { lat: 25.5684, lng: 94.0624 },
-          batteryLevel: 34
+          touristId: tourist?.touristId || 'TID-1024',
+          touristName: tourist?.fullName || 'Active Tourist',
+          bloodGroup: tourist?.bloodGroup || 'O+ Positive',
+          emergencyType: isRedZoneTriggered ? 'RESTRICTED_RED_ZONE_BREACH' : 'INJURED_IMMOBILE_IN_GORGE',
+          coords: {
+            lat: tourist?.currentLocation?.lat || 25.5684,
+            lng: tourist?.currentLocation?.lng || 94.0624
+          },
+          batteryLevel: 42
         })
       });
 
@@ -149,6 +152,16 @@ export default function OfflineGhostMeshModal({ isOpen, onClose }) {
             </span>
           </div>
         </div>
+
+        {/* Red Zone Auto-Engaged Notice */}
+        {isRedZoneTriggered && (
+          <div className="bg-red-50 border border-red-300 rounded-2xl p-3 flex items-center space-x-2.5 text-red-900 shadow-sm">
+            <ShieldAlert className="w-5 h-5 text-red-600 shrink-0 animate-bounce-short" />
+            <p className="text-xs font-bold leading-tight">
+              🚨 <span className="font-black text-red-700">Restricted Red Zone Breach Detected:</span> Ghost-Mesh Relay was auto-engaged to maintain emergency telemetry over offline peer-to-peer radio channels.
+            </p>
+          </div>
+        )}
 
         {/* Protocol Mode Switcher Tabs */}
         <div className="flex items-center space-x-2 bg-gray-100 p-1.5 rounded-2xl border border-gray-200">
