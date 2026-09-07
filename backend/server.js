@@ -44,6 +44,18 @@ app.use('/api/mesh-rescue', require('./routes/meshRescueRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/deadman', require('./routes/deadmanRoutes'));
 
+// Serve Frontend in Production / Cloud Deployments
+const path = require('path');
+const fs = require('fs');
+const frontendDist = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
+
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('API Error Stack:', err.stack);
