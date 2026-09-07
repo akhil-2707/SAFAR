@@ -35,9 +35,9 @@ export default function AnalyticsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Header */}
-      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-6 shadow-lg flex items-center justify-between backdrop-blur-xl">
+      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-4 sm:p-6 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 backdrop-blur-xl">
         <div>
-          <h2 className="text-2xl font-black text-gray-900">Authority Analytics & Intelligence</h2>
+          <h2 className="text-xl sm:text-2xl font-black text-gray-900">Authority Analytics & Intelligence</h2>
           <p className="text-xs text-gray-500 font-medium">
             Real-Time Statistical Insights on Incident Trends, Geo-Fence Breaches, and Emergency Response Times
           </p>
@@ -45,25 +45,25 @@ export default function AnalyticsPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
-          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Avg Emergency Response Time</span>
-          <span className="text-2xl font-black text-emerald-700">{overview.avgResponseTimeMinutes} mins</span>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block truncate">Avg Response Time</span>
+          <span className="text-xl sm:text-2xl font-black text-emerald-700">{overview.avgResponseTimeMinutes} mins</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
-          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Total Monitored Tourists</span>
-          <span className="text-2xl font-black text-gray-900">{overview.totalTourists}</span>
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block truncate">Monitored Tourists</span>
+          <span className="text-xl sm:text-2xl font-black text-gray-900">{overview.totalTourists}</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
-          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Geo-Fence Violations</span>
-          <span className="text-2xl font-black text-amber-800">{overview.geofenceViolations}</span>
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block truncate">Geo-Fence Violations</span>
+          <span className="text-xl sm:text-2xl font-black text-amber-800">{overview.geofenceViolations}</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
-          <span className="text-[10px] text-gray-500 uppercase font-extrabold block">Resolution Success Rate</span>
-          <span className="text-2xl font-black text-teal-700">94.2%</span>
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white/95 border border-gray-200/80 shadow-md backdrop-blur-xl space-y-1">
+          <span className="text-[10px] text-gray-500 uppercase font-extrabold block truncate">Resolution Rate</span>
+          <span className="text-xl sm:text-2xl font-black text-teal-700">94.2%</span>
         </div>
       </div>
 

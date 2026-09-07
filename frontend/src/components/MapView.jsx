@@ -76,6 +76,85 @@ const createRealTimePinIcon = () => {
   });
 };
 
+// 🔵 Small Blue Circular Marker / "You are here" marker
+const createLiveUserIcon = () => {
+  const html = `
+    <div style="position: relative; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;">
+      <div style="
+        position: absolute;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(37, 99, 235, 0.28);
+        border: 2px solid #2563eb;
+        animation: sos-radar 1.6s infinite ease-out;
+        pointer-events: none;
+      "></div>
+      <div style="
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #2563eb;
+        border: 2.5px solid #ffffff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        position: relative;
+        z-index: 2;
+      "></div>
+    </div>
+  `;
+  return L.divIcon({
+    className: 'live-user-marker',
+    html: html,
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    popupAnchor: [0, -17]
+  });
+};
+
+// 📍 Visually distinct Destination Marker
+const createDestinationIcon = (color = '#EF4444') => {
+  const svgHtml = `
+    <div style="position: relative; width: 36px; height: 46px; display: flex; align-items: center; justify-content: center;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="36" height="46" style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.45));">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+      <span style="position: absolute; top: 8px; color: white; font-size: 11px; font-weight: 900; pointer-events: none;">★</span>
+    </div>
+  `;
+  return L.divIcon({
+    className: 'destination-marker',
+    html: svgHtml,
+    iconSize: [36, 46],
+    iconAnchor: [18, 44],
+    popupAnchor: [0, -42]
+  });
+};
+
+// Standard Geographic Haversine Distance in Kilometers
+function calculateHaversineDistanceKm(lat1, lon1, lat2, lon2) {
+  if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return null;
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function formatDistance(distanceKm) {
+  if (distanceKm == null || isNaN(distanceKm)) return null;
+  if (distanceKm < 1) {
+    const meters = Math.round(distanceKm * 1000);
+    return `${meters} m`;
+  }
+  return `${distanceKm.toFixed(1)} km`;
+}
+
 const INDIA_REGIONS = {
   ayodhya: { name: '🛕 Ayodhya (Ram Mandir)', center: { lat: 26.7922, lng: 82.1998 }, zoom: 14 },
   jammu: { name: '🏔️ Jammu (Vaishno Devi)', center: { lat: 32.9934, lng: 74.9328 }, zoom: 13 },
@@ -98,14 +177,51 @@ function MapRecenter({ center, zoom }) {
   return null;
 }
 
+// Automatically fits map bounds so both Current Location and Destination are visible
+function MapAutoBounds({ currentLocation, destination }) {
+  const map = useMap();
+  const fittedRef = React.useRef(false);
+
+  useEffect(() => {
+    if (
+      currentLocation &&
+      destination &&
+      typeof currentLocation.lat === 'number' &&
+      typeof currentLocation.lng === 'number' &&
+      typeof destination.lat === 'number' &&
+      typeof destination.lng === 'number'
+    ) {
+      try {
+        const bounds = L.latLngBounds([
+          [currentLocation.lat, currentLocation.lng],
+          [destination.lat, destination.lng]
+        ]);
+        map.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 16,
+          animate: true,
+          duration: 1.2
+        });
+        fittedRef.current = true;
+      } catch (err) {
+        console.warn('MapAutoBounds fitBounds error:', err);
+      }
+    }
+  }, [currentLocation?.lat, currentLocation?.lng, destination?.lat, destination?.lng, map]);
+
+  return null;
+}
+
 export default function MapView({
   tourists = [],
   geofences = [],
   selectedTourist = null,
+  destination: destinationProp = null,
   plannedRoute = null,
   emergencyServices = [],
   height = "500px",
-  onRealTimeLocationFound = null
+  onRealTimeLocationFound = null,
+  showLiveUserLocation = true
 }) {
   const [mapProvider, setMapProvider] = useState('google_streets');
   const [selectedRegion, setSelectedRegion] = useState(
@@ -118,84 +234,165 @@ export default function MapView({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [locatingUser, setLocatingUser] = useState(false);
 
+  // 1. Separate State: Current User Live GPS Location
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [geoStatus, setGeoStatus] = useState('idle'); // 'idle' | 'prompt' | 'granted' | 'denied' | 'unavailable' | 'timeout' | 'unsupported'
+  const [geoErrorMsg, setGeoErrorMsg] = useState(null);
+
+  // 2. Separate State: Destination Location
+  const [destination, setDestination] = useState(() => {
+    if (destinationProp && typeof destinationProp.lat === 'number') {
+      return destinationProp;
+    }
+    return {
+      lat: selectedTourist?.destinationLat || selectedTourist?.currentLocation?.lat || INDIA_REGIONS.ayodhya.center.lat,
+      lng: selectedTourist?.destinationLng || selectedTourist?.currentLocation?.lng || INDIA_REGIONS.ayodhya.center.lng,
+      name: selectedTourist?.destination || selectedTourist?.currentLocation?.address || 'Ayodhya Ram Mandir Complex',
+      address: selectedTourist?.currentLocation?.address || 'Ayodhya, Uttar Pradesh'
+    };
+  });
+
   const activeGeofences = geofences.filter((f) => f.active !== false);
 
-  // Initialize center and zoom based on selectedTourist or Ayodhya default
+  // Initialize center and zoom based on destination or selectedTourist
   const [mapCenter, setMapCenter] = useState(
+    destinationProp?.lat ? { lat: destinationProp.lat, lng: destinationProp.lng } :
     selectedTourist?.currentLocation || INDIA_REGIONS.ayodhya.center
   );
-  const [mapZoom, setMapZoom] = useState(selectedTourist ? 14 : 14);
+  const [mapZoom, setMapZoom] = useState(14);
 
+  // Synchronize destination state when destinationProp or selectedTourist changes
   useEffect(() => {
-    if (selectedTourist?.currentLocation) {
-      setMapCenter(selectedTourist.currentLocation);
-      setMapZoom(selectedTourist.touristId === 'TID-REAL' ? 16 : 14);
+    if (destinationProp && typeof destinationProp.lat === 'number') {
+      setDestination(destinationProp);
+      setMapCenter({ lat: destinationProp.lat, lng: destinationProp.lng });
+    } else if (selectedTourist) {
+      const destLat = selectedTourist.destinationLat || selectedTourist.currentLocation?.lat || INDIA_REGIONS[selectedRegion]?.center?.lat || 26.7922;
+      const destLng = selectedTourist.destinationLng || selectedTourist.currentLocation?.lng || INDIA_REGIONS[selectedRegion]?.center?.lng || 82.1998;
+      const destName = selectedTourist.destination || selectedTourist.currentLocation?.address || selectedTourist.fullName || 'Tourist Destination';
+      const destAddr = selectedTourist.currentLocation?.address || 'Designated Tourist Safe Area';
+      setDestination({
+        lat: destLat,
+        lng: destLng,
+        name: destName,
+        address: destAddr
+      });
+      setMapCenter({ lat: destLat, lng: destLng });
       if (selectedTourist.touristId === 'TID-1035') setSelectedRegion('ayodhya');
       else if (selectedTourist.touristId === 'TID-1036') setSelectedRegion('jammu');
       else if (selectedTourist.touristId === 'TID-1039') setSelectedRegion('tajmahal');
-      else if (selectedTourist.touristId === 'TID-REAL') setSelectedRegion('realtime');
     }
-  }, [selectedTourist]);
+  }, [destinationProp, selectedTourist]);
 
-  const handleFindRealTimeLocation = () => {
+  // 3. Continuous Geolocation Watcher using navigator.geolocation.watchPosition
+  const startLiveLocationTracking = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
-      return;
+      setGeoStatus('unsupported');
+      setGeoErrorMsg('Geolocation is not supported by your browser.');
+      return null;
     }
+
     setLocatingUser(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocatingUser(false);
-        const coords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          accuracyMeters: Math.round(position.coords.accuracy || 10),
+    setGeoStatus('prompt');
+
+    const handleSuccess = (position) => {
+      setLocatingUser(false);
+      const { latitude, longitude, accuracy, heading, speed } = position.coords;
+      const liveGps = {
+        lat: latitude,
+        lng: longitude,
+        accuracy: Math.round(accuracy || 10),
+        heading: heading || 0,
+        speed: speed ? Math.round(speed * 3.6 * 10) / 10 : 0,
+        timestamp: position.timestamp
+      };
+      setCurrentLocation(liveGps);
+      setGeoStatus('granted');
+      setGeoErrorMsg(null);
+
+      if (onRealTimeLocationFound) {
+        onRealTimeLocationFound({
+          ...liveGps,
           address: 'My Real-Time Device Location',
           isLiveGps: true,
-          speedKmH: position.coords.speed ? (position.coords.speed * 3.6).toFixed(1) : 0
-        };
-        setMapCenter(coords);
-        setMapZoom(16);
-        setSelectedRegion('realtime');
-        if (onRealTimeLocationFound) {
-          onRealTimeLocationFound(coords);
-        }
-      },
-      (err) => {
-        setLocatingUser(false);
-        console.warn('Geolocation fallback engaged:', err.message);
-        // Seamless fallback coordinates so the blue pin and map ALWAYS work without alert blocking
-        const fallbackCoords = {
-          lat: 28.6139,
-          lng: 77.2090,
-          accuracyMeters: 25,
-          address: 'My Real-Time Location (Network Sensor Active)',
-          isLiveGps: true,
-          speedKmH: 0
-        };
-        setMapCenter(fallbackCoords);
-        setMapZoom(15);
-        setSelectedRegion('realtime');
-        if (onRealTimeLocationFound) {
-          onRealTimeLocationFound(fallbackCoords);
-        }
-      },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-    );
+          speedKmH: liveGps.speed
+        });
+      }
+    };
+
+    const handleError = (err) => {
+      setLocatingUser(false);
+      switch (err.code) {
+        case err.PERMISSION_DENIED:
+          setGeoStatus('denied');
+          setGeoErrorMsg('Location access is required to show your current location.');
+          break;
+        case err.POSITION_UNAVAILABLE:
+          setGeoStatus('unavailable');
+          setGeoErrorMsg('GPS location is unavailable on your device.');
+          break;
+        case err.TIMEOUT:
+          setGeoStatus('timeout');
+          setGeoErrorMsg('GPS request timed out. Retrying...');
+          break;
+        default:
+          setGeoStatus('unavailable');
+          setGeoErrorMsg(err.message || 'Unable to retrieve location.');
+      }
+    };
+
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    };
+
+    // Initial position fetch
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, options);
+
+    // Continuous real-time watcher
+    const watchId = navigator.geolocation.watchPosition(handleSuccess, handleError, options);
+    return watchId;
   };
+
+  useEffect(() => {
+    if (!showLiveUserLocation) return;
+    const watchId = startLiveLocationTracking();
+    return () => {
+      if (watchId !== null && watchId !== undefined && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [showLiveUserLocation]);
 
   const handleRegionChange = (regKey) => {
     setSelectedRegion(regKey);
     if (regKey === 'realtime') {
-      handleFindRealTimeLocation();
+      if (currentLocation) {
+        setMapCenter({ lat: currentLocation.lat, lng: currentLocation.lng });
+        setMapZoom(16);
+      } else {
+        startLiveLocationTracking();
+      }
       return;
     }
     const reg = INDIA_REGIONS[regKey];
     if (reg && reg.center) {
+      setDestination({
+        lat: reg.center.lat,
+        lng: reg.center.lng,
+        name: reg.name,
+        address: `${reg.name} Heritage Corridor`
+      });
       setMapCenter(reg.center);
       setMapZoom(reg.zoom);
     }
   };
+
+  // 4. Dynamic Geographic Distance between Current Location and Destination
+  const calculatedDistanceKm = (currentLocation && destination && typeof currentLocation.lat === 'number' && typeof destination.lat === 'number')
+    ? calculateHaversineDistanceKm(currentLocation.lat, currentLocation.lng, destination.lat, destination.lng)
+    : null;
 
   // Map Provider Tile Configurations for High Zoom Resolution
   const tileProviders = {
@@ -231,22 +428,28 @@ export default function MapView({
 
   const currentProvider = tileProviders[mapProvider] || tileProviders.google_satellite;
 
+  const isCustomHeightClass = typeof height === 'string' && height.startsWith('h-');
+
   return (
     <div
-      style={{ height: isFullscreen ? '100vh' : height }}
-      className={`w-full relative rounded-xl overflow-hidden shadow-xl border border-gray-200 transition-all ${
-        isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''
+      style={{
+        height: isFullscreen ? '100vh' : (isCustomHeightClass ? undefined : undefined)
+      }}
+      className={`w-full relative rounded-2xl overflow-hidden shadow-xl border border-gray-200 transition-all ${
+        isFullscreen
+          ? 'fixed inset-0 z-50 rounded-none h-screen'
+          : (isCustomHeightClass ? height : 'h-[330px] xs:h-[370px] sm:h-[440px] md:h-[500px]')
       }`}
     >
       {/* Map Control Bar Overlay - RESPONSIVE BRIGHT THEME */}
-      <div className="absolute top-2 right-2 left-2 sm:left-auto sm:right-3 z-20 flex flex-wrap items-center justify-between sm:justify-end gap-1.5 p-1.5 rounded-xl text-xs"
-        style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(14px)', border: '1px solid rgba(139,92,246,0.25)', boxShadow: '0 4px 20px rgba(139,92,246,0.12)' }}>
+      <div className="absolute top-2 right-2 left-2 sm:left-auto sm:right-3 z-20 flex flex-wrap items-center justify-between sm:justify-end gap-1 sm:gap-1.5 p-1 sm:p-1.5 rounded-xl text-xs max-w-[calc(100%-16px)]"
+        style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(14px)', border: '1px solid rgba(139,92,246,0.25)', boxShadow: '0 4px 20px rgba(139,92,246,0.12)' }}>
         
         {/* Pan-India Region Switcher */}
         <select
           value={selectedRegion}
           onChange={(e) => handleRegionChange(e.target.value)}
-          className="font-bold px-2 py-1.5 rounded-lg border focus:outline-none cursor-pointer text-xs flex-1 sm:flex-initial"
+          className="font-bold px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-lg border focus:outline-none cursor-pointer text-[11px] sm:text-xs max-w-[130px] xs:max-w-[150px] sm:max-w-none truncate"
           style={{ background: 'rgba(254,243,199,0.95)', color: '#b45309', border: '1px solid rgba(245,158,11,0.45)' }}
           title="Jump to Region / City"
         >
@@ -260,7 +463,7 @@ export default function MapView({
           type="button"
           onClick={handleFindRealTimeLocation}
           disabled={locatingUser}
-          className={`px-2.5 py-1.5 rounded-lg flex items-center space-x-1 font-black text-xs transition-all shadow-xs ${
+          className={`px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg flex items-center space-x-1 font-black text-[11px] sm:text-xs transition-all shadow-xs ${
             locatingUser
               ? 'bg-blue-600 text-white animate-pulse'
               : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:brightness-110'
@@ -268,26 +471,26 @@ export default function MapView({
           title="Detect and fly to your real-time GPS location"
         >
           <Compass className={`w-3.5 h-3.5 ${locatingUser ? 'animate-spin' : ''}`} />
-          <span>{locatingUser ? 'Locating...' : '📍 Real-Time GPS'}</span>
+          <span>{locatingUser ? 'Locating...' : '📍 GPS'}</span>
         </button>
 
         {/* Map Layer Switcher */}
         <select
           value={mapProvider}
           onChange={(e) => setMapProvider(e.target.value)}
-          className="font-bold px-2 py-1.5 rounded-lg border focus:outline-none cursor-pointer text-xs"
+          className="font-bold px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-lg border focus:outline-none cursor-pointer text-[11px] sm:text-xs"
           style={{ background: 'rgba(245,243,255,1)', color: '#7c3aed', border: '1px solid rgba(139,92,246,0.3)' }}
         >
           <option value="google_streets">🗺️ Streets</option>
-          <option value="google_satellite">🛰️ Satellite HD</option>
+          <option value="google_satellite">🛰️ Satellite</option>
           <option value="carto_voyager">🌐 Voyager</option>
           <option value="carto_dark">🌙 Dark</option>
         </select>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <button
             onClick={() => setShowZones(!showZones)}
-            className={`p-1.5 rounded-lg flex items-center space-x-1 font-semibold transition-all ${
+            className={`p-1 sm:p-1.5 rounded-lg flex items-center space-x-1 font-semibold transition-all ${
               showZones ? 'text-emerald-700 border border-emerald-300' : 'text-gray-500 hover:text-gray-800'
             }`}
             style={showZones ? { background: 'rgba(16,185,129,0.12)' } : { background: 'transparent' }}
@@ -299,7 +502,7 @@ export default function MapView({
 
           <button
             onClick={() => setShowServices(!showServices)}
-            className={`p-1.5 rounded-lg flex items-center space-x-1 font-semibold transition-all ${
+            className={`p-1 sm:p-1.5 rounded-lg flex items-center space-x-1 font-semibold transition-all ${
               showServices ? 'text-blue-700 border border-blue-300' : 'text-gray-500 hover:text-gray-800'
             }`}
             style={showServices ? { background: 'rgba(59,130,246,0.12)' } : { background: 'transparent' }}
@@ -311,7 +514,7 @@ export default function MapView({
 
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+            className="p-1 sm:p-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
             title="Toggle Fullscreen"
           >
             <Maximize2 className="w-3.5 h-3.5" />
@@ -321,31 +524,31 @@ export default function MapView({
 
       {/* Map Legend - BRIGHT FROSTED GLASS */}
       <div
-        className="absolute bottom-3 left-3 z-20 p-2.5 rounded-2xl shadow-lg text-[10px] space-y-1.5 backdrop-blur-md"
+        className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-20 p-1.5 sm:p-2.5 rounded-xl sm:rounded-2xl shadow-lg text-[9px] sm:text-[10px] space-y-1 sm:space-y-1.5 backdrop-blur-md max-w-[85%] sm:max-w-none"
         style={{
           background: 'rgba(255, 255, 255, 0.94)',
           border: '1px solid rgba(139, 92, 246, 0.25)',
           boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)'
         }}
       >
-        <div className="flex items-center justify-between pb-1 space-x-2 border-b border-gray-100">
+        <div className="hidden sm:flex items-center justify-between pb-1 space-x-2 border-b border-gray-100">
           <span className="font-extrabold text-gray-800 block">Map Engine: <span className="text-emerald-600">Max Zoom 22 HD</span></span>
         </div>
-        <div className="flex items-center space-x-3 text-gray-700 font-semibold">
+        <div className="flex items-center space-x-2 sm:space-x-3 text-gray-700 font-semibold flex-wrap">
           <span className="flex items-center space-x-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span>Safe</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+            <span className="w-2 h-2 rounded-full bg-amber-500" />
             <span>Caution</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
-            <span>High Risk</span>
+            <span className="w-2 h-2 rounded-full bg-orange-500" />
+            <span>High</span>
           </span>
           <span className="flex items-center space-x-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             <span>Restricted</span>
           </span>
         </div>
@@ -462,12 +665,96 @@ export default function MapView({
             );
           })}
 
+        {/* Map Auto-Fit Bounds for both Live Location & Destination */}
+        <MapAutoBounds currentLocation={currentLocation} destination={destination} />
+
         {/* Planned Route Polyline */}
         {plannedRoute && plannedRoute.routeWaypoints && plannedRoute.routeWaypoints.length > 1 && (
           <Polyline
             positions={plannedRoute.routeWaypoints.map((w) => [w.lat, w.lng])}
             pathOptions={{ color: '#3B82F6', weight: 4, dashArray: '6, 8' }}
           />
+        )}
+
+        {/* Direct Connecting Polyline between Live Location and Destination */}
+        {currentLocation && destination && typeof currentLocation.lat === 'number' && typeof destination.lat === 'number' && (
+          <Polyline
+            positions={[
+              [currentLocation.lat, currentLocation.lng],
+              [destination.lat, destination.lng]
+            ]}
+            pathOptions={{
+              color: '#2563EB',
+              weight: 2.5,
+              dashArray: '6, 8',
+              opacity: 0.85
+            }}
+          />
+        )}
+
+        {/* 🔵 Current / Live Location Marker ("You are here") */}
+        {currentLocation && typeof currentLocation.lat === 'number' && (
+          <React.Fragment>
+            <Circle
+              center={[currentLocation.lat, currentLocation.lng]}
+              radius={currentLocation.accuracy || 15}
+              pathOptions={{ color: '#2563EB', fillColor: '#3B82F6', fillOpacity: 0.15, weight: 1.5 }}
+            />
+            <Marker
+              position={[currentLocation.lat, currentLocation.lng]}
+              icon={createLiveUserIcon()}
+              zIndexOffset={1000}
+            >
+              <Popup>
+                <div className="p-1.5 space-y-1 text-xs text-gray-900 min-w-[190px]">
+                  <div className="flex items-center space-x-1.5 font-black text-blue-600">
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse" />
+                    <span>You Are Here (Live Location)</span>
+                  </div>
+                  <p className="text-[10px] font-mono text-gray-600">
+                    [{currentLocation.lat.toFixed(5)}, {currentLocation.lng.toFixed(5)}]
+                  </p>
+                  <p className="text-[10px] text-gray-500">
+                    GPS Accuracy: ±{currentLocation.accuracy}m
+                  </p>
+                  {calculatedDistanceKm !== null && (
+                    <div className="mt-1 pt-1 border-t border-gray-100 font-bold text-emerald-700 text-[11px]">
+                      Distance to Destination: {formatDistance(calculatedDistanceKm)}
+                    </div>
+                  )}
+                </div>
+              </Popup>
+            </Marker>
+          </React.Fragment>
+        )}
+
+        {/* 📍 Destination Marker */}
+        {destination && typeof destination.lat === 'number' && (
+          <Marker
+            position={[destination.lat, destination.lng]}
+            icon={createDestinationIcon('#EF4444')}
+            zIndexOffset={900}
+          >
+            <Popup>
+              <div className="p-1.5 space-y-1 text-xs text-gray-900 min-w-[200px]">
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-base">📍</span>
+                  <span className="font-extrabold text-sm text-gray-900">{destination.name}</span>
+                </div>
+                {destination.address && (
+                  <p className="text-[11px] text-gray-600 leading-tight">{destination.address}</p>
+                )}
+                <span className="text-[10px] font-mono text-cyan-800 font-bold block">
+                  [{destination.lat.toFixed(4)}, {destination.lng.toFixed(4)}]
+                </span>
+                {calculatedDistanceKm !== null && (
+                  <div className="mt-1 pt-1 border-t border-gray-100 text-[11px] font-bold text-blue-700">
+                    Distance from You: {formatDistance(calculatedDistanceKm)}
+                  </div>
+                )}
+              </div>
+            </Popup>
+          </Marker>
         )}
 
         {/* Tourist Markers with Smooth Coordinate Interpolation */}
@@ -577,6 +864,71 @@ export default function MapView({
             </Marker>
           ))}
       </MapContainer>
+
+      {/* Floating Distance & Location Card (Corner Overlay) */}
+      <div
+        className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 p-2.5 sm:p-3 rounded-2xl text-xs space-y-2 backdrop-blur-xl max-w-[240px] xs:max-w-[270px] sm:max-w-[310px] shadow-xl transition-all"
+        style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          border: '1px solid rgba(59, 130, 246, 0.25)',
+          boxShadow: '0 8px 28px rgba(0, 0, 0, 0.12)'
+        }}
+      >
+        <div className="space-y-1.5">
+          {/* Destination */}
+          <div className="flex items-start space-x-2">
+            <span className="text-sm shrink-0">📍</span>
+            <div className="min-w-0">
+              <span className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Destination</span>
+              <strong className="text-gray-900 font-extrabold text-xs truncate block leading-tight">
+                {destination?.name || 'Selected Destination'}
+              </strong>
+            </div>
+          </div>
+
+          {/* Your Location */}
+          <div className="flex items-start space-x-2">
+            <div className="w-3.5 h-3.5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Your Location</span>
+              <span className="text-gray-800 font-bold text-xs truncate block leading-tight">
+                {currentLocation ? 'You are here (Live GPS)' : geoStatus === 'denied' ? 'Access Denied' : 'Acquiring GPS...'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Distance Summary */}
+        <div className="pt-1.5 border-t border-gray-100 flex items-center justify-between">
+          <span className="text-[11px] font-bold text-gray-600">Distance:</span>
+          {calculatedDistanceKm !== null ? (
+            <span className="text-xs font-black font-mono px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+              {formatDistance(calculatedDistanceKm)}
+            </span>
+          ) : (
+            <span className="text-[10px] font-mono text-gray-400">Calculating...</span>
+          )}
+        </div>
+
+        {/* User-Friendly Warning Message if Location Denied */}
+        {geoStatus === 'denied' && (
+          <div className="p-1.5 bg-amber-50 border border-amber-200 rounded-xl text-[10px] text-amber-900 space-y-1">
+            <div className="flex items-center space-x-1 font-semibold leading-tight">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <span>Location access is required to show your current location.</span>
+            </div>
+            <button
+              type="button"
+              onClick={startLiveLocationTracking}
+              className="w-full py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-[10px] transition-colors"
+            >
+              Allow / Retry GPS
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

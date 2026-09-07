@@ -160,7 +160,7 @@ export default function DeadmanSwitchPage({ tourist, onTriggerSos }) {
       </AnimatePresence>
 
       {/* Main Timer Display Card */}
-      <div className="p-8 sm:p-12 rounded-3xl apple-card flex flex-col items-center justify-center text-center space-y-6 relative overflow-hidden">
+      <div className="p-5 sm:p-12 rounded-2xl sm:rounded-3xl apple-card flex flex-col items-center justify-center text-center space-y-5 sm:space-y-6 relative overflow-hidden">
         
         {/* Soft Ambient Indigo Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full pointer-events-none"
@@ -168,7 +168,7 @@ export default function DeadmanSwitchPage({ tourist, onTriggerSos }) {
         />
 
         {/* Circular Progress Arc */}
-        <div className="relative w-64 h-64 flex items-center justify-center">
+        <div className="relative w-48 h-48 sm:w-64 sm:h-64 flex items-center justify-center">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
             {/* Background Track */}
             <circle
@@ -197,24 +197,24 @@ export default function DeadmanSwitchPage({ tourist, onTriggerSos }) {
 
           {/* Center Digital Clock Display */}
           <div className="absolute inset-0 flex flex-col items-center justify-center space-y-1 select-none">
-            <Clock className={`w-7 h-7 ${isLowTime ? 'text-amber-500 animate-pulse' : 'text-indigo-600'}`} />
-            <div className="text-4xl font-black font-mono tracking-tight text-gray-900">
+            <Clock className={`w-6 h-6 sm:w-7 sm:h-7 ${isLowTime ? 'text-amber-500 animate-pulse' : 'text-indigo-600'}`} />
+            <div className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-gray-900">
               {String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gray-400">
               {isLowTime ? 'URGENT CHECK-IN' : 'SAFETY COUNTDOWN'}
             </span>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex flex-wrap items-center justify-center gap-3 relative z-10 pt-2">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 relative z-10 pt-2 w-full max-w-xs sm:max-w-none">
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.95 }}
             transition={SPRING}
             onClick={handleResetTimer}
-            className="px-6 py-3 rounded-2xl bg-indigo-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:bg-indigo-700"
+            className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl bg-indigo-600 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 hover:bg-indigo-700"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Reset 2-Hour Timer</span>
@@ -225,7 +225,7 @@ export default function DeadmanSwitchPage({ tourist, onTriggerSos }) {
             whileTap={{ scale: 0.95 }}
             transition={SPRING}
             onClick={handleSimulate15MinWarning}
-            className="px-5 py-3 rounded-2xl apple-card text-gray-700 font-bold text-xs flex items-center gap-2"
+            className="px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl apple-card text-gray-700 font-bold text-xs flex items-center justify-center gap-2"
           >
             <Sparkles className="w-4 h-4 text-amber-500" />
             <span>Simulate 15-Min Check-in</span>
@@ -236,7 +236,7 @@ export default function DeadmanSwitchPage({ tourist, onTriggerSos }) {
             whileTap={{ scale: 0.95 }}
             transition={SPRING}
             onClick={handleTestSiren}
-            className="px-4 py-3 rounded-2xl apple-card text-gray-700 font-bold text-xs flex items-center gap-2"
+            className="px-4 py-2.5 sm:px-4 sm:py-3 rounded-2xl apple-card text-gray-700 font-bold text-xs flex items-center justify-center gap-2"
             title="Play Audio Alarm Beep"
           >
             {soundEnabled ? <Volume2 className="w-4 h-4 text-red-500" /> : <VolumeX className="w-4 h-4 text-gray-400" />}

@@ -172,7 +172,7 @@ export default function DeadmanSwitch({
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-start sm:items-center space-x-3 min-w-0">
             <div
               className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
               style={{
@@ -182,13 +182,13 @@ export default function DeadmanSwitch({
             >
               <Clock className={`w-5 h-5 ${isActive ? 'animate-pulse' : ''}`} />
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="text-base font-black text-gray-900">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <h3 className="text-sm sm:text-base font-black text-gray-900">
                   Automated Deadman's Switch
                 </h3>
                 <span
-                  className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
+                  className={`text-[9px] sm:text-[10px] font-black uppercase px-2 py-0.5 rounded-full border shrink-0 ${
                     isActive
                       ? secondsRemaining <= WARNING_THRESHOLD
                         ? 'bg-red-100 text-red-700 border-red-300 animate-pulse'
@@ -199,7 +199,7 @@ export default function DeadmanSwitch({
                   {isActive ? (secondsRemaining <= WARNING_THRESHOLD ? '⚠️ 15M Check-In Due' : '🟢 Sentinel Active (2h)') : '⚪ Armed on Red Zone'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 font-medium">
+              <p className="text-[11px] sm:text-xs text-gray-500 font-medium">
                 Auto-engages in 0-signal or red danger zones. Requires safety confirmation before 2h expiry.
               </p>
             </div>
@@ -210,7 +210,7 @@ export default function DeadmanSwitch({
             {!isActive ? (
               <button
                 onClick={() => handleArmSwitch('Manual User Start')}
-                className="px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:brightness-110 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5"
+                className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:brightness-110 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5"
               >
                 <Zap className="w-3.5 h-3.5" />
                 <span>Start 2h Safety Timer</span>
@@ -218,7 +218,7 @@ export default function DeadmanSwitch({
             ) : (
               <button
                 onClick={handleDisarmSwitch}
-                className="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-colors"
+                className="w-full sm:w-auto px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-colors text-center"
               >
                 Stop / Disarm
               </button>
@@ -229,12 +229,12 @@ export default function DeadmanSwitch({
         {/* Live Timer Display & Progress Bar */}
         {isActive && (
           <div className="space-y-3 pt-1">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div className="space-y-0.5">
-                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide block">
+                <span className="text-[10px] sm:text-[11px] font-bold text-gray-500 uppercase tracking-wide block">
                   Check-In Countdown Window
                 </span>
-                <div className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-gray-900 flex items-center space-x-2">
+                <div className="text-2xl sm:text-4xl font-black font-mono tracking-tight text-gray-900 flex items-center space-x-2">
                   <span className={secondsRemaining <= WARNING_THRESHOLD ? 'text-red-600' : 'text-orange-600'}>
                     {formatTime(secondsRemaining)}
                   </span>
@@ -244,10 +244,10 @@ export default function DeadmanSwitch({
 
               {/* Instant "Main Surakshit Hoon" Check-In Action */}
               <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleTouristCheckIn}
-                className="px-5 py-3 rounded-2xl text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-lg transition-all"
+                className="w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-lg transition-all"
                 style={{
                   background: 'linear-gradient(135deg, #10b981, #059669)',
                   boxShadow: '0 6px 20px rgba(16,185,129,0.35)'

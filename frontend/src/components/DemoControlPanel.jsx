@@ -22,9 +22,9 @@ export default function DemoControlPanel({ onTriggerScenario, onSwitchUser }) {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 transition-all duration-300 max-w-sm sm:max-w-md select-none font-sans">
+    <div className="fixed bottom-24 sm:bottom-4 right-2 sm:right-4 z-40 transition-all duration-300 w-[calc(100vw-16px)] sm:w-auto max-w-[340px] sm:max-w-md select-none font-sans">
       <div
-        className="backdrop-blur-2xl rounded-3xl overflow-hidden shadow-2xl transition-all"
+        className="backdrop-blur-2xl rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl transition-all"
         style={{
           background: 'rgba(255, 255, 255, 0.97)',
           border: '2px solid rgba(139, 92, 246, 0.35)',
@@ -34,23 +34,23 @@ export default function DemoControlPanel({ onTriggerScenario, onSwitchUser }) {
         {/* Panel Header */}
         <div
           onClick={() => setIsOpen(!isOpen)}
-          className="p-3.5 bg-gradient-to-r from-orange-50 via-white to-violet-50 cursor-pointer flex items-center justify-between border-b border-gray-100"
+          className="p-2.5 sm:p-3.5 bg-gradient-to-r from-orange-50 via-white to-violet-50 cursor-pointer flex items-center justify-between border-b border-gray-100"
         >
-          <div className="flex items-center space-x-2.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping" />
-            <Sparkles className="w-4 h-4 text-orange-500" />
-            <span className="text-xs font-black uppercase tracking-wider text-gray-900">
-              SIH Evaluator Guided Scenario Panel
+          <div className="flex items-center space-x-2 min-w-0">
+            <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping shrink-0" />
+            <Sparkles className="w-4 h-4 text-orange-500 shrink-0" />
+            <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-gray-900 truncate">
+              SIH Evaluator Demo Panel
             </span>
           </div>
-          <button className="text-gray-400 hover:text-gray-800 p-1 rounded-lg hover:bg-gray-100 transition-colors">
+          <button className="text-gray-400 hover:text-gray-800 p-1 rounded-lg hover:bg-gray-100 transition-colors shrink-0">
             {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
           </button>
         </div>
 
         {/* Panel Body */}
         {isOpen && (
-          <div className="p-4 space-y-3.5">
+          <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3.5 max-h-[60vh] sm:max-h-[75vh] overflow-y-auto">
             <p className="text-[11px] text-gray-600 leading-relaxed font-semibold">
               Execute live pre-entry warnings, geo-fence breaches, SOS dispatch, or 3D Cinematic Story Demo in 1 click:
             </p>

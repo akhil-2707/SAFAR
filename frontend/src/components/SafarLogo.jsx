@@ -73,7 +73,7 @@ export default function SafarLogo({
             </span>
           </div>
           {showSubtitle && (
-            <span className={`text-gray-500 font-medium ${currentSize.subtitle} leading-tight`}>
+            <span className={`hidden sm:inline text-gray-500 font-medium ${currentSize.subtitle} leading-tight truncate max-w-[260px]`}>
               Smart AI Framework for Assured & Responsible Tourism
             </span>
           )}

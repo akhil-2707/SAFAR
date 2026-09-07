@@ -239,12 +239,12 @@ export default function TouristDashboard({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-4 max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 py-4 sm:py-5"
+      className="space-y-4 max-w-7xl mx-auto px-2.5 sm:px-5 lg:px-8 py-3 sm:py-5"
     >
       {/* ── Tourist Header Banner ── */}
       <motion.div
         variants={itemVariants}
-        className="rounded-3xl px-5 py-4 sm:px-6 sm:py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden"
+        className="rounded-2xl sm:rounded-3xl px-4 py-3 sm:px-6 sm:py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 sm:gap-4 relative overflow-hidden"
         style={{
           background: 'rgba(255,255,255,0.78)',
           backdropFilter: 'blur(32px) saturate(180%)',
@@ -263,15 +263,15 @@ export default function TouristDashboard({
           style={{ background: 'radial-gradient(circle, rgba(52,199,89,0.07) 0%, transparent 70%)', filter: 'blur(16px)' }}
         />
 
-        <div className="flex items-start sm:items-center space-x-3 relative z-10 w-full md:w-auto">
+        <div className="flex items-start sm:items-center space-x-2.5 sm:space-x-3 relative z-10 w-full md:w-auto">
           <SafarLogo size="sm" showText={false} animated={true} />
-          <div className="space-y-1.5 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-bold text-xl sm:text-2xl tracking-tight" style={{ color: '#1C1C1E', letterSpacing: '-0.025em' }}>
+          <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="font-bold text-lg sm:text-2xl tracking-tight truncate max-w-[200px] sm:max-w-none" style={{ color: '#1C1C1E', letterSpacing: '-0.025em' }}>
                 {currentTourist?.fullName || 'Ananya Mishra'}
               </span>
               <span
-                className="text-xs font-semibold px-2.5 py-0.5 rounded-lg"
+                className="text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-lg"
                 style={{ background: 'rgba(10,132,255,0.1)', color: '#0A84FF', border: '0.5px solid rgba(10,132,255,0.25)' }}
               >
                 #{currentTourist?.touristId || 'TID-1035'}
@@ -279,20 +279,20 @@ export default function TouristDashboard({
               <motion.span
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full flex items-center space-x-1.5"
+                className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center space-x-1"
                 style={
                   isLiveGpsActive
                     ? { background: 'rgba(52,199,89,0.12)', color: '#248A3D', border: '0.5px solid rgba(52,199,89,0.3)' }
                     : { background: 'rgba(255,159,10,0.1)', color: '#CC7A00', border: '0.5px solid rgba(255,159,10,0.25)' }
                 }
               >
-                <Radio className="w-3 h-3" />
-                <span>{isAutoWandering ? 'Live Walk' : useLiveGpsMode ? 'Phone GPS' : 'Simulator'}</span>
+                <Radio className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                <span>{isAutoWandering ? 'Live Walk' : useLiveGpsMode ? 'GPS' : 'Simulator'}</span>
               </motion.span>
             </div>
 
             {/* Demo Location Switcher */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'rgba(60,60,67,0.5)' }}>Location:</span>
               <select
                 value={currentTourist?.touristId || 'TID-1035'}
@@ -304,12 +304,11 @@ export default function TouristDashboard({
                   } else if (useLiveGpsMode) { setUseLiveGpsMode(false); stopTracking(); }
                   if (onSelectTourist) onSelectTourist(val);
                 }}
-                className="text-xs font-medium px-2.5 py-1.5 rounded-xl cursor-pointer focus:outline-none"
+                className="text-[11px] sm:text-xs font-medium px-2 py-1 rounded-xl cursor-pointer focus:outline-none max-w-full"
                 style={{
                   background: 'rgba(120,120,128,0.1)',
                   border: '0.5px solid rgba(60,60,67,0.12)',
                   color: '#1C1C1E',
-                  maxWidth: '100%',
                 }}
               >
                 <option value="TID-1035">🛕 Ayodhya — Ram Janmabhoomi</option>
@@ -319,19 +318,19 @@ export default function TouristDashboard({
               </select>
             </div>
 
-            <p className="text-xs flex items-center space-x-1.5" style={{ color: 'rgba(60,60,67,0.55)' }}>
-              <MapPin className="w-3.5 h-3.5 shrink-0" style={{ color: '#FF9F0A' }} />
-              <span className="truncate">{currentTourist?.currentLocation?.address || 'Ayodhya Safe Tourism Hub'}</span>
+            <p className="text-[11px] sm:text-xs flex items-center space-x-1" style={{ color: 'rgba(60,60,67,0.55)' }}>
+              <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" style={{ color: '#FF9F0A' }} />
+              <span className="truncate max-w-[250px] sm:max-w-none">{currentTourist?.currentLocation?.address || 'Ayodhya Safe Tourism Hub'}</span>
             </p>
           </div>
         </div>
 
         {/* Controls */}
-        <div className="flex flex-wrap items-center gap-2 relative z-10 w-full md:w-auto justify-start md:justify-end">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 relative z-10 w-full md:w-auto justify-start md:justify-end">
           <motion.button
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }} transition={SPRING}
             onClick={handleToggleAutoWander}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all"
+            className="px-2.5 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold flex items-center gap-1 transition-all"
             style={
               isAutoWandering
                 ? { background: '#34C759', color: 'white', boxShadow: '0 2px 10px rgba(52,199,89,0.35)' }
@@ -339,13 +338,13 @@ export default function TouristDashboard({
             }
           >
             <span>{isAutoWandering ? '⏹' : '🚶‍♂️'}</span>
-            <span>{isAutoWandering ? 'Stop Walk' : 'Live Walk'}</span>
+            <span>{isAutoWandering ? 'Stop' : 'Live Walk'}</span>
           </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }} transition={SPRING}
             onClick={handleToggleLiveGps}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all"
+            className="px-2.5 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold flex items-center gap-1 transition-all"
             style={
               useLiveGpsMode
                 ? { background: '#0A84FF', color: 'white', boxShadow: '0 2px 10px rgba(10,132,255,0.4)' }
@@ -353,13 +352,13 @@ export default function TouristDashboard({
             }
           >
             <Compass className={`w-3.5 h-3.5 ${useLiveGpsMode ? 'animate-spin' : ''}`} />
-            <span>Phone GPS</span>
+            <span>GPS</span>
           </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }} transition={SPRING}
             onClick={() => setShowMeshModal(true)}
-            className="px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5"
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold flex items-center gap-1"
             style={{ background: 'rgba(255,59,48,0.08)', color: '#FF3B30', border: '0.5px solid rgba(255,59,48,0.2)' }}
           >
             <WifiOff className="w-3.5 h-3.5" />
@@ -368,7 +367,7 @@ export default function TouristDashboard({
 
           {/* Risk badge */}
           <span
-            className="text-xs font-bold px-3 py-1.5 rounded-xl uppercase tracking-wide"
+            className="text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-xl uppercase tracking-wide"
             style={{
               background: riskLevel === 'CRITICAL' ? 'rgba(255,59,48,0.1)'
                 : riskLevel === 'HIGH' ? 'rgba(255,159,10,0.1)'
@@ -386,7 +385,7 @@ export default function TouristDashboard({
 
       {/* Permission Denied Warning Banner */}
       {gpsError && (
-        <div className="p-4 bg-amber-50/95 border border-amber-300 rounded-2xl text-amber-900 text-xs flex items-center justify-between shadow-sm">
+        <div className="p-3 sm:p-4 bg-amber-50/95 border border-amber-300 rounded-2xl text-amber-900 text-xs flex items-center justify-between shadow-sm">
           <div className="flex items-center space-x-2.5">
             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
             <div>
@@ -394,7 +393,7 @@ export default function TouristDashboard({
               <p className="text-[11px] text-amber-800">{gpsError}</p>
             </div>
           </div>
-          <span className="text-[10px] font-mono font-bold bg-white px-2.5 py-1 rounded-lg text-amber-700 border border-amber-200">
+          <span className="text-[10px] font-mono font-bold bg-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-amber-700 border border-amber-200 shrink-0">
             Fallback Active
           </span>
         </div>
@@ -408,10 +407,10 @@ export default function TouristDashboard({
       />
 
       {/* Main Grid: Left Column (2 cols) & Right Column (1 col) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         
         {/* Left Column (2 Cols): SOS + Live Map + Telemetry MiniMap + Evaluator Simulator */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           
           {/* Prominent Emergency SOS Trigger Button */}
           <motion.div variants={itemVariants}>
@@ -427,26 +426,26 @@ export default function TouristDashboard({
           {/* Interactive Leaflet Map */}
           <motion.div
             variants={itemVariants}
-            className="rounded-3xl p-4 space-y-3 apple-card"
+            className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 space-y-3 apple-card"
           >
             <div
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 pb-2.5 sm:pb-3"
               style={{ borderBottom: '0.5px solid rgba(60,60,67,0.08)' }}
             >
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2.5 sm:space-x-3">
                 <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0"
                   style={{ background: 'rgba(10,132,255,0.1)', border: '0.5px solid rgba(10,132,255,0.2)' }}
                 >
                   <Navigation className="w-4 h-4" style={{ color: '#0A84FF' }} />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>Live Safety Map</h2>
-                  <p className="text-xs" style={{ color: 'rgba(60,60,67,0.5)' }}>Safe Corridors · Danger Zones · Live Tracking</p>
+                  <h2 className="text-sm sm:text-base font-semibold" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>Live Safety Map</h2>
+                  <p className="text-[11px] sm:text-xs" style={{ color: 'rgba(60,60,67,0.5)' }}>Safe Corridors · Danger Zones · Live Tracking</p>
                 </div>
               </div>
               <div
-                className="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-xl font-mono"
+                className="flex items-center space-x-2 text-[11px] sm:text-xs px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl font-mono"
                 style={{ background: 'rgba(120,120,128,0.08)', border: '0.5px solid rgba(60,60,67,0.08)' }}
               >
                 <span style={{ color: 'rgba(60,60,67,0.6)' }}>Speed: <strong style={{ color: '#34C759' }}>{currentSpeed} km/h</strong></span>
@@ -456,11 +455,17 @@ export default function TouristDashboard({
             </div>
 
             <MapView
+              destination={{
+                lat: currentTourist?.destinationLat || currentTourist?.currentLocation?.lat || 26.7922,
+                lng: currentTourist?.destinationLng || currentTourist?.currentLocation?.lng || 82.1998,
+                name: currentTourist?.destination || currentTourist?.currentLocation?.address || 'Ayodhya Ram Janmabhoomi Complex',
+                address: currentTourist?.currentLocation?.address || 'Ayodhya Safe Heritage Circuit, Uttar Pradesh'
+              }}
               tourists={allTourists && allTourists.length > 0 ? allTourists : (currentTourist ? [currentTourist] : [])}
               geofences={geofences}
               selectedTourist={currentTourist}
               emergencyServices={emergencyServices}
-              height="480px"
+              height="h-[340px] xs:h-[380px] sm:h-[460px] md:h-[500px]"
             />
           </motion.div>
 

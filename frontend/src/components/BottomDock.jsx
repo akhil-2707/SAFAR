@@ -13,11 +13,24 @@ const TOURIST_TABS = [
   { id: 'help',  to: '/emergency-help',    icon: Phone,      label: 'Help',   color: '#34C759' },
 ];
 
+const TOURIST_ROUTES = [
+  '/tourist-dashboard',
+  '/digital-id',
+  '/sos',
+  '/fares',
+  '/deadman-switch',
+  '/emergency-help'
+];
+
 export default function BottomDock({ currentUser, onTriggerSos }) {
   const location = useLocation();
   const [sosPressed, setSosPressed] = useState(false);
+  const [dismissDeadmanPill, setDismissDeadmanPill] = useState(false);
 
-  if (!currentUser || currentUser.role !== 'TOURIST') return null;
+  // Only render on designated tourist routes
+  if (!currentUser || currentUser.role !== 'TOURIST' || !TOURIST_ROUTES.includes(location.pathname)) {
+    return null;
+  }
 
   const tabs = TOURIST_TABS;
 
@@ -30,37 +43,43 @@ export default function BottomDock({ currentUser, onTriggerSos }) {
       initial={{ y: 80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.2, ...SPRING }}
-      className="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center pb-4 px-4 sm:px-6 pointer-events-none"
+      className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-center pb-2 sm:pb-4 px-2 sm:px-6 pointer-events-none pb-safe"
     >
-      {/* Mini Floating Deadman's Switch Pill above Dock */}
-      {location.pathname !== '/deadman-switch' && (
+      {/* Mini Floating Deadman's Switch Pill above Dock — Only on tourist dashboard, dismissible */}
+      {location.pathname === '/tourist-dashboard' && !dismissDeadmanPill && (
         <motion.div
           initial={{ opacity: 0, y: 10, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={SPRING}
-          className="pointer-events-auto mb-2"
+          className="pointer-events-auto mb-1.5 sm:mb-2 max-w-[calc(100vw-32px)] flex items-center gap-1"
         >
           <Link
             to="/deadman-switch"
-            className="px-3.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1.5 shadow-md backdrop-blur-xl transition-transform hover:scale-105 active:scale-95"
+            className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold flex items-center gap-1.5 shadow-md backdrop-blur-xl transition-transform hover:scale-105 active:scale-95"
             style={{
-              background: 'rgba(255,255,255,0.85)',
+              background: 'rgba(255,255,255,0.95)',
               border: '0.5px solid rgba(94,92,230,0.3)',
               color: '#5E5CE6',
               boxShadow: '0 2px 10px rgba(94,92,230,0.15)',
             }}
           >
-            <Clock className="w-3 h-3 text-indigo-600 animate-spin-slow" />
-            <span>Deadman Switch: <strong>Armed (2h)</strong></span>
-            <span className="text-[9px] bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded font-mono">15m Check-in</span>
+            <Clock className="w-3 h-3 text-indigo-600 animate-spin-slow shrink-0" />
+            <span className="truncate">Deadman Switch: <strong>Armed (2h)</strong></span>
+            <span className="text-[9px] bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded font-mono hidden xs:inline">15m Check-in</span>
           </Link>
+          <button
+            onClick={() => setDismissDeadmanPill(true)}
+            className="w-4 h-4 rounded-full bg-white/90 border border-gray-200 text-gray-400 hover:text-gray-700 flex items-center justify-center text-[9px] shadow-xs"
+            title="Dismiss"
+          >
+            ✕
+          </button>
         </motion.div>
       )}
 
       {/* Dock Bar */}
       <motion.div
-        className="dock-container pointer-events-auto flex items-end px-3 pt-2 pb-2 gap-1"
-        style={{ minWidth: 320, maxWidth: 430, width: '100%' }}
+        className="dock-container pointer-events-auto flex items-end justify-between px-2 sm:px-3 pt-1.5 sm:pt-2 pb-1.5 sm:pb-2 gap-1 w-[calc(100vw-24px)] xs:w-[calc(100vw-32px)] sm:w-full max-w-[400px] shadow-xl"
       >
         {tabs.map((tab) => (
           tab.isSos
@@ -77,8 +96,8 @@ function RegularTab({ tab, active }) {
   return (
     <Link
       to={tab.to}
-      className="flex-1 flex flex-col items-center gap-0.5 py-1 px-1 rounded-2xl relative group"
-      style={{ minWidth: 52, textDecoration: 'none' }}
+      className="flex-1 min-w-0 flex flex-col items-center gap-0.5 py-1 px-0.5 rounded-2xl relative group"
+      style={{ textDecoration: 'none' }}
     >
       {/* Active indicator pill */}
       <AnimatePresence>
@@ -97,20 +116,20 @@ function RegularTab({ tab, active }) {
 
       {/* Icon */}
       <motion.div
-        whileHover={{ scale: 1.15, y: -2 }}
+        whileHover={{ scale: 1.12, y: -2 }}
         whileTap={{ scale: 0.88 }}
         transition={SPRING}
-        className="relative z-10 w-8 h-8 flex items-center justify-center"
+        className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center"
       >
         <IconComp
           style={{ color: active ? tab.color : 'rgba(60,60,67,0.55)', strokeWidth: active ? 2.5 : 1.8 }}
-          className="w-5 h-5 transition-colors duration-200"
+          className="w-4.5 h-4.5 sm:w-5 sm:h-5 transition-colors duration-200"
         />
       </motion.div>
 
       {/* Label */}
       <span
-        className="relative z-10 text-[10px] font-semibold tracking-tight transition-colors duration-200"
+        className="relative z-10 text-[9px] sm:text-[10px] font-semibold tracking-tight transition-colors duration-200 truncate max-w-full"
         style={{ color: active ? tab.color : 'rgba(60,60,67,0.5)' }}
       >
         {tab.label}
@@ -122,16 +141,16 @@ function RegularTab({ tab, active }) {
 function SosTab({ tab, active, onTriggerSos, currentUser }) {
   const IconComp = tab.icon;
   return (
-    <div className="flex-1 flex flex-col items-center justify-end pb-0.5" style={{ minWidth: 64 }}>
+    <div className="flex-1 min-w-0 flex flex-col items-center justify-end pb-0.5">
       <Link to={tab.to}>
         <motion.div
-          whileHover={{ scale: 1.1, y: -3 }}
+          whileHover={{ scale: 1.08, y: -2 }}
           whileTap={{ scale: 0.88 }}
           transition={SPRING}
           className="relative flex items-center justify-center rounded-full shadow-lg"
           style={{
-            width: 56,
-            height: 56,
+            width: 48,
+            height: 48,
             background: 'linear-gradient(145deg, #FF3B30, #FF375F)',
             boxShadow: active
               ? '0 0 0 3px #FFFFFF, 0 4px 20px rgba(255,59,48,0.6)'
@@ -146,10 +165,10 @@ function SosTab({ tab, active, onTriggerSos, currentUser }) {
               background: 'transparent',
             }}
           />
-          <IconComp className="w-6 h-6 text-white relative z-10" strokeWidth={2.5} />
+          <IconComp className="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10" strokeWidth={2.5} />
         </motion.div>
       </Link>
-      <span className="text-[10px] font-bold mt-1 tracking-tight" style={{ color: '#FF3B30' }}>
+      <span className="text-[9px] sm:text-[10px] font-bold mt-0.5 sm:mt-1 tracking-tight" style={{ color: '#FF3B30' }}>
         SOS
       </span>
     </div>

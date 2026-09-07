@@ -251,7 +251,7 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
   };
 
   return (
-    <div className="relative w-full h-[92vh] min-h-[650px] overflow-hidden rounded-3xl border-2 border-emerald-500/20 shadow-xl bg-slate-100">
+    <div className="relative w-full h-[68vh] sm:h-[82vh] lg:h-[90vh] min-h-[460px] sm:min-h-[580px] overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-emerald-500/20 shadow-xl bg-slate-100">
       
       {/* Map Camera Controller Sync */}
       <MapContainer
@@ -343,21 +343,21 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
       </MapContainer>
 
       {/* Top Floating Overlay: Live GPS Telemetry Badge & Hero Branding - BRIGHT */}
-      <div className="absolute top-4 left-4 right-4 z-10 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 z-10 flex flex-wrap items-center justify-between gap-1.5 sm:gap-3 pointer-events-none">
         
         {/* Hero Branding Badge */}
         <div
-          className="pointer-events-auto backdrop-blur-xl px-4 py-2 rounded-2xl shadow-xl flex items-center space-x-3"
+          className="pointer-events-auto backdrop-blur-xl px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-xl flex items-center space-x-2 sm:space-x-3 max-w-[calc(100vw-24px)]"
           style={{
             background: 'rgba(255, 255, 255, 0.95)',
             border: '1.5px solid rgba(16, 185, 129, 0.35)',
             boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)'
           }}
         >
-          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
-          <div>
-            <h2 className="text-sm font-black text-gray-900 tracking-wide">SAFE-TOUR CINEMATIC COMMAND ENGINE</h2>
-            <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
+          <div className="min-w-0">
+            <h2 className="text-xs sm:text-sm font-black text-gray-900 tracking-wide truncate">SAFE-TOUR CINEMATIC COMMAND</h2>
+            <p className="text-[9px] sm:text-[10px] font-bold text-emerald-700 uppercase tracking-widest hidden sm:block">
               Live GPS • Geo-Fence Containment • AI Risk Telemetry
             </p>
           </div>
@@ -365,17 +365,17 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
 
         {/* Live GPS Status Pill */}
         <div
-          className="pointer-events-auto backdrop-blur-xl px-3.5 py-2 rounded-2xl shadow-xl flex items-center space-x-3"
+          className="pointer-events-auto backdrop-blur-xl px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-xl flex items-center space-x-2 sm:space-x-3"
           style={{
             background: 'rgba(255, 255, 255, 0.95)',
             border: '1.5px solid rgba(0, 0, 0, 0.1)',
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)'
           }}
         >
-          <div className="flex items-center space-x-2">
-            <span className={`w-2.5 h-2.5 rounded-full ${isLiveGps ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-            <span className="text-xs font-black text-gray-800">
-              {isLiveGps ? '🟢 LIVE GPS' : '🟡 DEMO MODE'}
+          <div className="flex items-center space-x-1.5">
+            <span className={`w-2 h-2 rounded-full ${isLiveGps ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+            <span className="text-[11px] sm:text-xs font-black text-gray-800">
+              {isLiveGps ? '🟢 LIVE' : '🟡 DEMO'}
             </span>
           </div>
 
@@ -384,27 +384,27 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
               if (isLiveGps) stopTracking();
               else startTracking();
             }}
-            className="px-2.5 py-1 text-[11px] font-bold rounded-xl bg-gray-100 hover:bg-gray-200 text-emerald-700 border border-gray-200 transition-colors shadow-sm"
+            className="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded-lg sm:rounded-xl bg-gray-100 hover:bg-gray-200 text-emerald-700 border border-gray-200 transition-colors shadow-sm"
           >
-            {isLiveGps ? 'Switch to Demo' : 'Enable Real GPS'}
+            {isLiveGps ? 'Demo Mode' : 'Real GPS'}
           </button>
 
           <button
             onClick={() => setFollowMe(!followMe)}
-            className={`px-2.5 py-1 text-[11px] font-bold rounded-xl transition-colors shadow-sm ${
+            className={`px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded-lg sm:rounded-xl transition-colors shadow-sm ${
               followMe ? 'bg-emerald-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
             }`}
           >
-            {followMe ? '🎯 Camera Locked' : 'Follow Me'}
+            {followMe ? '🎯 Locked' : 'Follow'}
           </button>
         </div>
       </div>
 
       {/* Active Story Alert Card Overlay - BRIGHT */}
       {activeAlert && (
-        <div className="absolute top-20 left-4 z-10 max-w-md w-full pointer-events-auto transition-all animate-bounce-short">
+        <div className="absolute top-16 sm:top-20 left-2 sm:left-4 z-10 max-w-[calc(100vw-20px)] sm:max-w-md pointer-events-auto transition-all animate-bounce-short">
           <div
-            className={`p-4 rounded-2xl backdrop-blur-xl border-2 shadow-2xl space-y-2 ${
+            className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl backdrop-blur-xl border shadow-xl sm:shadow-2xl space-y-1 sm:space-y-2 ${
               activeAlert.type === 'WARNING'
                 ? 'bg-amber-50/95 border-amber-400 text-amber-950'
                 : activeAlert.type === 'BREACH' || activeAlert.type === 'SOS' || activeAlert.type === 'CRITICAL'
@@ -417,32 +417,32 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
             }`}
             style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.12)' }}
           >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-orange-500" />
-                <span>{activeAlert.title}</span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center space-x-1.5 truncate">
+                <Sparkles className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                <span className="truncate">{activeAlert.title}</span>
               </span>
-              <span className="text-[10px] font-mono font-bold bg-white/80 border border-gray-200 px-2 py-0.5 rounded text-gray-700">
-                Scene {currentScene}/13
+              <span className="text-[9px] sm:text-[10px] font-mono font-bold bg-white/80 border border-gray-200 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                {currentScene}/13
               </span>
             </div>
-            <p className="text-xs font-semibold leading-relaxed">{activeAlert.msg}</p>
+            <p className="text-[11px] sm:text-xs font-semibold leading-snug sm:leading-relaxed">{activeAlert.msg}</p>
           </div>
         </div>
       )}
 
       {/* AI Risk Score Gauge Overlay (Right Floating) - BRIGHT */}
       <div
-        className="absolute top-20 right-4 z-10 pointer-events-auto backdrop-blur-xl p-4 rounded-2xl shadow-xl space-y-2 w-48"
+        className="absolute top-36 sm:top-20 right-2 sm:right-4 z-10 pointer-events-auto backdrop-blur-xl p-2.5 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl space-y-1.5 sm:space-y-2 w-36 sm:w-48"
         style={{
           background: 'rgba(255, 255, 255, 0.95)',
           border: '1.5px solid rgba(0, 0, 0, 0.1)',
           boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)'
         }}
       >
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-extrabold text-gray-600 uppercase tracking-wider">AI Risk Meter</span>
-          <span className={`font-black px-2 py-0.5 rounded text-[10px] ${
+        <div className="flex items-center justify-between text-[10px] sm:text-xs">
+          <span className="font-extrabold text-gray-600 uppercase tracking-wider">AI Risk</span>
+          <span className={`font-black px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] ${
             riskLevel === 'CRITICAL' ? 'bg-red-100 text-red-700 border border-red-200' :
             riskLevel === 'HIGH' ? 'bg-orange-100 text-orange-700 border border-orange-200' :
             'bg-emerald-100 text-emerald-700 border border-emerald-200'
@@ -451,12 +451,12 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
           </span>
         </div>
 
-        <div className="relative pt-1">
-          <div className="flex mb-1 items-center justify-between text-xs">
-            <span className="text-2xl font-black text-gray-900">{riskScore}</span>
-            <span className="text-[10px] text-gray-400 font-bold">/ 100</span>
+        <div className="relative pt-0.5">
+          <div className="flex mb-0.5 items-center justify-between text-xs">
+            <span className="text-lg sm:text-2xl font-black text-gray-900">{riskScore}</span>
+            <span className="text-[9px] sm:text-[10px] text-gray-400 font-bold">/ 100</span>
           </div>
-          <div className="overflow-hidden h-2.5 text-xs flex rounded-full bg-gray-100 border border-gray-200">
+          <div className="overflow-hidden h-2 sm:h-2.5 text-xs flex rounded-full bg-gray-100 border border-gray-200">
             <div
               style={{ width: `${riskScore}%` }}
               className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500 ${
@@ -467,16 +467,16 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
         </div>
 
         {responseEta && (
-          <div className="pt-2 border-t border-gray-100 text-[11px] text-blue-700 font-bold flex items-center justify-between">
-            <span>Response ETA:</span>
-            <span className="bg-blue-50 px-2 py-0.5 rounded text-blue-700 border border-blue-200 font-mono">{responseEta}</span>
+          <div className="pt-1.5 border-t border-gray-100 text-[10px] sm:text-[11px] text-blue-700 font-bold flex items-center justify-between">
+            <span>ETA:</span>
+            <span className="bg-blue-50 px-1.5 py-0.5 rounded text-blue-700 border border-blue-200 font-mono text-[10px]">{responseEta}</span>
           </div>
         )}
       </div>
 
       {/* Bottom Floating Control Bar: 13-Scene Judge Demo Player - BRIGHT */}
       <div
-        className="absolute bottom-4 left-4 right-4 z-10 pointer-events-auto backdrop-blur-2xl p-3.5 sm:p-4 rounded-3xl shadow-2xl space-y-3"
+        className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 z-10 pointer-events-auto backdrop-blur-2xl p-2.5 sm:p-4 rounded-2xl sm:rounded-3xl shadow-2xl space-y-2 sm:space-y-3 max-w-[calc(100vw-16px)] mx-auto"
         style={{
           background: 'rgba(255, 255, 255, 0.96)',
           border: '2px solid rgba(16, 185, 129, 0.35)',
@@ -484,7 +484,7 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
         }}
       >
         {/* Timeline Scene Indicators */}
-        <div className="flex items-center justify-between gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center justify-start gap-1 sm:gap-1.5 overflow-x-auto pb-1 no-scrollbar touch-scroll">
           {[
             '1. India', '2. Mumbai', '3. Route', '4. Delhi', '5. NE Arrive', 
             '6. Moving', '7. 300m Warn', '8. Breach', '9. AI Risk', '10. SOS Lock', 
@@ -499,7 +499,7 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
                   setIsPlaying(false);
                   executeScene(sceneNum);
                 }}
-                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all whitespace-nowrap ${
+                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold transition-all whitespace-nowrap shrink-0 ${
                   isActive
                     ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md scale-105 font-black'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
@@ -512,35 +512,35 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
         </div>
 
         {/* Master Playback & Scenario Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-2.5">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between gap-2 border-t border-gray-100 pt-2 flex-wrap">
+          <div className="flex items-center space-x-1.5 sm:space-x-2">
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center space-x-1.5"
+              className="px-2.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-[11px] sm:text-xs rounded-xl shadow-md transition-all flex items-center space-x-1"
             >
-              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              <span>{isPlaying ? 'Pause Demo' : '▶ Start 3D Cinematic Demo'}</span>
+              {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+              <span>{isPlaying ? 'Pause' : '▶ Play 3D Demo'}</span>
             </button>
 
             <button
               onClick={handleNext}
-              className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-xl border border-gray-200 transition-colors flex items-center space-x-1 shadow-sm"
+              className="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-[11px] sm:text-xs rounded-xl border border-gray-200 transition-colors flex items-center space-x-1 shadow-sm"
             >
-              <span>Next Scene</span>
-              <SkipForward className="w-3.5 h-3.5" />
+              <span>Next</span>
+              <SkipForward className="w-3 h-3" />
             </button>
 
             <button
               onClick={handleRestart}
-              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 transition-colors shadow-sm"
+              className="p-1.5 sm:p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 transition-colors shadow-sm"
               title="Restart Demo"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="text-[11px] text-gray-500 font-semibold hidden lg:block">
-            SIH Judge Evaluator Mode: <span className="text-emerald-700 font-bold">13-Scene Automated Storyboard Active</span>
+          <div className="text-[10px] sm:text-[11px] text-gray-500 font-semibold hidden md:block">
+            SIH Mode: <span className="text-emerald-700 font-bold">13-Scene Storyboard</span>
           </div>
         </div>
       </div>

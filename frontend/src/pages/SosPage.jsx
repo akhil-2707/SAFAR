@@ -154,17 +154,17 @@ export default function SosPage({
       </AnimatePresence>
 
       {/* Main SOS Trigger Center Card */}
-      <div className="p-8 sm:p-12 rounded-3xl apple-card flex flex-col items-center justify-center text-center space-y-8 relative overflow-hidden">
+      <div className="p-6 sm:p-12 rounded-2xl sm:rounded-3xl apple-card flex flex-col items-center justify-center text-center space-y-6 sm:space-y-8 relative overflow-hidden">
         {/* Soft Ambient Red Orbs */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(255,59,48,0.12) 0%, transparent 70%)', filter: 'blur(30px)' }}
         />
 
         <div className="space-y-2 relative z-10 max-w-md">
-          <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-200">
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-200">
             Emergency Trigger
           </span>
-          <h2 className="text-xl sm:text-2xl font-black text-gray-900">
+          <h2 className="text-lg sm:text-2xl font-black text-gray-900">
             Hold or Press to Broadcast SOS
           </h2>
           <p className="text-xs text-gray-500">
@@ -173,46 +173,46 @@ export default function SosPage({
         </div>
 
         {/* The Massive Pulsing SOS Button */}
-        <div className="relative flex items-center justify-center py-4">
+        <div className="relative flex items-center justify-center py-2 sm:py-4">
           {/* Concentric Radar Rings */}
-          <span className="wave-ring w-56 h-56 -top-4 -left-4" />
-          <span className="wave-ring w-72 h-72 -top-12 -left-12" />
+          <span className="wave-ring w-48 h-48 sm:w-56 sm:h-56 -top-4 -left-4" />
+          <span className="wave-ring w-60 h-60 sm:w-72 sm:h-72 -top-10 -left-10 sm:-top-12 sm:-left-12" />
 
           {countdown !== null ? (
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
-              className="w-44 h-44 rounded-full flex flex-col items-center justify-center bg-red-600 text-white shadow-2xl relative z-20 cursor-pointer"
+              className="w-36 h-36 sm:w-44 sm:h-44 rounded-full flex flex-col items-center justify-center bg-red-600 text-white shadow-2xl relative z-20 cursor-pointer"
             >
-              <span className="text-5xl font-black">{countdown}</span>
-              <span className="text-[11px] font-bold uppercase tracking-wider mt-1">Tap to Cancel</span>
+              <span className="text-4xl sm:text-5xl font-black">{countdown}</span>
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mt-1">Tap to Cancel</span>
               <button
                 onClick={handleAbortCountdown}
-                className="mt-2 text-[10px] font-bold px-3 py-1 rounded-full bg-white/20 hover:bg-white/30"
+                className="mt-1.5 sm:mt-2 text-[10px] font-bold px-3 py-1 rounded-full bg-white/20 hover:bg-white/30"
               >
                 Abort
               </button>
             </motion.div>
           ) : (
             <motion.button
-              whileHover={{ scale: 1.06 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.92 }}
               transition={SPRING}
               onClick={handleStartSos}
               disabled={isEmergencyActive}
-              className="w-44 h-44 rounded-full flex flex-col items-center justify-center text-white relative z-20 shadow-2xl transition-all select-none"
+              className="w-36 h-36 sm:w-44 sm:h-44 rounded-full flex flex-col items-center justify-center text-white relative z-20 shadow-2xl transition-all select-none"
               style={{
                 background: isEmergencyActive
                   ? 'linear-gradient(145deg, #8E8E93, #636366)'
                   : 'linear-gradient(145deg, #FF3B30, #FF2D55)',
                 boxShadow: isEmergencyActive
                   ? '0 4px 20px rgba(0,0,0,0.2)'
-                  : '0 12px 40px rgba(255,59,48,0.5), 0 0 0 12px rgba(255,59,48,0.15)',
+                  : '0 12px 40px rgba(255,59,48,0.5), 0 0 0 10px rgba(255,59,48,0.15)',
               }}
             >
-              <Siren className="w-14 h-14 mb-1 animate-pulse" />
-              <span className="text-3xl font-black tracking-wider">SOS</span>
-              <span className="text-[10px] font-semibold opacity-90 tracking-wide mt-0.5">
+              <Siren className="w-10 h-10 sm:w-14 sm:h-14 mb-1 animate-pulse" />
+              <span className="text-2xl sm:text-3xl font-black tracking-wider">SOS</span>
+              <span className="text-[9px] sm:text-[10px] font-semibold opacity-90 tracking-wide mt-0.5">
                 {isEmergencyActive ? 'INCIDENT LIVE' : 'PRESS FOR HELP'}
               </span>
             </motion.button>
@@ -220,7 +220,7 @@ export default function SosPage({
         </div>
 
         {/* Current Locked GPS Sensor Coordinates */}
-        <div className="flex items-center space-x-2 text-xs font-mono p-3 rounded-2xl bg-gray-50 border border-gray-200/80 relative z-10">
+        <div className="flex items-center space-x-2 text-[11px] sm:text-xs font-mono p-2.5 sm:p-3 rounded-2xl bg-gray-50 border border-gray-200/80 relative z-10 max-w-full">
           <MapPin className="w-4 h-4 text-red-500 shrink-0" />
           <span className="text-gray-700 truncate">
             <strong>Location:</strong> {locationAddr} ({lat}, {lng})
@@ -229,18 +229,18 @@ export default function SosPage({
       </div>
 
       {/* Voice SOS Equalizer Card */}
-      <div className="p-6 rounded-3xl apple-card space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl apple-card space-y-3 sm:space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
           <div className="flex items-center space-x-3">
-            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${isVoiceActive ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
-              {isVoiceActive ? <Mic className="w-5 h-5 animate-pulse" /> : <MicOff className="w-5 h-5" />}
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 ${isVoiceActive ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+              {isVoiceActive ? <Mic className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" /> : <MicOff className="w-4 h-4 sm:w-5 sm:h-5" />}
             </div>
             <div>
-              <h3 className="text-base font-bold text-gray-900">
+              <h3 className="text-sm sm:text-base font-bold text-gray-900">
                 Voice-Activated SOS Recognition
               </h3>
-              <p className="text-xs text-gray-500">
-                AI acoustic listener detects shouted distress keywords like <strong>"Bachao"</strong>, <strong>"Help"</strong>, or <strong>"Police"</strong>.
+              <p className="text-[11px] sm:text-xs text-gray-500">
+                AI acoustic listener detects shouted distress keywords like <strong>"Bachao"</strong> or <strong>"Help"</strong>.
               </p>
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function SosPage({
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsVoiceActive(!isVoiceActive)}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold"
+            className="px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-xl text-xs font-bold shrink-0 self-end sm:self-auto"
             style={{
               background: isVoiceActive ? 'rgba(52,199,89,0.12)' : 'rgba(120,120,128,0.12)',
               color: isVoiceActive ? '#248A3D' : '#636366',
@@ -261,7 +261,7 @@ export default function SosPage({
 
         {/* Audio Equalizer Frequency Waveform Bars */}
         {isVoiceActive && (
-          <div className="flex items-center justify-center space-x-2 py-3 bg-gray-50/80 rounded-2xl border border-gray-200/60">
+          <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 py-2.5 sm:py-3 px-2 bg-gray-50/80 rounded-2xl border border-gray-200/60 overflow-hidden">
             <div className="w-1.5 rounded-full bg-blue-500 eq-bar-1" />
             <div className="w-1.5 rounded-full bg-blue-600 eq-bar-2" />
             <div className="w-1.5 rounded-full bg-indigo-500 eq-bar-3" />
@@ -269,7 +269,7 @@ export default function SosPage({
             <div className="w-1.5 rounded-full bg-indigo-600 eq-bar-5" />
             <div className="w-1.5 rounded-full bg-blue-400 eq-bar-2" />
             <div className="w-1.5 rounded-full bg-blue-600 eq-bar-1" />
-            <span className="text-xs font-mono text-gray-500 ml-4">
+            <span className="text-[10px] sm:text-xs font-mono text-gray-500 ml-2 sm:ml-4 truncate">
               {micRecognizedWord || 'Microphone Active · Zero False Alarm Threshold'}
             </span>
           </div>

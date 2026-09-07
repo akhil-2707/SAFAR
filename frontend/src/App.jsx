@@ -397,7 +397,7 @@ function AppContent({
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col justify-between" style={{ background: '#F2F2F7', color: '#1C1C1E', fontFamily: "'Inter', -apple-system, 'SF Pro Display', sans-serif" }}>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col justify-between" style={{ background: '#F2F2F7', color: '#1C1C1E', fontFamily: "'Inter', -apple-system, 'SF Pro Display', sans-serif" }}>
       
       {/* Patriotic Indian Flag Animated Loading Screen */}
       {showPatrioticLoader && (
@@ -436,7 +436,11 @@ function AppContent({
       />
 
       {/* Main Route Body with Silky iOS Page Transitions */}
-      <main className="flex-1" style={{ paddingBottom: currentUser?.role === 'TOURIST' ? 96 : 0 }}>
+      <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help'].includes(location.pathname))
+          ? 'pb-36 sm:pb-28'
+          : 'pb-12 sm:pb-8'
+      }`}>
         <ErrorBoundary>
           <AnimatePresence mode="wait">
             <motion.div

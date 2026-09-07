@@ -153,81 +153,81 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
             }}
           />
 
-          <div className="p-6 sm:p-8 space-y-6">
+          <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
             {/* Top Bar inside Card */}
-            <div className="flex items-center justify-between border-b border-gray-100/80 pb-4">
-              <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-between border-b border-gray-100/80 pb-3 sm:pb-4 gap-2">
+              <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
                 <SafarLogo size="sm" showText={false} animated={true} />
-                <div>
-                  <h3 className="font-extrabold text-sm uppercase tracking-wider text-gray-900">
-                    S.A.F.A.R. Tourist Pass
+                <div className="min-w-0">
+                  <h3 className="font-extrabold text-xs sm:text-sm uppercase tracking-wider text-gray-900 truncate">
+                    S.A.F.A.R. Pass
                   </h3>
-                  <p className="text-[10px] font-mono text-emerald-700 font-semibold">
-                    Government of India · Ministry of Tourism
+                  <p className="text-[9px] sm:text-[10px] font-mono text-emerald-700 font-semibold truncate">
+                    Govt of India · Ministry of Tourism
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold"
+              <div className="flex items-center space-x-1 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold shrink-0"
                 style={{
                   background: 'rgba(52,199,89,0.12)',
                   color: '#248A3D',
                   border: '0.5px solid rgba(52,199,89,0.3)',
                 }}
               >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>ACTIVE & VERIFIED</span>
+                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>VERIFIED</span>
               </div>
             </div>
 
             {/* Profile & QR Code Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 items-center">
               {/* Profile Details */}
-              <div className="sm:col-span-2 space-y-4">
+              <div className="sm:col-span-2 space-y-3 sm:space-y-4">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Cardholder</span>
-                  <h2 className="text-2xl font-black text-gray-900 tracking-tight">{fullName}</h2>
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg text-blue-700 bg-blue-50 border border-blue-200 mt-1 inline-block">
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-400">Cardholder</span>
+                  <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight truncate">{fullName}</h2>
+                  <span className="text-[11px] sm:text-xs font-mono font-bold px-2 py-0.5 rounded-lg text-blue-700 bg-blue-50 border border-blue-200 mt-1 inline-block">
                     {activeTid}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3 text-xs">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Nationality</span>
+                    <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-400 block">Nationality</span>
                     <span className="font-semibold text-gray-800">{currentTourist?.nationality || 'Indian'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Destination</span>
-                    <span className="font-semibold text-gray-800">{currentTourist?.destination || 'Ayodhya Circuit'}</span>
+                    <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-400 block">Destination</span>
+                    <span className="font-semibold text-gray-800 truncate block">{currentTourist?.destination || 'Ayodhya Circuit'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">ID Proof</span>
+                    <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-400 block">ID Proof</span>
                     <span className="font-semibold text-gray-800">{currentTourist?.idProofType || 'Aadhaar / Passport'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Risk Tier</span>
+                    <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gray-400 block">Risk Tier</span>
                     <span className="font-bold text-emerald-600">SAFE (Tier-1)</span>
                   </div>
                 </div>
 
-                <div className="text-xs space-y-1 text-gray-600 pt-1">
+                <div className="text-[11px] sm:text-xs space-y-1 text-gray-600 pt-1">
                   <div className="flex items-center space-x-1.5">
                     <Calendar className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                    <span>Valid: <strong>{currentTourist?.travelStartDate || '2026-08-10'}</strong> to <strong>{currentTourist?.travelEndDate || '2026-08-20'}</strong></span>
+                    <span className="truncate">Valid: <strong>{currentTourist?.travelStartDate || '2026-08-10'}</strong> to <strong>{currentTourist?.travelEndDate || '2026-08-20'}</strong></span>
                   </div>
                   <div className="flex items-center space-x-1.5">
                     <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>Emergency Contact: <strong>{currentTourist?.emergencyContact?.phone || '+91 98765 43210'}</strong></span>
+                    <span className="truncate">Emergency: <strong>{currentTourist?.emergencyContact?.phone || '+91 98765 43210'}</strong></span>
                   </div>
                 </div>
               </div>
 
               {/* QR Code Container with High Scanability */}
-              <div className="flex flex-col items-center justify-center p-3.5 bg-white rounded-2xl border border-gray-200/80 shadow-md space-y-2">
+              <div className="flex flex-col items-center justify-center p-3 bg-white rounded-2xl border border-gray-200/80 shadow-md space-y-1.5 mx-auto">
                 <QRCodeSVG
                   value={qrUrl}
-                  size={128}
+                  size={110}
                   bgColor="#ffffff"
                   fgColor="#1C1C1E"
                   level="H"
@@ -240,8 +240,8 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
             </div>
 
             {/* Cryptographic Ledger Proof Banner */}
-            <div className="p-3 rounded-2xl bg-gray-50/80 border border-gray-200/60 flex items-center justify-between gap-2 text-[11px] font-mono">
-              <div className="flex items-center space-x-2 truncate">
+            <div className="p-2 sm:p-3 rounded-2xl bg-gray-50/80 border border-gray-200/60 flex items-center justify-between gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-mono max-w-full overflow-hidden">
+              <div className="flex items-center space-x-1.5 truncate min-w-0">
                 <Hash className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                 <span className="text-gray-500 truncate">SHA-256: {shaHash}</span>
               </div>
@@ -258,20 +258,20 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
       </div>
 
       {/* Action Controls: Download Pass, Share, Check Ledger */}
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 w-full">
         <motion.button
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.95 }}
           transition={SPRING}
           onClick={handleDownloadPass}
-          className="px-5 py-2.5 rounded-2xl font-semibold text-sm flex items-center gap-2 text-white"
+          className="px-4 sm:px-5 py-2.5 rounded-2xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 text-white"
           style={{
             background: 'linear-gradient(135deg, #0A84FF, #5E5CE6)',
             boxShadow: '0 4px 16px rgba(10,132,255,0.3)',
           }}
         >
           <Download className="w-4 h-4" />
-          <span>Download Official Pass (PDF)</span>
+          <span>Download Pass (PDF)</span>
         </motion.button>
 
         <motion.button
@@ -279,23 +279,23 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
           whileTap={{ scale: 0.95 }}
           transition={SPRING}
           onClick={handleCopyHash}
-          className="px-5 py-2.5 rounded-2xl font-semibold text-sm flex items-center gap-2 apple-card"
+          className="px-4 sm:px-5 py-2.5 rounded-2xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 apple-card"
           style={{ color: '#1C1C1E' }}
         >
           <Share2 className="w-4 h-4 text-blue-600" />
           <span>{copied ? 'Link Copied!' : 'Share Pass URL'}</span>
         </motion.button>
 
-        <Link to="/blockchain-ledger">
+        <Link to="/blockchain-ledger" className="w-full sm:w-auto">
           <motion.div
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.95 }}
             transition={SPRING}
-            className="px-5 py-2.5 rounded-2xl font-semibold text-sm flex items-center gap-2 apple-card"
+            className="px-4 sm:px-5 py-2.5 rounded-2xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 apple-card w-full sm:w-auto"
             style={{ color: '#5E5CE6' }}
           >
             <Lock className="w-4 h-4" />
-            <span>Inspect Blockchain Ledger</span>
+            <span>Blockchain Ledger</span>
             <ExternalLink className="w-3.5 h-3.5 opacity-60" />
           </motion.div>
         </Link>

@@ -158,22 +158,22 @@ export default function GeoFenceManagementPage({ geofences = [], onRefreshData }
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Top Banner */}
-      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-6 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-xl">
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className="font-extrabold text-2xl text-gray-900">Authority Geo-Fence Boundary System</span>
-            <span className="bg-emerald-50 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 uppercase tracking-widest">
-              GeoJSON Compatible Database
+      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-4 sm:p-6 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-xl">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-extrabold text-xl sm:text-2xl text-gray-900">Authority Geo-Fence Boundary System</span>
+            <span className="bg-emerald-50 text-emerald-800 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 uppercase tracking-widest">
+              GeoJSON Compatible
             </span>
           </div>
-          <p className="text-xs text-gray-500 font-medium mt-1">
+          <p className="text-xs text-gray-500 font-medium">
             Create, Edit, Activate, Deactivate & Delete Boundaries (Circle, Polygon, Box) directly on the map.
           </p>
         </div>
 
         <button
           onClick={handleOpenCreate}
-          className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md flex items-center space-x-2 transition-all shrink-0"
+          className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-orange-500 to-emerald-600 hover:from-orange-600 hover:to-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md flex items-center justify-center space-x-2 transition-all shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Create New Boundary Zone</span>
@@ -196,11 +196,14 @@ export default function GeoFenceManagementPage({ geofences = [], onRefreshData }
             Active GeoJSON Safety Boundaries Overlay
           </span>
 
-          <MapView
-            tourists={[]}
-            geofences={zones}
-            height="540px"
-          />
+          <div className="h-[340px] sm:h-[460px] lg:h-[540px]">
+            <MapView
+              tourists={[]}
+              geofences={zones}
+              height="100%"
+              showLiveUserLocation={false}
+            />
+          </div>
         </div>
 
         {/* Zone List & Controls */}

@@ -168,11 +168,11 @@ export default function FaresPage({ tourist }) {
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2">
             Select Vehicle Mode
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 xs:grid-cols-3 gap-2.5 sm:gap-3">
             {[
               { id: 'AUTO', label: 'Auto-Rickshaw', icon: '🛺', rate: `₹${city.perKmAuto}/km` },
-              { id: 'ERICKSHAW', label: 'E-Rickshaw (Shared/Private)', icon: '⚡', rate: `₹${city.perKmERickshaw}/km` },
-              { id: 'CAB', label: 'Taxi / AC Cab', icon: '🚕', rate: `₹${city.perKmCab}/km` },
+              { id: 'ERICKSHAW', label: 'E-Rickshaw', icon: '⚡', rate: `₹${city.perKmERickshaw}/km` },
+              { id: 'CAB', label: 'Taxi / Cab', icon: '🚕', rate: `₹${city.perKmCab}/km` },
             ].map((v) => {
               const active = vehicleType === v.id;
               return (
@@ -182,13 +182,13 @@ export default function FaresPage({ tourist }) {
                   whileTap={{ scale: 0.96 }}
                   transition={SPRING}
                   onClick={() => setVehicleType(v.id)}
-                  className="p-3.5 rounded-2xl text-left transition-all relative overflow-hidden"
+                  className="p-3 sm:p-3.5 rounded-2xl text-left transition-all relative overflow-hidden"
                   style={{
                     background: active ? 'rgba(255,159,10,0.12)' : 'rgba(120,120,128,0.06)',
                     border: active ? '1.5px solid #FF9F0A' : '0.5px solid rgba(60,60,67,0.12)',
                   }}
                 >
-                  <span className="text-2xl block mb-1">{v.icon}</span>
+                  <span className="text-xl sm:text-2xl block mb-1">{v.icon}</span>
                   <span className="text-xs font-bold block" style={{ color: active ? '#CC7A00' : '#1C1C1E' }}>
                     {v.label}
                   </span>

@@ -133,23 +133,23 @@ export default function LandingPage({ onScenarioTrigger }) {
 
             {/* Badge */}
             <motion.div variants={fadeInUp} custom={0.1}
-              className="inline-flex items-center space-x-2 px-5 py-2 rounded-full text-xs font-bold shadow-lg"
+              className="inline-flex flex-wrap items-center justify-center gap-1.5 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-2xl sm:rounded-full text-[10px] sm:text-xs font-bold shadow-lg max-w-[95vw] text-center"
               style={{
-                background: 'rgba(255,255,255,0.9)',
+                background: 'rgba(255,255,255,0.92)',
                 border: '1.5px solid rgba(249,115,22,0.35)',
                 backdropFilter: 'blur(10px)',
                 color: '#ea580c',
               }}>
-              <span className="text-base">🇮🇳</span>
-              <span className="tracking-widest">GOVERNMENT OF INDIA • MINISTRY OF TOURISM</span>
-              <span className="text-gray-300">•</span>
+              <span className="text-sm sm:text-base">🇮🇳</span>
+              <span className="tracking-wider sm:tracking-widest">GOVERNMENT OF INDIA • MINISTRY OF TOURISM</span>
+              <span className="text-gray-300 hidden sm:inline">•</span>
               <span style={{ color: '#7c3aed' }}>SMART INDIA HACKATHON 2026</span>
             </motion.div>
 
             {/* Title */}
-            <div className="space-y-3 max-w-5xl mx-auto">
+            <div className="space-y-3 max-w-5xl mx-auto px-2">
               <motion.h1 variants={fadeInUp} custom={0.2}
-                className="text-6xl sm:text-8xl lg:text-9xl font-black tracking-tight relative"
+                className="text-5xl sm:text-8xl lg:text-9xl font-black tracking-tight relative"
                 style={{
                   background: 'linear-gradient(135deg, #f97316 0%, #8b5cf6 40%, #10b981 70%, #3b82f6 100%)',
                   WebkitBackgroundClip: 'text',
@@ -169,14 +169,14 @@ export default function LandingPage({ onScenarioTrigger }) {
               </motion.h1>
 
               <motion.p variants={fadeInUp} custom={0.3}
-                className="text-xl sm:text-3xl font-extrabold text-gray-700 max-w-4xl mx-auto">
+                className="text-lg sm:text-3xl font-extrabold text-gray-700 max-w-4xl mx-auto">
                 Smart AI Framework for{' '}
                 <span style={{ color: '#f97316' }}>Assured</span> &{' '}
                 <span style={{ color: '#8b5cf6' }}>Responsible</span> Tourism
               </motion.p>
 
               <motion.p variants={fadeInUp} custom={0.4}
-                className="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+                className="text-gray-500 text-xs sm:text-base max-w-2xl mx-auto leading-relaxed">
                 Autonomous tourist safety grid featuring{' '}
                 <strong className="text-emerald-600">MaxZoom 22 satellite corridors</strong>,{' '}
                 <strong className="text-orange-600">zero-network Ghost-Mesh rescue</strong>, and{' '}
@@ -186,10 +186,10 @@ export default function LandingPage({ onScenarioTrigger }) {
 
             {/* CTA Buttons */}
             <motion.div variants={fadeInUp} custom={0.5}
-              className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }}>
+              className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 w-full max-w-xs sm:max-w-none px-4 sm:px-0">
+              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                 <Link to="/register"
-                  className="px-8 py-4 text-white font-black text-sm rounded-2xl flex items-center space-x-2 relative overflow-hidden"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 text-white font-black text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 relative overflow-hidden"
                   style={{
                     background: 'linear-gradient(135deg, #f97316, #8b5cf6)',
                     backgroundSize: '200% 200%',
@@ -199,15 +199,15 @@ export default function LandingPage({ onScenarioTrigger }) {
                     style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }}
                     animate={{ x: ['-100%', '200%'] }}
                     transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
-                  <ShieldCheck className="w-5 h-5 relative z-10" />
+                  <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                   <span className="relative z-10">Issue Digital Tourist Pass</span>
-                  <ArrowRight className="w-4 h-4 relative z-10" />
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10" />
                 </Link>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }}>
+              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                 <Link to="/tourist-dashboard"
-                  className="px-7 py-4 font-bold text-sm rounded-2xl flex items-center space-x-2 border-2"
+                  className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 border-2"
                   style={{
                     background: 'rgba(255,255,255,0.9)',
                     border: '2px solid rgba(16,185,129,0.4)',
@@ -220,9 +220,9 @@ export default function LandingPage({ onScenarioTrigger }) {
                 </Link>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }}>
+              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                 <Link to="/authority-dashboard"
-                  className="px-7 py-4 font-bold text-sm rounded-2xl flex items-center space-x-2"
+                  className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2"
                   style={{
                     background: 'rgba(255,255,255,0.9)',
                     border: '2px solid rgba(139,92,246,0.4)',
@@ -238,26 +238,26 @@ export default function LandingPage({ onScenarioTrigger }) {
 
             {/* KPI Pills */}
             <motion.div variants={fadeInUp} custom={0.65}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 max-w-4xl w-full">
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 pt-4 max-w-4xl w-full">
               {[
-                { value: '100%', label: 'Dynamic Geo-Fencing', sub: 'Acoustic Pre-Entry Warning', color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.25)' },
-                { value: '< 3.8m', label: 'Emergency Dispatch', sub: '112 ERSS Police Handshake', color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.25)' },
+                { value: '100%', label: 'Geo-Fencing', sub: 'Acoustic Warning', color: '#f97316', bg: 'rgba(249,115,22,0.08)', border: 'rgba(249,115,22,0.25)' },
+                { value: '< 3.8m', label: 'Emergency', sub: '112 ERSS Handshake', color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)', border: 'rgba(139,92,246,0.25)' },
                 { value: 'SHA-256', label: 'Blockchain ID', sub: 'Zero-Trust QR Verify', color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)' },
-                { value: '0-Bars', label: 'Ghost-Mesh P2P', sub: 'Offline BLE Hop Relay', color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)' },
+                { value: '0-Bars', label: 'Ghost-Mesh', sub: 'Offline BLE Relay', color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.25)' },
               ].map((kpi, i) => (
                 <TiltCard key={i}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 + i * 0.1 }}
                     whileHover={{ scale: 1.03 }}
-                    className="p-5 rounded-2xl text-left space-y-1.5 cursor-pointer"
+                    className="p-3 sm:p-5 rounded-2xl text-left space-y-1 cursor-pointer"
                     style={{ background: kpi.bg, border: `1.5px solid ${kpi.border}`, backdropFilter: 'blur(8px)' }}
                   >
-                    <span className="text-2xl sm:text-3xl font-black block font-mono" style={{ color: kpi.color }}>
+                    <span className="text-xl sm:text-3xl font-black block font-mono" style={{ color: kpi.color }}>
                       {kpi.value}
                     </span>
-                    <span className="text-sm font-bold text-gray-700 block">{kpi.label}</span>
-                    <span className="text-xs text-gray-400">{kpi.sub}</span>
+                    <span className="text-xs sm:text-sm font-bold text-gray-700 block truncate">{kpi.label}</span>
+                    <span className="text-[10px] sm:text-xs text-gray-400 block truncate">{kpi.sub}</span>
                   </motion.div>
                 </TiltCard>
               ))}

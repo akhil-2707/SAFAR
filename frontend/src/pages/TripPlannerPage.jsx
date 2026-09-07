@@ -107,6 +107,12 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
           </span>
 
           <MapView
+            destination={{
+              lat: trip.routeWaypoints[trip.routeWaypoints.length - 1].lat,
+              lng: trip.routeWaypoints[trip.routeWaypoints.length - 1].lng,
+              name: trip.destination,
+              address: 'Cherrapunji (Sohra) Monsoon Circuit'
+            }}
             tourists={tourist ? [tourist] : []}
             geofences={geofences}
             selectedTourist={tourist}

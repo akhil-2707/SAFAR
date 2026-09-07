@@ -77,43 +77,43 @@ export default function BlockchainLedgerPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Top Banner Header */}
-      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-6 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-xl">
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className="font-extrabold text-2xl text-gray-900">Prototype Blockchain Ledger & Tamper Audit</span>
-            <span className="bg-cyan-50 text-cyan-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-cyan-200 uppercase tracking-widest shadow-sm">
-              Private SHA-256 Ledger
+      <div className="bg-white/95 border border-gray-200/80 rounded-2xl p-4 sm:p-6 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-xl">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-extrabold text-xl sm:text-2xl text-gray-900">Blockchain Ledger & Tamper Audit</span>
+            <span className="bg-cyan-50 text-cyan-800 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-cyan-200 uppercase tracking-widest shadow-sm">
+              Private SHA-256
             </span>
           </div>
-          <p className="text-xs text-gray-500 font-medium mt-1">
+          <p className="text-xs text-gray-500 font-medium">
             Tamper-Evident Digital Tourist ID Verification Engine
           </p>
         </div>
 
         {/* Audit Actions Bar */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
           <button
             disabled={loading}
             onClick={handleVerify}
-            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center space-x-1.5 transition-all"
+            className="w-full sm:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1.5 transition-all"
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>Verify Integrity Audit</span>
+            <span>Verify Integrity</span>
           </button>
 
           <button
             disabled={loading}
             onClick={handleTamper}
-            className="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs rounded-xl border border-rose-300 flex items-center space-x-1.5 transition-all shadow-sm"
+            className="w-full sm:w-auto px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-800 font-bold text-xs rounded-xl border border-rose-300 flex items-center justify-center space-x-1.5 transition-all shadow-sm"
           >
             <ShieldAlert className="w-4 h-4 text-rose-600" />
-            <span>Simulate Tampering (Block #1)</span>
+            <span>Simulate Tampering</span>
           </button>
 
           <button
             disabled={loading}
             onClick={handleRestore}
-            className="px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl border border-gray-300 flex items-center space-x-1.5 transition-all shadow-sm"
+            className="w-full sm:w-auto px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl border border-gray-300 flex items-center justify-center space-x-1.5 transition-all shadow-sm"
           >
             <RefreshCw className="w-4 h-4 text-cyan-600" />
             <span>Restore Ledger</span>
@@ -123,20 +123,20 @@ export default function BlockchainLedgerPage() {
 
       {/* Audit Banner Result */}
       {auditResult && (
-        <div className={`p-4 rounded-2xl border flex items-center justify-between shadow-sm ${
+        <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm ${
           isChainValid ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-red-50 border-red-300 text-red-900'
         }`}>
-          <div className="flex items-center space-x-3">
-            {isChainValid ? <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-6 h-6 text-red-600 shrink-0" />}
+          <div className="flex items-start sm:items-center space-x-3">
+            {isChainValid ? <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" /> : <AlertTriangle className="w-6 h-6 text-red-600 shrink-0 mt-0.5 sm:mt-0" />}
             <div>
               <span className="font-extrabold text-sm block">
                 {isChainValid ? '✓ Prototype Blockchain Ledger Integrity Verified' : '✗ Tampering Detected! Cryptographic Audit Failed'}
               </span>
-              <p className="text-xs font-semibold mt-0.5 opacity-90">{auditResult.error || auditResult.message}</p>
+              <p className="text-xs font-semibold mt-0.5 opacity-90 break-words">{auditResult.error || auditResult.message}</p>
             </div>
           </div>
 
-          <span className="text-xs font-mono font-bold bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm text-gray-800">
+          <span className="text-xs font-mono font-bold bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm text-gray-800 shrink-0 self-start sm:self-auto">
             Total Blocks: {ledgerData?.chain?.length || 0}
           </span>
         </div>

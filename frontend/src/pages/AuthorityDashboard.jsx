@@ -102,13 +102,13 @@ export default function AuthorityDashboard({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+      className="space-y-4 sm:space-y-6 max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-3 sm:py-6"
       style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}
     >
       {/* Top Banner Header */}
       <motion.div
         variants={itemVariants}
-        className="rounded-3xl p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 relative overflow-hidden"
+        className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-5 relative overflow-hidden"
         style={{
           background: 'linear-gradient(135deg, rgba(245,243,255,0.96) 0%, rgba(255,248,240,0.96) 50%, rgba(240,255,248,0.96) 100%)',
           backdropFilter: 'blur(20px)',
@@ -129,15 +129,15 @@ export default function AuthorityDashboard({
           transition={{ duration: 8, repeat: Infinity, delay: 2 }}
         />
 
-        <div className="flex items-center space-x-4 relative z-10">
+        <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 relative z-10 w-full lg:w-auto">
           <SafarLogo size="sm" showText={false} animated={true} />
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-              <span className="font-black text-2xl text-gray-900 tracking-tight">S.A.F.A.R. Authority Command Desk</span>
+              <span className="font-black text-lg sm:text-2xl text-gray-900 tracking-tight truncate">Command Desk</span>
               <motion.span
                 animate={{ opacity: [1, 0.6, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
-                className="text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center space-x-1.5"
+                className="text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center space-x-1"
                 style={{ background: 'rgba(16,185,129,0.12)', color: '#059669', border: '1px solid rgba(16,185,129,0.35)' }}
               >
                 <motion.span
@@ -145,58 +145,52 @@ export default function AuthorityDashboard({
                   animate={{ scale: [1, 1.5, 1] }}
                   transition={{ duration: 1, repeat: Infinity }}
                 />
-                <span>Live Sentinel Active</span>
+                <span>Live Sentinel</span>
               </motion.span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Unified National Tourist Safety Grid • Set Threat Radii, Track Real-Time Tourists & Dispatch SOS
+            <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 line-clamp-2">
+              National Tourist Safety Grid • Threat Radii, Real-Time Tracking & SOS
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5 relative z-10 w-full lg:w-auto">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 relative z-10 w-full lg:w-auto">
           <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
             onClick={() => setShowCreateModal(true)}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-2xl text-white font-black text-xs flex items-center justify-center space-x-2 relative overflow-hidden shadow-lg"
-            style={{ background: 'linear-gradient(135deg, #ef4444, #f97316)', boxShadow: '0 6px 25px rgba(239,68,68,0.4)' }}
+            className="col-span-2 sm:col-span-1 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl text-white font-black text-xs flex items-center justify-center space-x-1.5 relative overflow-hidden shadow-md"
+            style={{ background: 'linear-gradient(135deg, #ef4444, #f97316)', boxShadow: '0 4px 20px rgba(239,68,68,0.35)' }}
           >
-            <motion.span
-              className="absolute inset-0 rounded-2xl"
-              style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }}
-              animate={{ x: ['-100%', '200%'] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
-            />
-            <ShieldAlert className="w-4 h-4 relative z-10" />
-            <span className="relative z-10">+ Set Danger Area & Radius</span>
+            <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
+            <span>+ Set Danger Zone</span>
           </motion.button>
 
           <Link
             to="/geo-fence-management"
-            className="px-3.5 py-2.5 rounded-2xl font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+            className="px-3 py-2 rounded-xl sm:rounded-2xl font-bold text-xs flex items-center justify-center space-x-1 shadow-sm transition-all"
             style={{ background: 'rgba(255,255,255,0.9)', color: '#059669', border: '1.5px solid rgba(16,185,129,0.3)' }}
           >
-            <Settings className="w-4 h-4" />
-            <span>Geo-Fences</span>
+            <Settings className="w-3.5 h-3.5" />
+            <span>Zones</span>
           </Link>
 
           <Link
             to="/incidents"
-            className="px-3.5 py-2.5 rounded-2xl font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+            className="px-3 py-2 rounded-xl sm:rounded-2xl font-bold text-xs flex items-center justify-center space-x-1 shadow-sm transition-all"
             style={{ background: 'rgba(255,255,255,0.9)', color: '#dc2626', border: '1.5px solid rgba(239,68,68,0.3)' }}
           >
-            <AlertOctagon className="w-4 h-4" />
+            <AlertOctagon className="w-3.5 h-3.5" />
             <span>Incidents ({activeIncidents.length})</span>
           </Link>
 
           <Link
             to="/analytics"
-            className="px-3.5 py-2.5 rounded-2xl font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+            className="col-span-2 sm:col-span-1 px-3 py-2 rounded-xl sm:rounded-2xl font-bold text-xs flex items-center justify-center space-x-1 shadow-sm transition-all"
             style={{ background: 'rgba(255,255,255,0.9)', color: '#0891b2', border: '1.5px solid rgba(8,145,178,0.3)' }}
           >
-            <BarChart3 className="w-4 h-4" />
+            <BarChart3 className="w-3.5 h-3.5" />
             <span>Analytics</span>
           </Link>
         </div>
@@ -209,31 +203,31 @@ export default function AuthorityDashboard({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-4 rounded-2xl text-emerald-700 text-sm font-bold flex items-center space-x-2.5 shadow-lg"
+            className="p-3.5 sm:p-4 rounded-2xl text-emerald-700 text-xs sm:text-sm font-bold flex items-center space-x-2.5 shadow-lg"
             style={{
               background: 'rgba(240,255,248,0.98)',
               border: '1.5px solid rgba(16,185,129,0.4)',
               boxShadow: '0 6px 20px rgba(16,185,129,0.15)',
             }}
           >
-            <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
             <span>{actionSuccessMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* KPI Cards Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5">
         {kpiCards.map((card, i) => {
           const Icon = card.icon;
           return (
             <motion.div
               key={i}
-              whileHover={{ y: -4, scale: 1.02 }}
-              initial={{ opacity: 0, y: 20 }}
+              whileHover={{ y: -3, scale: 1.02 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 + i * 0.05, duration: 0.4 }}
-              className="p-4 rounded-2xl space-y-1.5 cursor-pointer"
+              transition={{ delay: 0.05 + i * 0.04, duration: 0.35 }}
+              className="p-3 sm:p-4 rounded-xl sm:rounded-2xl space-y-1 cursor-pointer"
               style={{
                 background: `linear-gradient(135deg, ${card.bg}, rgba(255,255,255,0.97))`,
                 border: `1.5px solid ${card.border}`,
@@ -242,20 +236,20 @@ export default function AuthorityDashboard({
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 truncate">{card.label}</span>
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-gray-500 truncate">{card.label}</span>
                 <motion.div
-                  className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0"
                   style={{ background: card.bg, border: `1.5px solid ${card.border}` }}
                   animate={card.pulse ? { scale: [1, 1.15, 1] } : {}}
                   transition={{ duration: 1, repeat: Infinity }}
                 >
-                  <Icon className="w-3.5 h-3.5" style={{ color: card.color }} />
+                  <Icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: card.color }} />
                 </motion.div>
               </div>
               <div className="flex items-baseline space-x-1">
-                <span className="text-2xl font-black" style={{ color: card.color }}>{card.value}</span>
+                <span className="text-xl sm:text-2xl font-black" style={{ color: card.color }}>{card.value}</span>
               </div>
-              <div className="text-[10px] font-semibold text-gray-500 truncate">{card.sub}</div>
+              <div className="text-[9px] sm:text-[10px] font-semibold text-gray-500 truncate">{card.sub}</div>
             </motion.div>
           );
         })}
@@ -264,29 +258,29 @@ export default function AuthorityDashboard({
       {/* Self-Learning AI Feedback Loop Status Banner */}
       <motion.div
         variants={itemVariants}
-        className="bg-white/95 border border-emerald-300 rounded-3xl p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md"
+        className="bg-white/95 border border-emerald-300 rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm"
       >
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center font-bold shrink-0">
-            <Activity className="w-5 h-5 animate-pulse text-emerald-600" />
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center font-bold shrink-0">
+            <Activity className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse text-emerald-600" />
           </div>
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-black text-emerald-800 uppercase tracking-widest">
+            <div className="flex items-center space-x-2 flex-wrap">
+              <span className="text-xs font-black text-emerald-800 uppercase tracking-wider">
                 Self-Learning AI Feedback Engine
               </span>
-              <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-300">
+              <span className="bg-emerald-100 text-emerald-800 text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-300">
                 ACTIVE RETRAINING
               </span>
             </div>
-            <p className="text-[11px] text-slate-600 mt-0.5">
-              Anonymized resolved incident logs automatically retrain the AI Risk Model to improve hazard prediction accuracy over time.
+            <p className="text-[10px] sm:text-[11px] text-slate-600 mt-0.5">
+              Anonymized resolved incident logs automatically retrain the AI Risk Model to improve hazard prediction.
             </p>
           </div>
         </div>
-        <div className="text-right shrink-0 bg-emerald-50/80 px-4 py-2 rounded-2xl border border-emerald-200">
-          <div className="text-xs font-mono font-bold text-slate-900">Total Retrained Cases: {resolvedIncidents + 12}</div>
-          <div className="text-[10px] font-mono text-emerald-700 font-extrabold">Prediction Accuracy: 98.4%</div>
+        <div className="text-left sm:text-right shrink-0 bg-emerald-50/80 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-emerald-200 w-full sm:w-auto">
+          <div className="text-[11px] sm:text-xs font-mono font-bold text-slate-900">Total Retrained: {resolvedIncidents + 12}</div>
+          <div className="text-[10px] font-mono text-emerald-700 font-extrabold">Accuracy: 98.4%</div>
         </div>
       </motion.div>
 
@@ -298,7 +292,7 @@ export default function AuthorityDashboard({
       {/* Tactical Radar Map */}
       <motion.div
         variants={itemVariants}
-        className="rounded-3xl p-5 space-y-4"
+        className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 space-y-3 sm:space-y-4"
         style={{
           background: 'rgba(255,255,255,0.92)',
           backdropFilter: 'blur(16px)',
@@ -307,12 +301,12 @@ export default function AuthorityDashboard({
         }}
       >
         <div
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3"
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3 pb-2.5 sm:pb-3"
           style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}
         >
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5 sm:space-x-3">
             <motion.div
-              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0"
               style={{ background: 'rgba(16,185,129,0.1)', border: '1.5px solid rgba(16,185,129,0.3)' }}
               animate={{ boxShadow: ['0 0 8px rgba(16,185,129,0.3)', '0 0 18px rgba(16,185,129,0.5)', '0 0 8px rgba(16,185,129,0.3)'] }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -320,12 +314,12 @@ export default function AuthorityDashboard({
               <Radio className="w-4 h-4 text-emerald-600" />
             </motion.div>
             <div>
-              <h2 className="text-base font-black text-gray-900">Live Tactical Radar & Threat Zone Map</h2>
-              <p className="text-xs text-gray-400">Circular Danger Radii • Geo-Fence Boundaries • Live Tourist GPS Pins</p>
+              <h2 className="text-sm sm:text-base font-black text-gray-900">Live Tactical Radar & Threat Zone Map</h2>
+              <p className="text-[11px] sm:text-xs text-gray-400">Danger Radii • Geo-Fence Boundaries • Live GPS Pins</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
+          <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl sm:rounded-2xl border border-gray-100 overflow-x-auto no-scrollbar max-w-full">
             {[
               { id: 'ALL', label: 'All' },
               { id: 'CRITICAL', label: '🔴 SOS' },
@@ -338,7 +332,7 @@ export default function AuthorityDashboard({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setFilterRisk(f.id)}
-                className="px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all"
+                className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all shrink-0"
                 style={
                   filterRisk === f.id
                     ? { background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', color: 'white', boxShadow: '0 3px 10px rgba(139,92,246,0.4)' }
@@ -356,7 +350,7 @@ export default function AuthorityDashboard({
           geofences={geofences}
           selectedTourist={selectedTourist}
           emergencyServices={emergencyServices}
-          height="500px"
+          height="h-[330px] xs:h-[370px] sm:h-[450px] md:h-[500px]"
         />
       </motion.div>
 
