@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Smart Tourist Safety Monitoring & Incident Response System (SIH25002)",
   "scripts": {
-    "build": "npm --prefix frontend install && npm --prefix frontend run build && npm --prefix backend install",
+    "build": "npm --prefix frontend install --include=dev && npm --prefix frontend run build && npm --prefix backend install",
     "start": "node backend/server.js",
     "dev": "cd frontend && npm run dev",
     "backend": "cd backend && npm start",
