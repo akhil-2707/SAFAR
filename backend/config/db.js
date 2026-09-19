@@ -22,6 +22,9 @@ function getFallbackInitialState() {
     emergencyServices: initialData.emergencyServices,
     incidents: initialData.incidents,
     trips: initialData.trips,
+    guides: initialData.guides || [],
+    guideRequests: initialData.guideRequests || [],
+    guideComplaints: initialData.guideComplaints || [],
     notifications: [
       {
         id: 'notif_01',
@@ -82,7 +85,7 @@ async function connectMongoDB() {
 
     // Sync from MongoDB into state
     const db = mongoose.connection.db;
-    const collectionsToSync = ['users', 'tourists', 'digitalids', 'geofences', 'incidents', 'emergencyservices', 'trips'];
+    const collectionsToSync = ['users', 'tourists', 'digitalids', 'geofences', 'incidents', 'emergencyservices', 'trips', 'guides', 'guiderequests', 'guidecomplaints'];
 
     for (const colName of collectionsToSync) {
       try {
@@ -93,7 +96,11 @@ async function connectMongoDB() {
             const { _id, ...rest } = d;
             return rest;
           });
-          const targetKey = colName === 'digitalids' ? 'digitalIds' : colName === 'emergencyservices' ? 'emergencyServices' : colName;
+          const targetKey = colName === 'digitalids' ? 'digitalIds' 
+            : colName === 'emergencyservices' ? 'emergencyServices' 
+            : colName === 'guiderequests' ? 'guideRequests'
+            : colName === 'guidecomplaints' ? 'guideComplaints'
+            : colName;
           state[targetKey] = cleanDocs;
           console.log(`✓ Loaded ${cleanDocs.length} ${targetKey} from MongoDB Atlas`);
         }

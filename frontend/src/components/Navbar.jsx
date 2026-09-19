@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, LogOut, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
-  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck
+  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -88,6 +88,36 @@ export default function Navbar({
                     style={{
                       background: active ? 'rgba(255,255,255,0.85)' : 'transparent',
                       color: active ? '#1C1C1E' : 'rgba(60,60,67,0.7)',
+                      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                    }}
+                  >
+                    <IconC className="w-3.5 h-3.5" />
+                    <span>{nl.label}</span>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </nav>
+        ) : currentUser?.role === 'GUIDE' ? (
+          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl" style={{
+            background: 'rgba(120,120,128,0.1)',
+          }}>
+            {[
+              { to: '/guide-dashboard', label: 'Guide Cockpit', icon: Award },
+              { to: '/blockchain-ledger', label: 'Blockchain Ledger', icon: ShieldCheck },
+            ].map((nl) => {
+              const IconC = nl.icon;
+              const active = location.pathname === nl.to;
+              return (
+                <Link key={nl.to} to={nl.to}>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={SPRING}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    style={{
+                      background: active ? 'rgba(255,255,255,0.85)' : 'transparent',
+                      color: active ? '#d97706' : 'rgba(60,60,67,0.7)',
                       boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
                     }}
                   >
@@ -325,6 +355,17 @@ export default function Navbar({
                   Register
                 </Link>
               </motion.div>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
+                <Link
+                  to="/guide-register"
+                  className="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1 text-amber-800 bg-amber-50 hover:bg-amber-100 transition-all border border-amber-300 shadow-sm"
+                  title="Certified Local Guide Portal (Register / Login)"
+                >
+                  <Award className="w-3.5 h-3.5 text-amber-600" />
+                  <span className="hidden sm:inline">Guide</span>
+                  <span>Portal</span>
+                </Link>
+              </motion.div>
             </div>
           )}
 
@@ -362,8 +403,8 @@ export default function Navbar({
             }}
           >
             <div className="px-4 py-4 space-y-3 max-h-[calc(100vh-64px)] overflow-y-auto">
-              {/* User badge on mobile drawer */}
-              {currentUser && (
+              {/* User badge on mobile drawer / Account Access */}
+              {currentUser ? (
                 <div className="p-3 rounded-2xl bg-slate-100/80 border border-slate-200/80 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-tr from-blue-600 to-indigo-600 shadow-sm">
@@ -386,6 +427,34 @@ export default function Navbar({
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Out</span>
                   </button>
+                </div>
+              ) : (
+                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Account Access</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-2 px-3 text-center text-xs font-bold rounded-xl bg-white border border-slate-200 text-slate-700 shadow-sm"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-2 px-3 text-center text-xs font-bold rounded-xl text-white bg-blue-600 shadow-sm"
+                    >
+                      Tourist Register
+                    </Link>
+                  </div>
+                  <Link
+                    to="/guide-register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full py-2 px-3 text-center text-xs font-bold rounded-xl text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-300 flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+                  >
+                    <Award className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Certified Local Guide (Register / Login)</span>
+                  </Link>
                 </div>
               )}
 
@@ -446,6 +515,29 @@ export default function Navbar({
                     >
                       <BarChart2 className="w-4 h-4 text-purple-500" />
                       <span>AI Predictive Safety Analytics</span>
+                    </Link>
+                  </>
+                ) : currentUser?.role === 'GUIDE' ? (
+                  <>
+                    <Link
+                      to="/guide-dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/guide-dashboard' ? 'bg-amber-50 text-amber-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Award className="w-4 h-4 text-amber-500" />
+                      <span>Guide Cockpit & Digital ID</span>
+                    </Link>
+                    <Link
+                      to="/blockchain-ledger"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/blockchain-ledger' ? 'bg-amber-50 text-amber-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <ShieldCheck className="w-4 h-4 text-indigo-500" />
+                      <span>Immutable Blockchain Ledger</span>
                     </Link>
                   </>
                 ) : (

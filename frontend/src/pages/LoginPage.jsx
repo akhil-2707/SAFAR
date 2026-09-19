@@ -50,6 +50,7 @@ export default function LoginPage({ onLoginSuccess }) {
       if (!data.success) throw new Error(data.error || 'Login failed');
       onLoginSuccess(data);
       if (data.user.role === 'AUTHORITY') navigate('/authority-dashboard');
+      else if (data.user.role === 'GUIDE') navigate('/guide-dashboard');
       else navigate('/tourist-dashboard');
     } catch (err) {
       setError(err.message);
@@ -74,6 +75,7 @@ export default function LoginPage({ onLoginSuccess }) {
       if (!data.success) throw new Error(data.error || 'Login failed');
       onLoginSuccess(data);
       if (data.user.role === 'AUTHORITY') navigate('/authority-dashboard');
+      else if (data.user.role === 'GUIDE') navigate('/guide-dashboard');
       else navigate('/tourist-dashboard');
     } catch (err) {
       setError(err.message);
@@ -132,6 +134,7 @@ export default function LoginPage({ onLoginSuccess }) {
 
       onLoginSuccess(data);
       if (data.user.role === 'AUTHORITY') navigate('/authority-dashboard');
+      else if (data.user.role === 'GUIDE') navigate('/guide-dashboard');
       else navigate('/tourist-dashboard');
     } catch (err) {
       setError(err.message);
@@ -140,7 +143,7 @@ export default function LoginPage({ onLoginSuccess }) {
     }
   };
 
-  // Curated demo locations as requested: Ayodhya, Jammu, Taj Mahal, Real-Time Location, and Command Desk
+  // Curated demo locations as requested: Ayodhya, Jammu, Taj Mahal, Real-Time Location, Command Desk, and Certified Local Guides
   const demoAccounts = [
     {
       id: 'ayodhya',
@@ -155,18 +158,6 @@ export default function LoginPage({ onLoginSuccess }) {
       btnGrad: 'linear-gradient(135deg, #f97316, #ea580c)'
     },
     {
-      id: 'jammu',
-      label: '🏔️ Jammu',
-      location: 'Katra Vaishno Devi Bhawan Track',
-      name: 'Vikas Chandel',
-      email: 'vikas.chandel@example.com',
-      role: 'TOURIST',
-      badge: 'Mountain Route',
-      gradient: 'linear-gradient(135deg, rgba(240,249,255,0.98), rgba(255,255,255,0.99))',
-      border: 'rgba(14,165,233,0.35)',
-      btnGrad: 'linear-gradient(135deg, #0284c7, #0369a1)'
-    },
-    {
       id: 'tajmahal',
       label: '🕌 Taj Mahal',
       location: 'Agra World Heritage Complex',
@@ -179,18 +170,6 @@ export default function LoginPage({ onLoginSuccess }) {
       btnGrad: 'linear-gradient(135deg, #10b981, #059669)'
     },
     {
-      id: 'realtime',
-      label: '📍 Real-Time Location',
-      location: 'Live Physical Device GPS & Telemetry',
-      name: 'Real Device Tourist',
-      email: 'reallive@safetour.gov.in',
-      role: 'TOURIST',
-      badge: 'Real Device GPS',
-      gradient: 'linear-gradient(135deg, rgba(238,242,255,0.98), rgba(255,255,255,0.99))',
-      border: 'rgba(99,102,241,0.4)',
-      btnGrad: 'linear-gradient(135deg, #4f46e5, #4338ca)'
-    },
-    {
       id: 'authority',
       label: '🏛️ Command Desk',
       location: 'National Safety & Emergency Dispatch',
@@ -201,6 +180,42 @@ export default function LoginPage({ onLoginSuccess }) {
       gradient: 'linear-gradient(135deg, rgba(245,243,255,0.98), rgba(255,255,255,0.99))',
       border: 'rgba(139,92,246,0.4)',
       btnGrad: 'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+    },
+    {
+      id: 'guide_ayodhya',
+      label: '🪪 Rajesh Sharma (Guide)',
+      location: 'Ayodhya Certified Heritage Escort',
+      name: 'Rajesh Sharma',
+      email: 'rajesh.guide@safetour.gov.in',
+      role: 'GUIDE',
+      badge: 'Verified Guide',
+      gradient: 'linear-gradient(135deg, rgba(254,243,199,0.98), rgba(255,255,255,0.99))',
+      border: 'rgba(245,158,11,0.45)',
+      btnGrad: 'linear-gradient(135deg, #d97706, #b45309)'
+    },
+    {
+      id: 'guide_pending',
+      label: '⏳ Amitav Sengupta (Pending)',
+      location: 'Awaiting Authority Verification',
+      name: 'Amitav Sengupta',
+      email: 'amitav.pending@safetour.gov.in',
+      role: 'GUIDE',
+      badge: 'Pending Review',
+      gradient: 'linear-gradient(135deg, rgba(254,249,195,0.98), rgba(255,255,255,0.99))',
+      border: 'rgba(234,179,8,0.45)',
+      btnGrad: 'linear-gradient(135deg, #ca8a04, #a16207)'
+    },
+    {
+      id: 'jammu',
+      label: '🏔️ Jammu',
+      location: 'Katra Vaishno Devi Bhawan Track',
+      name: 'Vikas Chandel',
+      email: 'vikas.chandel@example.com',
+      role: 'TOURIST',
+      badge: 'Mountain Route',
+      gradient: 'linear-gradient(135deg, rgba(240,249,255,0.98), rgba(255,255,255,0.99))',
+      border: 'rgba(14,165,233,0.35)',
+      btnGrad: 'linear-gradient(135deg, #0284c7, #0369a1)'
     }
   ];
 
@@ -495,10 +510,14 @@ export default function LoginPage({ onLoginSuccess }) {
 
           {/* Footer & Option to switch to Email OTP if needed */}
           <div className="pt-2 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2 relative z-10">
-            <div>
-              Need an ID?{' '}
+            <div className="flex items-center space-x-2">
+              <span>Need an ID?</span>
               <Link to="/register" className="font-extrabold hover:underline" style={{ color: '#ea580c' }}>
-                Register Here
+                Tourist Register
+              </Link>
+              <span>•</span>
+              <Link to="/guide-register" className="font-extrabold hover:underline text-amber-700">
+                Guide Register
               </Link>
             </div>
             <div>

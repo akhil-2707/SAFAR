@@ -4,11 +4,12 @@ import MapView from '../components/MapView';
 import MiniMap from '../components/MiniMap';
 import CreateDangerAreaModal from '../components/CreateDangerAreaModal';
 import DeadmanAuthoritySentinel from '../components/DeadmanAuthoritySentinel';
+import AuthorityGuideDesk from '../components/AuthorityGuideDesk';
 import SafarLogo from '../components/SafarLogo';
 import { 
   ShieldCheck, AlertTriangle, Users, AlertOctagon, CheckCircle2, 
   Radio, Plus, Trash2, Power, ExternalLink, Settings, BarChart3,
-  ShieldAlert, Zap, Activity, Radar, Phone
+  ShieldAlert, Zap, Activity, Radar, Phone, Award
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -33,6 +34,7 @@ export default function AuthorityDashboard({
 }) {
   const [selectedTourist, setSelectedTourist] = useState(null);
   const [filterRisk, setFilterRisk] = useState('ALL');
+  const [activeView, setActiveView] = useState('OVERVIEW'); // 'OVERVIEW' | 'GUIDES'
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [actionSuccessMessage, setActionSuccessMessage] = useState(null);
 
@@ -193,8 +195,49 @@ export default function AuthorityDashboard({
             <BarChart3 className="w-3.5 h-3.5" />
             <span>Analytics</span>
           </Link>
+
+          <button
+            onClick={() => setActiveView(activeView === 'GUIDES' ? 'OVERVIEW' : 'GUIDES')}
+            className="col-span-2 sm:col-span-1 px-4 py-2 rounded-xl sm:rounded-2xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all"
+            style={{
+              background: activeView === 'GUIDES' ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(255,255,255,0.95)',
+              color: activeView === 'GUIDES' ? '#ffffff' : '#b45309',
+              border: '1.5px solid rgba(245,158,11,0.5)',
+              boxShadow: activeView === 'GUIDES' ? '0 4px 15px rgba(245,158,11,0.35)' : 'none'
+            }}
+          >
+            <Award className="w-4 h-4" />
+            <span>Local Guides Desk</span>
+          </button>
         </div>
       </motion.div>
+
+      {/* View Mode Switcher Header Pills */}
+      <div className="flex items-center space-x-2 bg-slate-200/70 p-1.5 rounded-2xl w-fit backdrop-blur-md">
+        <button
+          onClick={() => setActiveView('OVERVIEW')}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${
+            activeView === 'OVERVIEW'
+              ? 'bg-white text-gray-900 shadow-md'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Radar className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Live Sentinel & Radar Map</span>
+        </button>
+
+        <button
+          onClick={() => setActiveView('GUIDES')}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${
+            activeView === 'GUIDES'
+              ? 'bg-amber-500 text-white shadow-md'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Award className="w-3.5 h-3.5" />
+          <span>Local Guides Command & Verifications</span>
+        </button>
+      </div>
 
       {/* Success Toast */}
       <AnimatePresence>
@@ -216,8 +259,15 @@ export default function AuthorityDashboard({
         )}
       </AnimatePresence>
 
-      {/* KPI Cards Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5">
+      {/* Main Content Area: Overview or Guides Desk */}
+      {activeView === 'GUIDES' ? (
+        <motion.div variants={itemVariants}>
+          <AuthorityGuideDesk onRefreshData={onRefreshData} />
+        </motion.div>
+      ) : (
+        <>
+          {/* KPI Cards Grid */}
+          <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3.5">
         {kpiCards.map((card, i) => {
           const Icon = card.icon;
           return (
@@ -624,6 +674,8 @@ export default function AuthorityDashboard({
         </div>
 
       </motion.div>
+        </>
+      )}
 
       {/* Danger Zone Creator Modal */}
       <CreateDangerAreaModal
