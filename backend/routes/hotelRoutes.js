@@ -227,6 +227,17 @@ const bookingsStore = {
   cloakroom: []
 };
 
+// 0. GET /api/hotels (Root Alias to micro-stays)
+router.get('/', (req, res) => {
+  const hotels = getHotels();
+  res.json({
+    success: true,
+    hotels,
+    totalHotels: hotels.length,
+    authority: 'IRCTC & State Tourism Development Corporations'
+  });
+});
+
 // 1. GET /api/hotels/micro-stays
 router.get('/micro-stays', (req, res) => {
   const { city } = req.query;

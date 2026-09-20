@@ -260,9 +260,9 @@ export default function App() {
     } else if (role === 'GUIDE') {
       const guideUser = {
         id: 'usr_guide_01',
-        guideId: 'GUIDE-AYO-01',
-        name: 'Rajesh Sharma',
-        email: 'rajesh.guide@ayodhya.tour.in',
+        guideId: 'GID-2026-AYODHYA',
+        name: 'Ramesh Pathak',
+        email: 'ramesh.guide@safetour.gov.in',
         role: 'GUIDE',
         status: 'VERIFIED',
         assignedDestination: 'Ayodhya Ram Janmabhoomi Corridor'
@@ -507,6 +507,7 @@ function AppContent({
         onMarkRead={handleMarkRead}
         onOpenMeshModal={() => setShowMeshModal(true)}
         onShowLoader={() => setShowPatrioticLoader(true)}
+        onSwitchUser={handleSwitchUser}
       />
 
       {/* Offline Ghost-Mesh Rescue Modal Simulator */}
@@ -523,7 +524,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/micro-stays', '/artisans'].includes(location.pathname))
+        ((!currentUser || currentUser?.role === 'TOURIST') && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/micro-stays', '/artisans'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -650,17 +651,6 @@ function AppContent({
                   }
                 />
 
-                {/* 7. Smart Micro-Stays & Luggage Cloakroom Hub (Hotels) */}
-                <Route
-                  path="/micro-stays"
-                  element={<MicroStaysPage tourist={touristProfile} />}
-                />
-
-                {/* 8. GI Master Artisans & Fair Trade Direct Hub (Others) */}
-                <Route
-                  path="/artisans"
-                  element={<ArtisansPage tourist={touristProfile} />}
-                />
 
                 {/* Authority & Management Command Desks */}
                 <Route

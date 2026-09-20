@@ -140,7 +140,7 @@ export default function TouristDashboard({
   onToggleSugamya = null
 }) {
   const { t } = useLanguage();
-  const [currentTourist, setCurrentTourist] = useState(tourist);
+  const [currentTourist, setCurrentTourist] = useState(tourist || (allTourists && allTourists.length > 0 ? allTourists[0] : null));
   const [loading, setLoading] = useState(false);
 
   // Feature 2 & 4 & 5 Local state toggles
@@ -169,20 +169,6 @@ export default function TouristDashboard({
   const [aiAdvice, setAiAdvice] = useState(null);
   const [aiAdviceLoading, setAiAdviceLoading] = useState(false);
 
-  // Auto-prompt tourist if in destination and not dismissed in current session
-  useEffect(() => {
-    try {
-      const promptShown = sessionStorage.getItem('safar_guide_prompt_shown');
-      if (!promptShown && currentTourist?.destination) {
-        const timer = setTimeout(() => {
-          setShowGuidePromptModal(true);
-          sessionStorage.setItem('safar_guide_prompt_shown', 'true');
-        }, 2200);
-        return () => clearTimeout(timer);
-      }
-    } catch (e) {}
-  }, [currentTourist?.destination]);
-
   const wanderIntervalRef = React.useRef(null);
   const wanderStepRef = React.useRef(0);
 
@@ -190,8 +176,9 @@ export default function TouristDashboard({
 
   // If real registered user, auto-prompt and activate live GPS tracking
   useEffect(() => {
-    setCurrentTourist(tourist);
-    if (tourist && (!tourist.isDemo || tourist.isRealUser) && !isDemoTourist) {
+    const resolvedTourist = tourist || (allTourists && allTourists.length > 0 ? allTourists[0] : null);
+    setCurrentTourist(resolvedTourist);
+    if (resolvedTourist && (!resolvedTourist.isDemo || resolvedTourist.isRealUser) && !isDemoTourist) {
       setUseLiveGpsMode(true);
       startTracking();
     } else if (isDemoTourist && !useLiveGpsMode) {
@@ -202,7 +189,7 @@ export default function TouristDashboard({
       clearInterval(wanderIntervalRef.current);
       setIsAutoWandering(false);
     }
-  }, [tourist?.touristId, isRealUser, isDemoTourist]);
+  }, [tourist?.touristId, isRealUser, isDemoTourist, allTourists]);
 
   // Live generative-AI explanation layer. Deterministic risk engine remains the source of truth; AI explains signals.
   useEffect(() => {
@@ -736,6 +723,16 @@ export default function TouristDashboard({
                 <span>🏺</span>
                 <span>GI Artisans Hub</span>
               </Link>
+
+              {/* Certified Local Guide Quick Trigger */}
+              <button
+                onClick={() => setShowGuidePromptModal(true)}
+                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 transition-all shadow-sm"
+                title="Request an Authority-verified certified local tourist guide"
+              >
+                <Award className="w-3.5 h-3.5 text-amber-600" />
+                <span>🪪 Request Local Guide</span>
+              </button>
             </div>
 
             {/* Sugamya Mode Active Banner with 1-Click Sahayak Cart */}

@@ -27,8 +27,9 @@ const TOURIST_ROUTES = [
 export default function BottomDock({ currentUser, onTriggerSos }) {
   const location = useLocation();
 
-  // Only render on designated tourist routes
-  if (!currentUser || currentUser.role !== 'TOURIST' || !TOURIST_ROUTES.includes(location.pathname)) {
+  // Render on designated tourist routes for tourists or visitors exploring the tourist portal
+  const isAuthorityOrGuide = currentUser?.role === 'AUTHORITY' || currentUser?.role === 'GUIDE';
+  if (isAuthorityOrGuide || !TOURIST_ROUTES.includes(location.pathname)) {
     return null;
   }
 
