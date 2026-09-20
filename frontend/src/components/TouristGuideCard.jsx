@@ -10,7 +10,7 @@ import TouristGuidePromptModal from './TouristGuidePromptModal';
 import GuideReviewModal from './GuideReviewModal';
 import GuideComplaintModal from './GuideComplaintModal';
 
-export default function TouristGuideCard({ tourist }) {
+export default function TouristGuideCard({ tourist, refreshTrigger }) {
   const [activeRequest, setActiveRequest] = useState(null);
   const [assignedGuide, setAssignedGuide] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ export default function TouristGuideCard({ tourist }) {
 
   useEffect(() => {
     fetchGuideStatus();
-  }, [tourist?.touristId]);
+  }, [tourist?.touristId, refreshTrigger]);
 
   const fetchGuideStatus = async () => {
     try {

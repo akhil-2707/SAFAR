@@ -154,22 +154,29 @@ export default function TouristDashboard({
   const [showMeshModal, setShowMeshModal] = useState(false);
   const [show112Modal, setShow112Modal] = useState(false);
   const [showGuidePromptModal, setShowGuidePromptModal] = useState(false);
+  const [guideRefreshTrigger, setGuideRefreshTrigger] = useState(0);
   const [aiAdvice, setAiAdvice] = useState(null);
   const [aiAdviceLoading, setAiAdviceLoading] = useState(false);
 
-  // Auto-prompt tourist if in destination and not dismissed in current session
+  // Set of prompted tourist IDs to prevent repeating within same active inspection
+  const promptedTouristsRef = React.useRef(new Set());
+
+  // Auto-prompt tourist for certified local guide when viewing destination
+  // Fires for Ananya Mishra (Ayodhya), Vikas Chandel (Jammu), Aarav Sharma (Taj Mahal), and all registered tourists
   useEffect(() => {
-    try {
-      const promptShown = sessionStorage.getItem('safar_guide_prompt_shown');
-      if (!promptShown && currentTourist?.destination) {
-        const timer = setTimeout(() => {
-          setShowGuidePromptModal(true);
-          sessionStorage.setItem('safar_guide_prompt_shown', 'true');
-        }, 2200);
-        return () => clearTimeout(timer);
-      }
-    } catch (e) {}
-  }, [currentTourist?.destination]);
+    const tid = currentTourist?.touristId;
+    if (!tid) return;
+
+    // Check if this specific tourist has already been prompted in this session
+    if (promptedTouristsRef.current.has(tid)) return;
+
+    const timer = setTimeout(() => {
+      setShowGuidePromptModal(true);
+      promptedTouristsRef.current.add(tid);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [currentTourist?.touristId]);
 
   const wanderIntervalRef = React.useRef(null);
   const wanderStepRef = React.useRef(0);
@@ -690,7 +697,7 @@ export default function TouristDashboard({
 
           {/* 🪪 Certified Local Tourist Guide (Authority Assigned & Rated) */}
           <motion.div variants={itemVariants}>
-            <TouristGuideCard tourist={currentTourist} />
+            <TouristGuideCard tourist={currentTourist} refreshTrigger={guideRefreshTrigger} />
           </motion.div>
 
           {/* 🛺 Local Transport Budget & Anti-Scam Auto/Cab Fare Guide */}
@@ -882,6 +889,7 @@ export default function TouristDashboard({
         isOpen={showGuidePromptModal}
         onClose={() => setShowGuidePromptModal(false)}
         tourist={currentTourist}
+        onRequestSuccess={() => setGuideRefreshTrigger((prev) => prev + 1)}
       />
     </motion.div>
   );
