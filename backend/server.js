@@ -44,6 +44,7 @@ app.use('/api/mesh-rescue', require('./routes/meshRescueRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/deadman', require('./routes/deadmanRoutes'));
 app.use('/api/guides', require('./routes/guideRoutes'));
+app.use('/api/fares', require('./routes/fareRoutes'));
 
 // Serve Frontend in Production / Cloud Deployments
 const path = require('path');

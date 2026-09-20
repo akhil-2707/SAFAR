@@ -18,8 +18,9 @@ import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
   PhoneCall, Zap, WifiOff, Sparkles, ShieldAlert, Activity, Wifi, Shield,
-  Phone, AlertCircle, Clock, HeartHandshake
+  Phone, AlertCircle, Clock, HeartHandshake, ArrowRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
@@ -698,6 +699,37 @@ export default function TouristDashboard({
           {/* 🪪 Certified Local Tourist Guide (Authority Assigned & Rated) */}
           <motion.div variants={itemVariants}>
             <TouristGuideCard tourist={currentTourist} refreshTrigger={guideRefreshTrigger} />
+          </motion.div>
+
+          {/* ⚡ Multi-Provider Ride Comparison Quick Entry (Uber, Ola, Rapido) */}
+          <motion.div variants={itemVariants}>
+            <div className="rounded-3xl p-4 sm:p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border border-slate-700/80">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                    TRANSIT AGGREGATOR
+                  </span>
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                    PROTOTYPE
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black tracking-tight flex items-center space-x-2">
+                  <Zap className="w-4 h-4 text-orange-400 shrink-0" />
+                  <span>Compare Uber, Ola & Rapido Fares</span>
+                </h3>
+                <p className="text-[11px] sm:text-xs text-slate-300 font-medium max-w-xl">
+                  Compare calibrated ride-hailing prototype estimates for your route with official deep-link handoff.
+                </p>
+              </div>
+
+              <Link
+                to="/fares?tab=compare"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md flex items-center justify-center space-x-2 shrink-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Compare Rides Now</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </motion.div>
 
           {/* 🛺 Local Transport Budget & Anti-Scam Auto/Cab Fare Guide */}
