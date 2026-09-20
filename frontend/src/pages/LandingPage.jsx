@@ -5,7 +5,7 @@ import {
   ShieldCheck, MapPin, Cpu, Lock, AlertOctagon, Activity, Users, 
   FileCheck, CheckCircle2, ArrowRight, Phone, ShieldAlert, Sparkles, 
   Navigation, Play, Eye, Radio, Compass, Zap, SignalZero, Globe, ChevronRight,
-  Route, FileCode, Loader2, UserCheck
+  Route, FileCode, Loader2, UserCheck, Award
 } from 'lucide-react';
 import CinematicHeroMap from '../components/CinematicHeroMap';
 import SafarLogo from '../components/SafarLogo';
@@ -253,6 +253,21 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                   <span>Authority Command Desk</span>
                 </Link>
               </motion.div>
+
+              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+                <Link to="/guide-register"
+                  className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 border-2"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,251,235,0.95), rgba(254,243,199,0.9))',
+                    border: '2px solid rgba(245,158,11,0.55)',
+                    color: '#b45309',
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '0 8px 25px rgba(245,158,11,0.18)',
+                  }}>
+                  <Award className="w-4 h-4 text-amber-600" />
+                  <span>Local Guide Portal</span>
+                </Link>
+              </motion.div>
             </motion.div>
 
             {/* KPI Pills */}
@@ -477,6 +492,22 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               >
                 <ShieldCheck className="w-4 h-4" />
                 <span>Command Desk</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (onSwitchUser) onSwitchUser('GUIDE');
+                  navigate('/guide-dashboard');
+                }}
+                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'rgba(245,158,11,0.12)',
+                  border: '1.5px solid rgba(245,158,11,0.4)',
+                  color: '#b45309'
+                }}
+              >
+                <Award className="w-4 h-4 text-amber-600" />
+                <span>Guide Cockpit</span>
               </button>
             </div>
           </div>

@@ -97,6 +97,31 @@ function getInitialData() {
       password: defaultPasswordHash,
       role: 'TOURIST',
       touristId: 'TID-REAL'
+    },
+    // Verified Local Guides & Demo Guide Accounts
+    {
+      id: 'usr_guide_ayodhya',
+      name: 'Rajesh Sharma',
+      email: 'rajesh.guide@safetour.gov.in',
+      password: defaultPasswordHash,
+      role: 'GUIDE',
+      guideId: 'GID-2026-AYODHYA'
+    },
+    {
+      id: 'usr_guide_tajmahal',
+      name: 'Imran Khan',
+      email: 'imran.guide@safetour.gov.in',
+      password: defaultPasswordHash,
+      role: 'GUIDE',
+      guideId: 'GID-2026-TAJMAHAL'
+    },
+    {
+      id: 'usr_guide_pending',
+      name: 'Amitav Sengupta',
+      email: 'amitav.pending@safetour.gov.in',
+      password: defaultPasswordHash,
+      role: 'GUIDE',
+      guideId: 'GID-PENDING-001'
     }
   ];
 
@@ -962,6 +987,347 @@ function getInitialData() {
     }
   ];
 
+  // S.A.F.A.R. Verified Local Tourist Guides
+  const guides = [
+    {
+      id: 'guide_01',
+      guideId: 'GID-2026-AYODHYA',
+      userId: 'usr_guide_ayodhya',
+      fullName: 'Rajesh Sharma',
+      email: 'rajesh.guide@safetour.gov.in',
+      phone: '+91 98390 11223',
+      city: 'Ayodhya',
+      operatingDestinations: ['Ayodhya', 'Ram Janmabhoomi', 'Saryu Ghat', 'Hanuman Garhi', 'Kanak Bhawan'],
+      languages: ['Hindi', 'English', 'Sanskrit'],
+      experienceYears: 8,
+      specialization: 'Spiritual & Heritage Corridor',
+      idProofType: 'Ministry of Tourism License',
+      idProofNumber: 'MOT-UP-AYD-2024-88',
+      bio: 'Certified Grade-A Heritage Guide for Ayodhya Pilgrim & Ramayana Circuit. 8+ years guiding pilgrims, international guests, and dignitaries.',
+      dailyRate: 1500,
+      hourlyRate: 350,
+      status: 'VERIFIED',
+      isAvailable: true,
+      rating: 4.9,
+      totalReviews: 48,
+      toursCompleted: 142,
+      policeVerificationStatus: 'VERIFIED',
+      digitalId: {
+        guideId: 'GID-2026-AYODHYA',
+        fullName: 'Rajesh Sharma',
+        issuer: 'Ministry of Tourism, Govt. of India (S.A.F.A.R.)',
+        issuedAt: '2026-01-15T10:00:00.000Z',
+        expiryDate: '2028-01-15',
+        digitalIdHash: '7a9f8c02b1e4569d8a34bc98e721ef65d8a9012bcfe89410ef32490ab8124cd1',
+        blockchainTxHash: '0000a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abc',
+        qrCodeData: 'https://safetour.gov.in/guide/verify/GID-2026-AYODHYA?hash=7a9f8c02b1e4569d'
+      },
+      reviews: [
+        {
+          id: 'rev_01',
+          touristName: 'Ananya Mishra',
+          touristId: 'TID-1035',
+          rating: 5,
+          comment: 'Very polite, showed us all historical facets of Saryu and temple corridor safely!',
+          date: '2026-08-16'
+        },
+        {
+          id: 'rev_02',
+          touristName: 'Dr. S. K. Verma',
+          touristId: 'TID-1024',
+          rating: 4.8,
+          comment: 'Extremely knowledgeable about ancient architecture and Ramayana history.',
+          date: '2026-07-28'
+        }
+      ],
+      createdAt: '2026-01-15T09:30:00.000Z'
+    },
+    {
+      id: 'guide_02',
+      guideId: 'GID-2026-TAJMAHAL',
+      userId: 'usr_guide_tajmahal',
+      fullName: 'Imran Khan',
+      email: 'imran.guide@safetour.gov.in',
+      phone: '+91 94120 44556',
+      city: 'Agra',
+      operatingDestinations: ['Taj Mahal', 'Agra Fort', 'Fatehpur Sikri', 'Mehtab Bagh'],
+      languages: ['Hindi', 'English', 'French', 'Urdu'],
+      experienceYears: 11,
+      specialization: 'Mughal Architecture & UNESCO World Heritage',
+      idProofType: 'Ministry of Tourism License',
+      idProofNumber: 'MOT-UP-AGR-2022-104',
+      bio: 'National Regional Level Guide (Northern Region). Expert in Mughal monument aesthetics, conservation and photography guidance.',
+      dailyRate: 1800,
+      hourlyRate: 400,
+      status: 'VERIFIED',
+      isAvailable: true,
+      rating: 4.8,
+      totalReviews: 82,
+      toursCompleted: 310,
+      policeVerificationStatus: 'VERIFIED',
+      digitalId: {
+        guideId: 'GID-2026-TAJMAHAL',
+        fullName: 'Imran Khan',
+        issuer: 'Ministry of Tourism, Govt. of India (S.A.F.A.R.)',
+        issuedAt: '2026-01-20T11:00:00.000Z',
+        expiryDate: '2028-01-20',
+        digitalIdHash: '8b0a9d13c2f5670e9b45cd09f832fe76e9b0123cdef90521fa43501bc9235de2',
+        blockchainTxHash: '0000b2c3d4e5f6a7890123456789bcdef0123456789abcdef0123456789abcde',
+        qrCodeData: 'https://safetour.gov.in/guide/verify/GID-2026-TAJMAHAL?hash=8b0a9d13c2f5670e'
+      },
+      reviews: [
+        {
+          id: 'rev_03',
+          touristName: 'Emily Chen',
+          touristId: 'TID-1028',
+          rating: 5,
+          comment: 'Imran made our Taj visit magical! Handled tickets, security checks and told great historical stories.',
+          date: '2026-08-05'
+        }
+      ],
+      createdAt: '2026-01-20T10:00:00.000Z'
+    },
+    {
+      id: 'guide_03',
+      guideId: 'GID-2026-KAZIRANGA',
+      userId: 'usr_guide_kaziranga',
+      fullName: 'Bhaben Borah',
+      email: 'bhaben.guide@safetour.gov.in',
+      phone: '+91 94350 99881',
+      city: 'Kaziranga / Guwahati',
+      operatingDestinations: ['Kaziranga National Park', 'Guwahati', 'Kamakhya Temple', 'Brahmaputra Cruise', 'Pobitora'],
+      languages: ['Assamese', 'Hindi', 'English', 'Bengali'],
+      experienceYears: 7,
+      specialization: 'Wildlife Tracking, Eco-Tourism & Birding Safari',
+      idProofType: 'Assam Forest Dept Naturalist Badge',
+      idProofNumber: 'ATDC-KZ-2023-45',
+      bio: 'Eco-guide & wildlife tracker. Licensed by Assam Tourism Development Corp and Kaziranga Forest Authority.',
+      dailyRate: 1600,
+      hourlyRate: 350,
+      status: 'VERIFIED',
+      isAvailable: true,
+      rating: 4.9,
+      totalReviews: 36,
+      toursCompleted: 98,
+      policeVerificationStatus: 'VERIFIED',
+      digitalId: {
+        guideId: 'GID-2026-KAZIRANGA',
+        fullName: 'Bhaben Borah',
+        issuer: 'Ministry of Tourism, Govt. of India (S.A.F.A.R.)',
+        issuedAt: '2026-02-01T09:00:00.000Z',
+        expiryDate: '2028-02-01',
+        digitalIdHash: '9c1bae24d3a6781fac56de10a943af87fa01234defa01632ab54612cd0346ef3',
+        blockchainTxHash: '0000c3d4e5f6a7b890123456789cdef0123456789abcdef0123456789abcdef0',
+        qrCodeData: 'https://safetour.gov.in/guide/verify/GID-2026-KAZIRANGA?hash=9c1bae24d3a6781f'
+      },
+      reviews: [
+        {
+          id: 'rev_04',
+          touristName: 'Priya Mukherjee',
+          touristId: 'TID-1025',
+          rating: 5,
+          comment: 'Safely guided through safari buffer zones, spotted rhinos and hornbills!',
+          date: '2026-08-11'
+        }
+      ],
+      createdAt: '2026-02-01T08:00:00.000Z'
+    },
+    {
+      id: 'guide_04',
+      guideId: 'GID-2026-VARANASI',
+      userId: 'usr_guide_varanasi',
+      fullName: 'Acharya Vishwanath Pandey',
+      email: 'vishwanath.guide@safetour.gov.in',
+      phone: '+91 94500 33221',
+      city: 'Varanasi',
+      operatingDestinations: ['Varanasi', 'Kashi Vishwanath', 'Dashashwamedh Ghat', 'Sarnath', 'Assi Ghat'],
+      languages: ['Hindi', 'English', 'Gujarati', 'Sanskrit'],
+      experienceYears: 14,
+      specialization: 'Ghat Heritage, Ganga Aarti & Vedic Culture',
+      idProofType: 'Ministry of Tourism License',
+      idProofNumber: 'MOT-UP-VNS-2021-33',
+      bio: 'Senior cultural interpreter for Kashi heritage corridor and Ganga twilight aarti ceremonies.',
+      dailyRate: 1500,
+      hourlyRate: 300,
+      status: 'VERIFIED',
+      isAvailable: true,
+      rating: 5.0,
+      totalReviews: 64,
+      toursCompleted: 220,
+      policeVerificationStatus: 'VERIFIED',
+      digitalId: {
+        guideId: 'GID-2026-VARANASI',
+        fullName: 'Acharya Vishwanath Pandey',
+        issuer: 'Ministry of Tourism, Govt. of India (S.A.F.A.R.)',
+        issuedAt: '2026-01-10T10:00:00.000Z',
+        expiryDate: '2028-01-10',
+        digitalIdHash: 'ad2cbf35e4b7892abd67ef21b054bf98ab12345efb012743bc65723de1457fa4',
+        blockchainTxHash: '0000d4e5f6a7b8c90123456789def0123456789abcdef0123456789abcdef01',
+        qrCodeData: 'https://safetour.gov.in/guide/verify/GID-2026-VARANASI?hash=ad2cbf35e4b7892a'
+      },
+      reviews: [],
+      createdAt: '2026-01-10T09:00:00.000Z'
+    },
+    {
+      id: 'guide_05',
+      guideId: 'GID-2026-JAIPUR',
+      userId: 'usr_guide_jaipur',
+      fullName: 'Vikram Singh Rathore',
+      email: 'vikram.guide@safetour.gov.in',
+      phone: '+91 98290 77889',
+      city: 'Jaipur',
+      operatingDestinations: ['Jaipur', 'Amber Fort', 'Hawa Mahal', 'City Palace', 'Nahargarh Fort'],
+      languages: ['Hindi', 'English', 'Marwari', 'German'],
+      experienceYears: 9,
+      specialization: 'Royal Forts, Rajputana History & Traditional Crafts',
+      idProofType: 'Rajasthan Tourism Dept Badge',
+      idProofNumber: 'RTDC-JP-2023-77',
+      bio: 'Registered state guide for Pink City heritage circuits. Specialist in Amber fort history and night tours.',
+      dailyRate: 1600,
+      hourlyRate: 350,
+      status: 'VERIFIED',
+      isAvailable: true,
+      rating: 4.7,
+      totalReviews: 41,
+      toursCompleted: 165,
+      policeVerificationStatus: 'VERIFIED',
+      digitalId: {
+        guideId: 'GID-2026-JAIPUR',
+        fullName: 'Vikram Singh Rathore',
+        issuer: 'Ministry of Tourism, Govt. of India (S.A.F.A.R.)',
+        issuedAt: '2026-02-10T11:00:00.000Z',
+        expiryDate: '2028-02-10',
+        digitalIdHash: 'be3dca46f5c8903bce78fa32c165ca09bc23456fac013854cd76834ef2568ab5',
+        blockchainTxHash: '0000e5f6a7b8c9d0123456789ef0123456789abcdef0123456789abcdef012',
+        qrCodeData: 'https://safetour.gov.in/guide/verify/GID-2026-JAIPUR?hash=be3dca46f5c8903b'
+      },
+      reviews: [],
+      createdAt: '2026-02-10T10:00:00.000Z'
+    },
+    {
+      id: 'guide_06',
+      guideId: 'GID-2026-JAMMU',
+      userId: 'usr_guide_jammu',
+      fullName: 'Sunil Kotwal',
+      email: 'sunil.guide@safetour.gov.in',
+      phone: '+91 97970 22334',
+      city: 'Jammu / Katra',
+      operatingDestinations: ['Katra', 'Vaishno Devi Bhawan', 'Bhairon Temple', 'Jammu', 'Patnitop'],
+      languages: ['Dogri', 'Hindi', 'English', 'Punjabi'],
+      experienceYears: 6,
+      specialization: 'High Altitude Pilgrimage & Disaster Evacuation Assistance',
+      idProofType: 'Shri Mata Vaishno Devi Shrine Board Permit',
+      idProofNumber: 'SMVDSB-GD-2024-19',
+      bio: 'Certified pilgrim guide and first-responder certified by Disaster Management unit for Vaishno Devi track.',
+      dailyRate: 1400,
+      hourlyRate: 300,
+      status: 'VERIFIED',
+      isAvailable: true,
+      rating: 4.9,
+      totalReviews: 29,
+      toursCompleted: 112,
+      policeVerificationStatus: 'VERIFIED',
+      digitalId: {
+        guideId: 'GID-2026-JAMMU',
+        fullName: 'Sunil Kotwal',
+        issuer: 'Ministry of Tourism, Govt. of India (S.A.F.A.R.)',
+        issuedAt: '2026-02-15T09:30:00.000Z',
+        expiryDate: '2028-02-15',
+        digitalIdHash: 'cf4edb57a6d9014cdf89ab43d276db10cd34567abd014965de87945fa3679bc6',
+        blockchainTxHash: '0000f6a7b8c9d0e123456789f0123456789abcdef0123456789abcdef0123',
+        qrCodeData: 'https://safetour.gov.in/guide/verify/GID-2026-JAMMU?hash=cf4edb57a6d9014c'
+      },
+      reviews: [],
+      createdAt: '2026-02-15T08:30:00.000Z'
+    },
+    // Pending Verification Guide (For Authority Desk Approval Demo)
+    {
+      id: 'guide_07',
+      guideId: 'GID-PENDING-001',
+      userId: 'usr_guide_pending',
+      fullName: 'Amitav Sengupta',
+      email: 'amitav.pending@safetour.gov.in',
+      phone: '+91 98300 55667',
+      city: 'Guwahati / Shillong',
+      operatingDestinations: ['Guwahati', 'Shillong', 'Cherrapunji', 'Dawki River'],
+      languages: ['Bengali', 'Hindi', 'English', 'Khasi'],
+      experienceYears: 4,
+      specialization: 'Adventure Caving, Living Root Bridges & Monsoon Trekking',
+      idProofType: 'Aadhaar Card & Tourism Diploma',
+      idProofNumber: 'AADHAAR-8901-2345-6789',
+      bio: 'Certified trekking enthusiast and Meghalaya caves naturalist. Awaiting central authority verification of documents.',
+      dailyRate: 1400,
+      hourlyRate: 300,
+      status: 'PENDING_VERIFICATION',
+      isAvailable: false,
+      rating: 0,
+      totalReviews: 0,
+      toursCompleted: 0,
+      policeVerificationStatus: 'PENDING',
+      digitalId: null,
+      reviews: [],
+      createdAt: new Date().toISOString()
+    }
+  ];
+
+  // Tourist Local Guide Requests
+  const guideRequests = [
+    {
+      id: 'req_demo_01',
+      touristId: 'TID-1035',
+      touristName: 'Ananya Mishra',
+      touristPhone: '+91 98765 43210',
+      destination: 'Ayodhya Ram Janmabhoomi Pilgrim Corridor',
+      city: 'Ayodhya',
+      preferredLanguage: 'Hindi',
+      travelDate: '2026-08-16',
+      tourType: 'Spiritual & Temple Darshan',
+      notes: 'Need elderly family friendly route with minimum staircase walking.',
+      status: 'ASSIGNED',
+      assignedGuideId: 'GID-2026-AYODHYA',
+      assignedGuideName: 'Rajesh Sharma',
+      assignedGuidePhone: '+91 98390 11223',
+      assignedAt: '2026-08-15T10:00:00.000Z',
+      createdAt: '2026-08-15T09:00:00.000Z'
+    },
+    {
+      id: 'req_demo_02',
+      touristId: 'TID-1039',
+      touristName: 'Aarav Sharma',
+      touristPhone: '+91 99887 76655',
+      destination: 'Taj Mahal Monument Safe Heritage Perimeter',
+      city: 'Agra',
+      preferredLanguage: 'English',
+      travelDate: '2026-08-20',
+      tourType: 'Heritage & Architectural Photography',
+      notes: 'Sunrise visit to eastern gate and Mehtab Bagh reflection spot.',
+      status: 'PENDING_ASSIGNMENT',
+      assignedGuideId: null,
+      assignedGuideName: null,
+      assignedGuidePhone: null,
+      assignedAt: null,
+      createdAt: new Date(Date.now() - 30 * 60000).toISOString()
+    }
+  ];
+
+  // Tourist Complaints against Guides
+  const guideComplaints = [
+    {
+      id: 'comp_01',
+      touristId: 'TID-1027',
+      touristName: 'Aarav Sharma',
+      touristPhone: '+91 99887 76655',
+      guideId: 'GID-2026-TAJMAHAL',
+      guideName: 'Imran Khan',
+      category: 'Overcharging / Tariff Discrepancy',
+      description: 'Requested extra tip for camera permit assistance outside standard pre-fixed tariff.',
+      status: 'INVESTIGATING', // 'PENDING' | 'INVESTIGATING' | 'WARNING_ISSUED' | 'SUSPENDED' | 'RESOLVED'
+      urgency: 'MEDIUM',
+      actionTaken: 'Contacted guide for clarification regarding authorized locker receipt.',
+      createdAt: new Date(Date.now() - 120 * 60000).toISOString()
+    }
+  ];
+
   return {
     users,
     geofences,
@@ -972,7 +1338,10 @@ function getInitialData() {
     trips,
     checkpoints,
     verificationRecords,
-    medicalProfiles
+    medicalProfiles,
+    guides,
+    guideRequests,
+    guideComplaints
   };
 }
 

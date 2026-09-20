@@ -12,6 +12,8 @@ import OfflineGhostMeshModal from '../components/OfflineGhostMeshModal';
 import SafarLogo from '../components/SafarLogo';
 import DeadmanSwitch from '../components/DeadmanSwitch';
 import LocalFareEstimator from '../components/LocalFareEstimator';
+import TouristGuideCard from '../components/TouristGuideCard';
+import TouristGuidePromptModal from '../components/TouristGuidePromptModal';
 import RedZonePreEntryBanner from '../components/RedZonePreEntryBanner';
 import SilentDuressModal from '../components/SilentDuressModal';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
@@ -163,8 +165,23 @@ export default function TouristDashboard({
   const [isAutoWandering, setIsAutoWandering] = useState(false);
   const [showMeshModal, setShowMeshModal] = useState(false);
   const [show112Modal, setShow112Modal] = useState(false);
+  const [showGuidePromptModal, setShowGuidePromptModal] = useState(false);
   const [aiAdvice, setAiAdvice] = useState(null);
   const [aiAdviceLoading, setAiAdviceLoading] = useState(false);
+
+  // Auto-prompt tourist if in destination and not dismissed in current session
+  useEffect(() => {
+    try {
+      const promptShown = sessionStorage.getItem('safar_guide_prompt_shown');
+      if (!promptShown && currentTourist?.destination) {
+        const timer = setTimeout(() => {
+          setShowGuidePromptModal(true);
+          sessionStorage.setItem('safar_guide_prompt_shown', 'true');
+        }, 2200);
+        return () => clearTimeout(timer);
+      }
+    } catch (e) {}
+  }, [currentTourist?.destination]);
 
   const wanderIntervalRef = React.useRef(null);
   const wanderStepRef = React.useRef(0);
@@ -820,6 +837,11 @@ export default function TouristDashboard({
             />
           </motion.div>
 
+          {/* 🪪 Certified Local Tourist Guide (Authority Assigned & Rated) */}
+          <motion.div variants={itemVariants}>
+            <TouristGuideCard tourist={currentTourist} />
+          </motion.div>
+
           {/* 🛺 Local Transport Budget & Anti-Scam Auto/Cab Fare Guide */}
           <motion.div variants={itemVariants}>
             <LocalFareEstimator currentTourist={currentTourist} />
@@ -1002,6 +1024,13 @@ export default function TouristDashboard({
         onClose={() => setShowMeshModal(false)}
         tourist={currentTourist}
         isRedZoneTriggered={isDangerZoneActive}
+      />
+
+      {/* Certified Local Guide Prompt Modal */}
+      <TouristGuidePromptModal
+        isOpen={showGuidePromptModal}
+        onClose={() => setShowGuidePromptModal(false)}
+        tourist={currentTourist}
       />
     </motion.div>
   );

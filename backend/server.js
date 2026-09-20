@@ -47,6 +47,7 @@ app.use('/api/authority', require('./routes/authorityRoutes'));
 app.use('/api/verify', require('./routes/verifyRoutes'));
 app.use('/api/hotels', require('./routes/hotelRoutes'));
 app.use('/api/artisans', require('./routes/artisanRoutes'));
+app.use('/api/guides', require('./routes/guideRoutes'));
 
 // Serve Frontend in Production / Cloud Deployments
 const path = require('path');

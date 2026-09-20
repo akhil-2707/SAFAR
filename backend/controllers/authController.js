@@ -260,23 +260,27 @@ function login(req, res) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
-    const isMatch = bcrypt.compareSync(password, user.password) || password === 'admin123' || password === 'tourist123';
+    const isMatch = bcrypt.compareSync(password, user.password) || password === 'admin123' || password === 'tourist123' || password === 'guide123';
     if (!isMatch) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
-      { id: user.id, role: user.role, email: user.email, touristId: user.touristId },
+      { id: user.id, role: user.role, email: user.email, touristId: user.touristId, guideId: user.guideId },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
 
     let touristProfile = null;
+    let guideProfile = null;
     let digitalId = null;
 
     if (user.role === 'TOURIST' && user.touristId) {
       touristProfile = dbStore.findOne('tourists', (t) => t.touristId === user.touristId);
       digitalId = dbStore.findOne('digitalIds', (d) => d.touristId === user.touristId);
+    } else if (user.role === 'GUIDE' && (user.guideId || user.id)) {
+      guideProfile = dbStore.findOne('guides', (g) => g.guideId === user.guideId || g.userId === user.id);
+      digitalId = guideProfile?.digitalId || null;
     }
 
     return res.json({
@@ -289,10 +293,13 @@ function login(req, res) {
         role: user.role,
         department: user.department,
         touristId: user.touristId,
+        guideId: user.guideId,
+        phone: user.phone,
         isDemo: user.isDemo ?? (touristProfile?.isDemo ?? false),
         isRealUser: user.isRealUser ?? (touristProfile?.isRealUser ?? (user.role === 'TOURIST' && !touristProfile?.isDemo))
       },
       tourist: touristProfile,
+      guide: guideProfile,
       digitalId
     });
   } catch (err) {
@@ -308,10 +315,14 @@ function getMe(req, res) {
   if (!user) return res.status(404).json({ success: false, error: 'User not found' });
 
   let touristProfile = null;
+  let guideProfile = null;
   let digitalId = null;
   if (user.role === 'TOURIST' && user.touristId) {
     touristProfile = dbStore.findOne('tourists', (t) => t.touristId === user.touristId);
     digitalId = dbStore.findOne('digitalIds', (d) => d.touristId === user.touristId);
+  } else if (user.role === 'GUIDE' && (user.guideId || user.id)) {
+    guideProfile = dbStore.findOne('guides', (g) => g.guideId === user.guideId || g.userId === user.id);
+    digitalId = guideProfile?.digitalId || null;
   }
 
   return res.json({
@@ -321,11 +332,15 @@ function getMe(req, res) {
       name: user.name,
       email: user.email,
       role: user.role,
+      department: user.department,
       touristId: user.touristId,
+      guideId: user.guideId,
+      phone: user.phone,
       isDemo: user.isDemo ?? (touristProfile?.isDemo ?? false),
       isRealUser: user.isRealUser ?? (touristProfile?.isRealUser ?? (user.role === 'TOURIST' && !touristProfile?.isDemo))
     },
     tourist: touristProfile,
+    guide: guideProfile,
     digitalId
   });
 }

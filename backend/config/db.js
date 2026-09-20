@@ -25,6 +25,9 @@ function getFallbackInitialState() {
     checkpoints: initialData.checkpoints || [],
     verificationRecords: initialData.verificationRecords || [],
     medicalProfiles: initialData.medicalProfiles || [],
+    guides: initialData.guides || [],
+    guideRequests: initialData.guideRequests || [],
+    guideComplaints: initialData.guideComplaints || [],
     notifications: [
       {
         id: 'notif_01',
@@ -85,7 +88,11 @@ async function connectMongoDB() {
 
     // Sync from MongoDB into state
     const db = mongoose.connection.db;
-    const collectionsToSync = ['users', 'tourists', 'digitalids', 'geofences', 'incidents', 'emergencyservices', 'trips', 'verificationrecords', 'medicalprofiles', 'checkpoints', 'artisans', 'hotels'];
+    const collectionsToSync = [
+      'users', 'tourists', 'digitalids', 'geofences', 'incidents', 
+      'emergencyservices', 'trips', 'verificationrecords', 'medicalprofiles', 
+      'checkpoints', 'artisans', 'hotels', 'guides', 'guiderequests', 'guidecomplaints'
+    ];
 
     for (const colName of collectionsToSync) {
       try {
@@ -101,7 +108,9 @@ async function connectMongoDB() {
             emergencyservices: 'emergencyServices',
             verificationrecords: 'verificationRecords',
             medicalprofiles: 'medicalProfiles',
-            checkpoints: 'checkpoints'
+            checkpoints: 'checkpoints',
+            guiderequests: 'guideRequests',
+            guidecomplaints: 'guideComplaints'
           };
           const targetKey = keyMap[colName] || colName;
           state[targetKey] = cleanDocs;

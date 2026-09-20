@@ -27,6 +27,9 @@ import EmergencyHelpPage from './pages/EmergencyHelpPage';
 import DeadmanSwitchPage from './pages/DeadmanSwitchPage';
 import MicroStaysPage from './pages/MicroStaysPage';
 import ArtisansPage from './pages/ArtisansPage';
+import GuideDashboard from './pages/GuideDashboard';
+import GuideRegisterPage from './pages/GuideRegisterPage';
+import GuideVerifyPage from './pages/GuideVerifyPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -254,6 +257,18 @@ export default function App() {
       };
       setCurrentUser(authUser);
       localStorage.setItem('safar_user', JSON.stringify(authUser));
+    } else if (role === 'GUIDE') {
+      const guideUser = {
+        id: 'usr_guide_01',
+        guideId: 'GUIDE-AYO-01',
+        name: 'Rajesh Sharma',
+        email: 'rajesh.guide@ayodhya.tour.in',
+        role: 'GUIDE',
+        status: 'VERIFIED',
+        assignedDestination: 'Ayodhya Ram Janmabhoomi Corridor'
+      };
+      setCurrentUser(guideUser);
+      localStorage.setItem('safar_user', JSON.stringify(guideUser));
     } else {
       const defaultTourist = touristProfile || allTourists[0];
       if (defaultTourist) {
@@ -635,6 +650,18 @@ function AppContent({
                   }
                 />
 
+                {/* 7. Smart Micro-Stays & Luggage Cloakroom Hub (Hotels) */}
+                <Route
+                  path="/micro-stays"
+                  element={<MicroStaysPage tourist={touristProfile} />}
+                />
+
+                {/* 8. GI Master Artisans & Fair Trade Direct Hub (Others) */}
+                <Route
+                  path="/artisans"
+                  element={<ArtisansPage tourist={touristProfile} />}
+                />
+
                 {/* Authority & Management Command Desks */}
                 <Route
                   path="/authority-dashboard"
@@ -691,6 +718,28 @@ function AppContent({
                 <Route
                   path="/vendor-marketplace"
                   element={<VendorMarketplacePage />}
+                />
+
+                {/* Local Tourist Guide Routes */}
+                <Route
+                  path="/guide-dashboard"
+                  element={
+                    <GuideDashboard
+                      currentUser={currentUser}
+                      onLogout={handleLogout}
+                    />
+                  }
+                />
+                <Route path="/guide" element={<Navigate to="/guide-dashboard" replace />} />
+
+                <Route
+                  path="/guide-register"
+                  element={<GuideRegisterPage onRegisterSuccess={handleLoginSuccess} />}
+                />
+
+                <Route
+                  path="/guide/verify/:guideId"
+                  element={<GuideVerifyPage />}
                 />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
