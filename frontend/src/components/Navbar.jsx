@@ -135,9 +135,9 @@ export default function Navbar({
             background: 'rgba(120,120,128,0.08)',
           }}>
             {[
-              { to: '/tourist-dashboard', label: 'Safety Map', shortLabel: 'Map', icon: Compass },
               { to: '/micro-stays', label: 'Hotels & Stays', shortLabel: 'Stays', icon: Building2, badge: 'NEW', badgeColor: '#0A84FF' },
               { to: '/artisans', label: 'GI Artisans', shortLabel: 'Artisans', icon: Award, badge: 'NEW', badgeColor: '#AF52DE' },
+              { to: '/guide-dashboard', label: 'Local Guide', shortLabel: 'Guide', icon: Award, badge: 'NEW', badgeColor: '#F59E0B' },
             ].map((nl) => {
               const IconC = nl.icon;
               const active = location.pathname === nl.to;
@@ -174,55 +174,6 @@ export default function Navbar({
 
         {/* Right Section */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* 1-Click Persona / Role Switcher for Evaluators & Multi-Role Demo */}
-          <div className="hidden lg:flex items-center p-0.5 rounded-2xl bg-slate-200/60 border border-slate-300/60 shadow-inner">
-            <button
-              onClick={() => {
-                onSwitchUser?.('TOURIST');
-                navigate('/tourist-dashboard');
-              }}
-              className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all flex items-center gap-1 cursor-pointer ${
-                (!currentUser || currentUser?.role === 'TOURIST')
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-blue-600'
-              }`}
-              title="Tourist Safety Portal"
-            >
-              <span>🎒</span>
-              <span>Tourist</span>
-            </button>
-            <button
-              onClick={() => {
-                onSwitchUser?.('GUIDE');
-                navigate('/guide-dashboard');
-              }}
-              className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all flex items-center gap-1 cursor-pointer ${
-                currentUser?.role === 'GUIDE'
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-amber-600'
-              }`}
-              title="Certified Local Guide Cockpit"
-            >
-              <span>🪪</span>
-              <span>Guide</span>
-            </button>
-            <button
-              onClick={() => {
-                onSwitchUser?.('AUTHORITY');
-                navigate('/authority-dashboard');
-              }}
-              className={`px-2.5 py-1 rounded-xl text-[11px] font-black transition-all flex items-center gap-1 cursor-pointer ${
-                currentUser?.role === 'AUTHORITY'
-                  ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-purple-600'
-              }`}
-              title="Central Authority Command Desk"
-            >
-              <span>🛡️</span>
-              <span>Authority</span>
-            </button>
-          </div>
-
           <LanguageSelector variant="navbar" />
 
           {/* Notification Bell */}
@@ -463,57 +414,6 @@ export default function Navbar({
             }}
           >
             <div className="px-4 py-4 space-y-3 max-h-[calc(100vh-64px)] overflow-y-auto">
-              {/* Mobile 1-Click Role Switcher */}
-              <div className="p-2.5 rounded-2xl bg-slate-100/90 border border-slate-200/80 space-y-1.5">
-                <p className="text-[10px] font-black uppercase tracking-wider text-slate-500 px-0.5">Switch Persona / Portal</p>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    onClick={() => {
-                      onSwitchUser?.('TOURIST');
-                      navigate('/tourist-dashboard');
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 ${
-                      (!currentUser || currentUser?.role === 'TOURIST')
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-slate-200'
-                    }`}
-                  >
-                    <span>🎒</span>
-                    <span>Tourist</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      onSwitchUser?.('GUIDE');
-                      navigate('/guide-dashboard');
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 ${
-                      currentUser?.role === 'GUIDE'
-                        ? 'bg-amber-600 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-slate-200'
-                    }`}
-                  >
-                    <span>🪪</span>
-                    <span>Guide</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      onSwitchUser?.('AUTHORITY');
-                      navigate('/authority-dashboard');
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 ${
-                      currentUser?.role === 'AUTHORITY'
-                        ? 'bg-purple-600 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-slate-200'
-                    }`}
-                  >
-                    <span>🛡️</span>
-                    <span>Authority</span>
-                  </button>
-                </div>
-              </div>
 
               {/* User badge on mobile drawer / Account Access */}
               {currentUser ? (
@@ -683,6 +583,16 @@ export default function Navbar({
                     >
                       <span className="text-sm">🏺</span>
                       <span>GI Artisans & Vocal for Local (Others)</span>
+                    </Link>
+                    <Link
+                      to="/guide-dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/guide-dashboard' ? 'bg-amber-50 text-amber-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Award className="w-4 h-4 text-amber-500" />
+                      <span>Certified Local Guide</span>
                     </Link>
                     <Link
                       to="/digital-id"
