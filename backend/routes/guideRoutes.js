@@ -10,6 +10,7 @@ const {
   createGuideRequest,
   getGuideRequests,
   assignGuideToRequest,
+  cancelGuideRequest,
   reviewGuide,
   complainAgainstGuide,
   getGuideComplaints,
@@ -24,6 +25,8 @@ router.get('/', getGuides);
 router.get('/requests', getGuideRequests);
 router.post('/request', createGuideRequest);
 router.patch('/requests/:requestId/assign', assignGuideToRequest);
+router.patch('/requests/:requestId/cancel', cancelGuideRequest);
+router.delete('/requests/:requestId', cancelGuideRequest);
 
 // Complaints Management (Must be before /:id)
 router.get('/complaints', getGuideComplaints);

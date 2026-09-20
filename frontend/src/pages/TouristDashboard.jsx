@@ -478,17 +478,29 @@ export default function TouristDashboard({
                   } else if (useLiveGpsMode) { setUseLiveGpsMode(false); stopTracking(); }
                   if (onSelectTourist) onSelectTourist(val);
                 }}
-                className="text-[11px] sm:text-xs font-medium px-2 py-1 rounded-xl cursor-pointer focus:outline-none max-w-full"
+                className="text-[11px] sm:text-xs font-semibold px-2 py-1 rounded-xl cursor-pointer focus:outline-none max-w-full"
                 style={{
                   background: 'rgba(120,120,128,0.1)',
                   border: '0.5px solid rgba(60,60,67,0.12)',
                   color: '#1C1C1E',
                 }}
               >
-                <option value="TID-1035">🛕 Ayodhya — Ram Janmabhoomi</option>
-                <option value="TID-1036">🏔️ Jammu — Vaishno Devi</option>
-                <option value="TID-1039">🕌 Taj Mahal — Agra</option>
-                <option value="TID-REAL">📍 Real-Time — Live GPS</option>
+                {allTourists && allTourists.length > 0 ? (
+                  allTourists.map((t) => (
+                    <option key={t.touristId} value={t.touristId}>
+                      {t.touristId === 'TID-1035' ? '🛕' : t.touristId === 'TID-1036' ? '🏔️' : t.touristId === 'TID-1037' ? '🏰' : t.touristId === 'TID-1038' ? '🦏' : t.touristId === 'TID-1039' ? '🕌' : '👤'} {t.fullName} — {t.destination?.split(' ')[0] || t.city || 'India'}
+                    </option>
+                  ))
+                ) : (
+                  <>
+                    <option value="TID-1035">🛕 Aarav Sharma — Ayodhya</option>
+                    <option value="TID-1036">🏔️ Vikram Singh — Katra (Jammu)</option>
+                    <option value="TID-1037">🏰 Sunita Patel — Jaipur</option>
+                    <option value="TID-1038">🦏 Rahul Roy — Kaziranga (Assam)</option>
+                    <option value="TID-1039">🕌 Priya Nair — Agra (Taj Mahal)</option>
+                  </>
+                )}
+                <option value="TID-REAL">📍 Real-Time Device — Live GPS</option>
               </select>
             </div>
 

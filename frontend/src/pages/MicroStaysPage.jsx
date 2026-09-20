@@ -16,6 +16,8 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
     if (dest.includes('agra') || dest.includes('taj')) return 'Agra';
     if (dest.includes('varanasi') || dest.includes('kashi')) return 'Varanasi';
     if (dest.includes('jaipur') || dest.includes('rajasthan')) return 'Jaipur';
+    if (dest.includes('jammu') || dest.includes('katra') || dest.includes('vaishno')) return 'Katra';
+    if (dest.includes('guwahati') || dest.includes('assam') || dest.includes('kamrup') || dest.includes('kaziranga')) return 'Guwahati';
     return 'Ayodhya';
   };
 
@@ -159,9 +161,11 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
                 className="text-xs font-bold px-2 py-1.5 rounded-xl cursor-pointer bg-transparent focus:outline-none text-gray-800"
               >
                 <option value="Ayodhya">🛕 Ayodhya Dham (AY)</option>
-                <option value="Varanasi">🕉️ Varanasi Cantt (BSB)</option>
+                <option value="Katra">🏔️ Katra • Vaishno Devi (SVDK)</option>
                 <option value="Agra">🕌 Agra Cantt (AGC)</option>
+                <option value="Varanasi">🕉️ Varanasi Cantt (BSB)</option>
                 <option value="Jaipur">🏰 Jaipur Junction (JP)</option>
+                <option value="Guwahati">🦏 Guwahati • Kamakhya (KYQ)</option>
               </select>
             </div>
           </div>

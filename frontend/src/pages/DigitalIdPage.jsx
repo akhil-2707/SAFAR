@@ -113,9 +113,21 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
               color: '#1C1C1E',
             }}
           >
-            <option value="TID-1035">🛕 Ayodhya — Ananya Mishra</option>
-            <option value="TID-1036">🏔️ Jammu — Rajesh Sharma</option>
-            <option value="TID-1039">🕌 Taj Mahal — Emily Watson</option>
+            {allTourists && allTourists.length > 0 ? (
+              allTourists.map((t) => (
+                <option key={t.touristId} value={t.touristId}>
+                  {t.touristId === 'TID-1035' ? '🛕' : t.touristId === 'TID-1036' ? '🏔️' : t.touristId === 'TID-1037' ? '🏰' : t.touristId === 'TID-1038' ? '🦏' : t.touristId === 'TID-1039' ? '🕌' : '👤'} {t.fullName} — {t.destination?.split(' ')[0] || t.city || 'India'}
+                </option>
+              ))
+            ) : (
+              <>
+                <option value="TID-1035">🛕 Aarav Sharma — Ayodhya</option>
+                <option value="TID-1036">🏔️ Vikram Singh — Katra (Jammu)</option>
+                <option value="TID-1037">🏰 Sunita Patel — Jaipur</option>
+                <option value="TID-1038">🦏 Rahul Roy — Kaziranga (Assam)</option>
+                <option value="TID-1039">🕌 Priya Nair — Agra (Taj Mahal)</option>
+              </>
+            )}
             <option value="TID-REAL">📍 Real-Time Live GPS</option>
           </select>
         </div>

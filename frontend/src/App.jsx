@@ -120,17 +120,18 @@ export default function App() {
         if (targetUser && targetUser.touristId) {
           const myProfile = dataT.tourists.find((t) => t.touristId === targetUser.touristId);
           if (myProfile) setTouristProfile(myProfile);
+        } else {
+          setTouristProfile((prev) => prev || (dataT.tourists && dataT.tourists.length > 0 ? dataT.tourists[0] : null));
         }
       }
 
       // 2. Fetch Digital ID if authenticated
       const targetUser = activeUser || currentUser;
-      if (targetUser && targetUser.touristId) {
-        fetch(`/api/digital-id/${targetUser.touristId}`, { headers: authHeaders })
-          .then((r) => r.json())
-          .then((d) => { if (d.success) setDigitalId(d.digitalId); })
-          .catch(() => {});
-      }
+      const tidToFetch = targetUser?.touristId || (dataT?.tourists?.[0]?.touristId) || 'TID-1035';
+      fetch(`/api/digital-id/${tidToFetch}`, { headers: authHeaders })
+        .then((r) => r.json())
+        .then((d) => { if (d.success) setDigitalId(d.digitalId); })
+        .catch(() => {});
 
       // 3. Fetch Geo-Fences
       const resG = await fetch('/api/geofences');
@@ -142,7 +143,7 @@ export default function App() {
       const dataI = await resI.json();
       if (dataI.success) {
         setIncidents(dataI.incidents);
-        const myTid = targetUser?.touristId;
+        const myTid = targetUser?.touristId || 'TID-1035';
         const sosInc = dataI.incidents.find(
           (i) => myTid && i.touristId === myTid && i.type === 'SOS Emergency' && i.status !== 'RESOLVED'
         );
@@ -176,18 +177,22 @@ export default function App() {
     }
     if (authData?.tourist) {
       setTouristProfile(authData.tourist);
+      setAllTourists((prev) => {
+        const exists = prev.some((t) => t.touristId === authData.tourist.touristId);
+        return exists ? prev : [authData.tourist, ...prev];
+      });
     }
     if (authData?.digitalId) {
       setDigitalId(authData.digitalId);
     }
   };
 
-  // Logout Handler: Cleans up all storage and state
+  // Logout Handler: Cleans up all storage and state gracefully
   const handleLogout = () => {
     localStorage.removeItem('safar_token');
     localStorage.removeItem('safar_user');
     setCurrentUser(null);
-    setTouristProfile(null);
+    setTouristProfile(allTourists && allTourists.length > 0 ? allTourists[0] : null);
     setDigitalId(null);
     setActiveSosIncident(null);
   };

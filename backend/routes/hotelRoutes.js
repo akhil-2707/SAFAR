@@ -109,6 +109,48 @@ const OFFICIAL_HOTELS_AND_PODS = [
     isAccessible: true,
     hasRamp: true,
     wheelchairFriendly: true
+  },
+  {
+    id: 'hotel_katra_01',
+    name: 'SMVDSB Yatri Nivas & IRCTC Transit Pods',
+    city: 'Katra',
+    state: 'Jammu & Kashmir',
+    stationCode: 'SVDK (Shri Mata Vaishno Devi Katra)',
+    location: 'Railway Station Concourse & Baan Ganga Road, Katra',
+    lat: 32.9912,
+    lng: 74.9318,
+    rating: 4.9,
+    reviewsCount: 1420,
+    authorityBadge: 'SMVDSB Shrine Board Certified',
+    amenities: ['Air-Conditioned Sleep Pod', 'Hot Geyser Shower', 'Cloakroom Locker', 'Yatra Parchi RFID Helpdesk', 'Battery Car Shuttle to Baan Ganga', 'Sugamya Ramp Access'],
+    image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&auto=format&fit=crop&q=80',
+    hourlyRates: { '2h': 299, '4h': 499, '6h': 750, 'fullDay': 1990 },
+    availableSlots: ['04:00 - 08:00', '08:00 - 12:00', '12:00 - 16:00', '16:00 - 20:00', '20:00 - 24:00'],
+    phoneContact: '+91 1991 232029',
+    isAccessible: true,
+    hasRamp: true,
+    wheelchairFriendly: true
+  },
+  {
+    id: 'hotel_guwahati_01',
+    name: 'IRCTC Kamakhya Executive Transit Lounge & Day-Rooms',
+    city: 'Guwahati',
+    state: 'Assam',
+    stationCode: 'KYQ (Kamakhya Junction)',
+    location: 'Platform 1, Kamakhya Jn & Guwahati Central (GHY)',
+    lat: 26.1550,
+    lng: 91.7050,
+    rating: 4.8,
+    reviewsCount: 680,
+    authorityBadge: 'NFR / IRCTC Certified',
+    amenities: ['AC Day-Stay Capsule', 'Tea Garden Refreshment Area', 'Shower Facility', 'Luggage Cloakroom', 'Kaziranga Safari Desk'],
+    image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&auto=format&fit=crop&q=80',
+    hourlyRates: { '2h': 250, '4h': 450, '6h': 680, 'fullDay': 1850 },
+    availableSlots: ['06:00 - 10:00', '10:00 - 14:00', '14:00 - 18:00', '18:00 - 22:00'],
+    phoneContact: '+91 361 2540142',
+    isAccessible: true,
+    hasRamp: true,
+    wheelchairFriendly: true
   }
 ];
 
@@ -176,6 +218,38 @@ const OFFICIAL_CLOAKROOMS = [
     securityFeatures: ['Government Verified Locker', 'Tamper-evident Seal', 'RFID Baggage Beacon'],
     operatingHours: '24 Hours (Round-the-Clock)',
     authorityBadge: 'North Western Railway'
+  },
+  {
+    id: 'cloak_katra_station',
+    hubName: 'Shri Mata Vaishno Devi Shrine Board (SVDK) Digital Cloakroom',
+    city: 'Katra',
+    state: 'Jammu & Kashmir',
+    location: 'Main Yatri Concourse, SVDK Katra Railway Station',
+    lat: 32.9912,
+    lng: 74.9318,
+    ratePerHour: 20,
+    hourlyTierText: '₹20/hr per bag · Max ₹100/24hr',
+    totalLockers: 500,
+    availableLockers: 180,
+    securityFeatures: ['Shrine Board Security & Police Post', '24x7 Biometric Pass', 'X-Ray Scanner', 'Insured Baggage Loss Up to ₹30,000'],
+    operatingHours: '24 Hours (Round-the-Clock)',
+    authorityBadge: 'SMVDSB Certified Facility'
+  },
+  {
+    id: 'cloak_guwahati_station',
+    hubName: 'Guwahati Junction (GHY) Smart Retiring Luggage Facility',
+    city: 'Guwahati',
+    state: 'Assam',
+    location: 'Platform 1 North Entry, Guwahati Railway Station',
+    lat: 26.1820,
+    lng: 91.7510,
+    ratePerHour: 20,
+    hourlyTierText: '₹20/hr per bag · Max ₹120/24hr',
+    totalLockers: 200,
+    availableLockers: 72,
+    securityFeatures: ['RPF Surveillance', 'RFID Luggage Beacon', 'Tamper-proof Seal'],
+    operatingHours: '24 Hours (Round-the-Clock)',
+    authorityBadge: 'Northeast Frontier Railway / IRCTC'
   }
 ];
 
@@ -214,12 +288,13 @@ const SEED_SPILLOVER_STAYS = [
 
 // Initialize in dbStore
 function getHotels() {
-  const current = dbStore.get('hotels');
-  if (!current || current.length === 0) {
-    OFFICIAL_HOTELS_AND_PODS.forEach(h => dbStore.insert('hotels', { ...h }));
-    return dbStore.get('hotels');
-  }
-  return current;
+  const current = dbStore.get('hotels') || [];
+  OFFICIAL_HOTELS_AND_PODS.forEach((seedH) => {
+    if (!current.some((ch) => ch.id === seedH.id)) {
+      dbStore.insert('hotels', { ...seedH });
+    }
+  });
+  return dbStore.get('hotels');
 }
 
 const bookingsStore = {
@@ -244,8 +319,18 @@ router.get('/micro-stays', (req, res) => {
   let hotels = getHotels();
   let cloakrooms = OFFICIAL_CLOAKROOMS;
   if (city) {
-    hotels = hotels.filter(h => h.city.toLowerCase().includes(city.toLowerCase()));
-    cloakrooms = cloakrooms.filter(c => c.city.toLowerCase().includes(city.toLowerCase()));
+    const qCity = city.toLowerCase();
+    const citySlug = qCity.split(' ')[0].replace(/[^a-z]/g, '');
+    hotels = hotels.filter((h) => 
+      h.city.toLowerCase().includes(citySlug) || 
+      h.state.toLowerCase().includes(citySlug) ||
+      h.location.toLowerCase().includes(citySlug)
+    );
+    cloakrooms = cloakrooms.filter((c) => 
+      c.city.toLowerCase().includes(citySlug) || 
+      c.state.toLowerCase().includes(citySlug) ||
+      c.location.toLowerCase().includes(citySlug)
+    );
   }
   res.json({
     success: true,

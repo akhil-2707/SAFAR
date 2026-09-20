@@ -33,17 +33,23 @@ export default function TouristGuideCard({ tourist }) {
       const data = await res.json();
 
       if (data.success && data.requests && data.requests.length > 0) {
-        // Take latest request
-        const req = data.requests[0];
-        setActiveRequest(req);
+        // Take latest active (non-cancelled) request
+        const activeReqs = data.requests.filter((r) => r.status !== 'CANCELLED');
+        if (activeReqs.length > 0) {
+          const req = activeReqs[0];
+          setActiveRequest(req);
 
-        if (req.assignedGuideId) {
-          const resG = await fetch(`/api/guides/${req.assignedGuideId}`);
-          const dataG = await resG.json();
-          if (dataG.success) {
-            setAssignedGuide(dataG.guide);
+          if (req.assignedGuideId) {
+            const resG = await fetch(`/api/guides/${req.assignedGuideId}`);
+            const dataG = await resG.json();
+            if (dataG.success) {
+              setAssignedGuide(dataG.guide);
+            }
+          } else {
+            setAssignedGuide(null);
           }
         } else {
+          setActiveRequest(null);
           setAssignedGuide(null);
         }
       } else {
@@ -52,6 +58,25 @@ export default function TouristGuideCard({ tourist }) {
       }
     } catch (err) {
       console.error('Fetch Guide Status Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    if (!activeRequest) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/guides/requests/${activeRequest.id}/cancel`, {
+        method: 'PATCH'
+      });
+      const data = await res.json();
+      if (data.success) {
+        setActiveRequest(null);
+        setAssignedGuide(null);
+      }
+    } catch (err) {
+      console.error('Cancel request error:', err);
     } finally {
       setLoading(false);
     }
@@ -229,12 +254,20 @@ export default function TouristGuideCard({ tourist }) {
 
             <div className="flex items-center justify-between text-xs pt-1">
               <span className="text-gray-500">Need to modify request?</span>
-              <button
-                onClick={() => setShowPromptModal(true)}
-                className="font-bold text-orange-600 hover:underline"
-              >
-                Edit Details
-              </button>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleCancelRequest}
+                  className="font-bold text-red-600 hover:text-red-700 hover:underline transition-colors"
+                >
+                  Cancel Request
+                </button>
+                <button
+                  onClick={() => setShowPromptModal(true)}
+                  className="font-bold text-orange-600 hover:underline"
+                >
+                  Edit Details
+                </button>
+              </div>
             </div>
           </div>
         ) : (

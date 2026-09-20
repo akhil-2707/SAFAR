@@ -26,6 +26,12 @@ export default function TouristGuidePromptModal({
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
 
+  React.useEffect(() => {
+    if (tourist?.destination) {
+      setDestination(tourist.destination);
+    }
+  }, [tourist?.destination]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e) => {
