@@ -5,6 +5,7 @@ import {
   MapPin, Radio, Users, Volume2, ArrowLeft, Clock, ShieldCheck, HeartPulse
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SilentDuressModal from '../components/SilentDuressModal';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
@@ -21,6 +22,7 @@ export default function SosPage({
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [micRecognizedWord, setMicRecognizedWord] = useState(null);
+  const [showDuressModal, setShowDuressModal] = useState(false);
 
   // Simulated Voice SOS word detection
   useEffect(() => {
@@ -268,13 +270,48 @@ export default function SosPage({
             <div className="w-1.5 rounded-full bg-blue-500 eq-bar-4" />
             <div className="w-1.5 rounded-full bg-indigo-600 eq-bar-5" />
             <div className="w-1.5 rounded-full bg-blue-400 eq-bar-2" />
-            <div className="w-1.5 rounded-full bg-blue-600 eq-bar-1" />
             <span className="text-[10px] sm:text-xs font-mono text-gray-500 ml-2 sm:ml-4 truncate">
               {micRecognizedWord || 'Microphone Active · Zero False Alarm Threshold'}
             </span>
           </div>
         )}
       </div>
+
+      {/* 🚨 FEATURE 5: SILENT DURESS / REVERSE-PIN ANTI-ABDUCTION SECURITY */}
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-red-500/10 via-rose-500/5 to-white border-2 border-red-300 apple-card space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+              <ShieldAlert className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-red-600 block">
+                World-First Anti-Abduction Innovation
+              </span>
+              <h3 className="text-base font-black text-gray-900">
+                Silent Duress & Decoy Keypad (Reverse-PIN Mode)
+              </h3>
+              <p className="text-xs text-gray-600 mt-0.5 max-w-xl leading-relaxed">
+                If forced by an attacker or rogue driver to unlock your phone, enter your Reverse PIN (4321). The screen opens an innocent photo gallery, while silently dispatching live GPS coordinates & ambient audio telemetry to the Police Command Desk.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowDuressModal(true)}
+            className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shrink-0 flex items-center space-x-1.5 transition-all"
+          >
+            <span>Launch Duress Keypad</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Silent Duress Modal */}
+      <SilentDuressModal
+        isOpen={showDuressModal}
+        onClose={() => setShowDuressModal(false)}
+        tourist={tourist}
+      />
 
       {/* Emergency Hotlines Directory */}
       <div className="space-y-4">

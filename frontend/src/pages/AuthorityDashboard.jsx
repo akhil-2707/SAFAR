@@ -41,7 +41,8 @@ export default function AuthorityDashboard({
   const safeTourists = totalTourists - touristsAtRisk;
   const activeIncidents = incidents.filter((i) => i.status !== 'RESOLVED');
   const resolvedIncidents = incidents.filter((i) => i.status === 'RESOLVED').length;
-  const criticalSosCount = incidents.filter((i) => i.severity === 'CRITICAL' || i.type === 'SOS Emergency').length;
+  const criticalSosCount = incidents.filter((i) => i.severity === 'CRITICAL' || i.type === 'SOS Emergency' || i.type?.includes('DURESS')).length;
+  const duressIncidents = incidents.filter((i) => i.type?.includes('DURESS') && i.status !== 'RESOLVED');
   const geofenceViolations = incidents.filter((i) => i.type === 'Geo-fence Violation').length;
 
   const filteredTourists = tourists.filter((t) => {
@@ -195,6 +196,33 @@ export default function AuthorityDashboard({
           </Link>
         </div>
       </motion.div>
+
+      {/* 🚨 CRITICAL DURESS ALERT BANNER */}
+      {duressIncidents && duressIncidents.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-gradient-to-r from-red-600 via-rose-600 to-red-800 text-white rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-2 border-red-300"
+        >
+          <div className="flex items-center space-x-3">
+            <Radio className="w-6 h-6 text-white animate-ping shrink-0" />
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-red-200 block">
+                🚨 CRITICAL CAD INTERCEPT: SILENT DURESS / REVERSE-PIN 4321 ACTIVATED
+              </span>
+              <p className="text-xs font-bold mt-0.5 text-white leading-relaxed">
+                Tourist <strong>{duressIncidents[0].touristName}</strong> triggered Reverse Duress PIN. Mobile phone is disguised in Decoy Gallery Mode. Tactical PCR Intercept unit dispatched to {duressIncidents[0].location?.address || 'coordinates'}.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => onUpdateIncidentStatus && onUpdateIncidentStatus(duressIncidents[0].id, 'IN_PROGRESS', 'Tactical Intervention Unit', 'PCR dispatched')}
+            className="px-4 py-2 bg-white hover:bg-gray-100 text-red-700 font-black text-xs rounded-xl shadow-lg shrink-0 cursor-pointer"
+          >
+            Acknowledge & Dispatch PCR
+          </button>
+        </motion.div>
+      )}
 
       {/* Success Toast */}
       <AnimatePresence>

@@ -285,6 +285,83 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
         </div>
       </section>
 
+      {/* 🏆 AICTE PROBLEM STATEMENT 26204 PILLARS SHOWCASE */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center space-y-2 mb-8">
+          <span className="text-xs font-black uppercase tracking-widest text-orange-600 bg-orange-100 px-3 py-1 rounded-full border border-orange-300">
+            AICTE MIC STUDENT INNOVATION (PS ID: 26204)
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-black text-gray-900">
+            Comprehensive Boost for Hotels, Travel & Local Economy
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto">
+            Addressing every keyword of the hackathon problem statement with 5 category-1 world-first innovations.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Pillar 1: HOTELS */}
+          <div className="p-6 rounded-3xl bg-white/95 border-2 border-blue-200 shadow-xl space-y-4 hover:border-blue-500 transition-all flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl">
+                🏨
+              </div>
+              <h3 className="text-lg font-black text-gray-900">Hotels & Hospitality Hub</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Monetizing 09 AM–04 PM empty rooms via <strong>Smart Micro-Stays (2–4 hrs)</strong> at 70% lower rates + <strong>Digital Cloakroom Baggage Mesh</strong> for bag-free city tourism.
+              </p>
+              <div className="text-[11px] font-bold text-blue-700 bg-blue-50 p-2 rounded-xl border border-blue-200">
+                ✓ AI Crowd Spillover Flash Stays (50% Off)
+              </div>
+            </div>
+            <Link to="/micro-stays" className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
+              <span>Explore Micro-Stays & Lockers</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Pillar 2: TRAVEL & SAFETY */}
+          <div className="p-6 rounded-3xl bg-white/95 border-2 border-emerald-200 shadow-xl space-y-4 hover:border-emerald-500 transition-all flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xl">
+                🚗
+              </div>
+              <h3 className="text-lg font-black text-gray-900">Travel & Sugamya Mobility</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                <strong>Anti-Scam GPS Fare Locking</strong> (MV Act Sec 178) + <strong>Sugamya Mode (♿)</strong> for senior citizens & disabled tourists + <strong>Silent Duress Decoy Keypad</strong>.
+              </p>
+              <div className="text-[11px] font-bold text-emerald-700 bg-emerald-50 p-2 rounded-xl border border-emerald-200">
+                ✓ Offline BLE Ghost-Mesh (0-Signal Rescue)
+              </div>
+            </div>
+            <Link to="/tourist-dashboard" className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
+              <span>Open Live Safety Radar & Map</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Pillar 3: OTHERS (Artisans & Local Vendors) */}
+          <div className="p-6 rounded-3xl bg-white/95 border-2 border-purple-200 shadow-xl space-y-4 hover:border-purple-500 transition-all flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xl">
+                🏺
+              </div>
+              <h3 className="text-lg font-black text-gray-900">Others & GI Master Artisans</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Eliminating tout commissions. <strong>Blockchain SHA-256 Provenance Verification</strong> for genuine Pashmina, Banarasi Silk & Brass + <strong>95% Direct Artisan UPI Payout</strong>.
+              </p>
+              <div className="text-[11px] font-bold text-purple-700 bg-purple-50 p-2 rounded-xl border border-purple-200">
+                ✓ Vocal for Local Fair-Trade Escrow
+              </div>
+            </div>
+            <Link to="/artisans" className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
+              <span>Verify GI Crafts & Pay Direct</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* 🗺️ INTERACTIVE MAP SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-5">
         <motion.div

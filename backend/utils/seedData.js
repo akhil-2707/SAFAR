@@ -326,6 +326,16 @@ function getInitialData() {
     }
   ];
 
+  // Official Gateway Checkpoints
+  const checkpoints = [
+    { id: 'CHK-GW-01', name: 'Guwahati Entry Gateway Desk', location: 'Guwahati, Assam', region: 'North East', officerName: 'Insp. Bikram Gogoi', officerId: 'usr_auth_02' },
+    { id: 'CHK-TW-02', name: 'Tawang Military & Border Pass', location: 'Tawang, Arunachal Pradesh', region: 'North East', officerName: 'Capt. T. Norbu', officerId: 'usr_auth_03' },
+    { id: 'CHK-KZ-03', name: 'Kaziranga Forest Gate Sentinel', location: 'Kohora, Assam', region: 'North East', officerName: 'Range Officer H. Saikia', officerId: 'usr_auth_02' },
+    { id: 'CHK-AY-04', name: 'Ayodhya Heritage Entry Corridor', location: 'Ayodhya, Uttar Pradesh', region: 'Central India', officerName: 'Officer R. S. Pandey', officerId: 'usr_auth_01' },
+    { id: 'CHK-JK-05', name: 'Katra-Vaishno Devi Highway Checkpost', location: 'Katra, Jammu & Kashmir', region: 'North India', officerName: 'Insp. S. K. Dogra', officerId: 'usr_auth_02' },
+    { id: 'CHK-AG-06', name: 'Agra-Taj Safe Tourism Promenade', location: 'Agra, Uttar Pradesh', region: 'North India', officerName: 'Desk Incharge M. Verma', officerId: 'usr_auth_01' }
+  ];
+
   // Registered Tourists
   const tourists = [
     {
@@ -337,13 +347,18 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 98765 43210',
       emergencyContact: {
-        name: 'Sunita Verma (Mother)',
+        name: 'Sunita Verma',
         phone: '+91 98765 00001',
         relation: 'Mother'
       },
+      bloodGroup: 'O+',
+      medicalConditions: 'None',
+      allergies: 'None',
       email: 'rohan.verma@example.com',
       idProofType: 'Aadhaar Card',
       idVerificationStatus: 'VERIFIED',
+      entryCheckpoint: 'CHK-GW-01',
+      origin: { street: '14 MG Road, Indiranagar', city: 'Bengaluru', state: 'Karnataka', country: 'India', postalCode: '560038' },
       destination: 'Guwahati & Shillong Circuit',
       travelStartDate: '2026-08-10',
       travelEndDate: '2026-08-20',
@@ -363,13 +378,18 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 98111 22334',
       emergencyContact: {
-        name: 'Debashis Mukherjee (Father)',
+        name: 'Debashis Mukherjee',
         phone: '+91 98111 00000',
         relation: 'Father'
       },
+      bloodGroup: 'A+',
+      medicalConditions: 'Asthma (Mild)',
+      allergies: 'Cold Weather, Dust',
       email: 'priya.m@example.com',
       idProofType: 'Passport',
-      idVerificationStatus: 'VERIFIED',
+      idVerificationStatus: 'PROVISIONALLY_ACTIVE',
+      entryCheckpoint: 'CHK-GW-01',
+      origin: { street: '82 Lake View Park', city: 'Kolkata', state: 'West Bengal', country: 'India', postalCode: '700029' },
       destination: 'Cherrapunji & Dawki River Trail',
       travelStartDate: '2026-08-12',
       travelEndDate: '2026-08-18',
@@ -389,13 +409,18 @@ function getInitialData() {
       nationality: 'United States',
       mobileNumber: '+1 415 555 2671',
       emergencyContact: {
-        name: 'Sarah Miller (Spouse)',
+        name: 'Sarah Miller',
         phone: '+1 415 555 9999',
         relation: 'Spouse'
       },
+      bloodGroup: 'B+',
+      medicalConditions: 'Hypertension',
+      allergies: 'None',
       email: 'david.miller@example.org',
       idProofType: 'Passport',
       idVerificationStatus: 'VERIFIED',
+      entryCheckpoint: 'CHK-KZ-03',
+      origin: { street: '445 Pine St', city: 'San Francisco', state: 'California', country: 'United States', postalCode: '94104' },
       destination: 'Kaziranga National Park Wildlife Safari',
       travelStartDate: '2026-08-14',
       travelEndDate: '2026-08-25',
@@ -415,13 +440,18 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 99887 76655',
       emergencyContact: {
-        name: 'Vikram Sharma (Brother)',
+        name: 'Vikram Sharma',
         phone: '+91 99887 00000',
         relation: 'Brother'
       },
+      bloodGroup: 'O-',
+      medicalConditions: 'Altitude sensitivity, Asthma',
+      allergies: 'Pollen',
       email: 'aarav.s@example.com',
       idProofType: 'Driving License',
-      idVerificationStatus: 'VERIFIED',
+      idVerificationStatus: 'PENDING_REVIEW',
+      entryCheckpoint: 'CHK-TW-02',
+      origin: { street: 'Flat 402, Shanti Heights', city: 'Jaipur', state: 'Rajasthan', country: 'India', postalCode: '302001' },
       destination: 'Tawang Monastery Trek',
       travelStartDate: '2026-08-11',
       travelEndDate: '2026-08-22',
@@ -441,13 +471,18 @@ function getInitialData() {
       nationality: 'Singapore',
       mobileNumber: '+65 9123 4567',
       emergencyContact: {
-        name: 'Kevin Chen (Brother)',
+        name: 'Kevin Chen',
         phone: '+65 9123 0000',
         relation: 'Brother'
       },
+      bloodGroup: 'AB+',
+      medicalConditions: 'None',
+      allergies: 'Peanuts',
       email: 'emily.chen@example.sg',
       idProofType: 'Passport',
       idVerificationStatus: 'VERIFIED',
+      entryCheckpoint: 'CHK-GW-01',
+      origin: { street: '12 Orchard Blvd', city: 'Singapore', state: 'Singapore', country: 'Singapore', postalCode: '248644' },
       destination: 'Gangtok & Nathula Pass',
       travelStartDate: '2026-08-13',
       travelEndDate: '2026-08-19',
@@ -467,16 +502,18 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 94150 11223',
       emergencyContact: {
-        name: 'Ramesh Mishra (Father)',
+        name: 'Ramesh Mishra',
         phone: '+91 94150 00001',
         relation: 'Father'
       },
       bloodGroup: 'B+',
-      allergies: 'None reported',
       medicalConditions: 'None',
+      allergies: 'None reported',
       email: 'ananya.mishra@example.com',
       idProofType: 'Aadhaar Card',
       idVerificationStatus: 'VERIFIED',
+      entryCheckpoint: 'CHK-AY-04',
+      origin: { street: 'B-12 Civil Lines', city: 'Lucknow', state: 'Uttar Pradesh', country: 'India', postalCode: '226001' },
       destination: 'Ayodhya Ram Janmabhoomi & Saryu Heritage Circuit',
       travelStartDate: '2026-09-01',
       travelEndDate: '2026-09-15',
@@ -496,7 +533,7 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 97960 44556',
       emergencyContact: {
-        name: 'Sunita Chandel (Spouse)',
+        name: 'Sunita Chandel',
         phone: '+91 97960 00002',
         relation: 'Spouse'
       },
@@ -505,7 +542,9 @@ function getInitialData() {
       medicalConditions: 'Mild Altitude Sensitivity',
       email: 'vikas.chandel@example.com',
       idProofType: 'Aadhaar Card',
-      idVerificationStatus: 'VERIFIED',
+      idVerificationStatus: 'PROVISIONALLY_ACTIVE',
+      entryCheckpoint: 'CHK-JK-05',
+      origin: { street: 'House 55, Sector 4', city: 'Chandigarh', state: 'Punjab', country: 'India', postalCode: '160004' },
       destination: 'Katra Vaishno Devi Shrine & Jammu Pilgrim Track',
       travelStartDate: '2026-09-03',
       travelEndDate: '2026-09-12',
@@ -525,16 +564,18 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 98220 77889',
       emergencyContact: {
-        name: 'Madhusudan Kulkarni (Father)',
+        name: 'Madhusudan Kulkarni',
         phone: '+91 98220 00003',
         relation: 'Father'
       },
       bloodGroup: 'A+',
       allergies: 'Peanuts, Sulfa drugs',
-      medicalConditions: 'None',
+      medicalConditions: 'Altitude sensitivity',
       email: 'sneha.k@example.com',
       idProofType: 'Driving License',
-      idVerificationStatus: 'VERIFIED',
+      idVerificationStatus: 'PENDING_REVIEW',
+      entryCheckpoint: 'CHK-AY-04',
+      origin: { street: '19 FC Road', city: 'Pune', state: 'Maharashtra', country: 'India', postalCode: '411004' },
       destination: 'Kashi Vishwanath Corridor & Ganga Ghats',
       travelStartDate: '2026-09-02',
       travelEndDate: '2026-09-10',
@@ -554,7 +595,7 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 98290 33445',
       emergencyContact: {
-        name: 'Pratap Rathore (Brother)',
+        name: 'Pratap Rathore',
         phone: '+91 98290 00004',
         relation: 'Brother'
       },
@@ -564,6 +605,8 @@ function getInitialData() {
       email: 'kabir.rathore@example.com',
       idProofType: 'Passport',
       idVerificationStatus: 'VERIFIED',
+      entryCheckpoint: 'CHK-AG-06',
+      origin: { street: '77 Heritage Lane', city: 'Udaipur', state: 'Rajasthan', country: 'India', postalCode: '313001' },
       destination: 'Amber Fort & Aravalli Heritage Circuit',
       travelStartDate: '2026-09-04',
       travelEndDate: '2026-09-14',
@@ -583,7 +626,7 @@ function getInitialData() {
       nationality: 'Indian',
       mobileNumber: '+91 98390 55441',
       emergencyContact: {
-        name: 'Sunita Sharma (Mother)',
+        name: 'Sunita Sharma',
         phone: '+91 98390 00011',
         relation: 'Mother'
       },
@@ -593,6 +636,8 @@ function getInitialData() {
       email: 'aarav.taj@example.com',
       idProofType: 'Aadhaar Card',
       idVerificationStatus: 'VERIFIED',
+      entryCheckpoint: 'CHK-AG-06',
+      origin: { street: '58 Mall Road', city: 'Kanpur', state: 'Uttar Pradesh', country: 'India', postalCode: '208001' },
       destination: 'Taj Mahal & Agra Heritage Promenade',
       travelStartDate: '2026-09-02',
       travelEndDate: '2026-09-18',
@@ -616,9 +661,14 @@ function getInitialData() {
         phone: '112',
         relation: 'Official Emergency'
       },
+      bloodGroup: 'O+',
+      medicalConditions: 'None',
+      allergies: 'None',
       email: 'reallive@safetour.gov.in',
       idProofType: 'Aadhaar Card',
-      idVerificationStatus: 'VERIFIED',
+      idVerificationStatus: 'PROVISIONALLY_ACTIVE',
+      entryCheckpoint: 'CHK-AY-04',
+      origin: { street: 'Real-Time Device GPS Location', city: 'New Delhi', state: 'Delhi', country: 'India', postalCode: '110001' },
       destination: 'Live Real Device GPS Tracking (Mobile/Browser)',
       travelStartDate: '2026-09-01',
       travelEndDate: '2026-09-30',
@@ -642,7 +692,7 @@ function getInitialData() {
     }
   });
 
-  // Digital IDs with SHA-256 Hashes
+  // Digital IDs with SHA-256 Hashes & Offline ECDSA Envelopes
   const digitalIds = tourists.map((t) => {
     const rawString = `${t.touristId}:${t.fullName}:${t.dob}:${t.nationality}:${t.idProofType}`;
     const touristIdHash = crypto.createHash('sha256').update(t.touristId).digest('hex');
@@ -653,25 +703,75 @@ function getInitialData() {
       touristId: t.touristId,
       touristIdHash,
       digitalIdHash,
-      verificationStatus: 'VERIFIED',
+      verificationStatus: t.idVerificationStatus || 'VERIFIED',
       issuer: 'S.A.F.A.R. National Tourism Safety Authority',
-      network: 'Prototype Blockchain Ledger',
+      network: 'S.A.F.A.R. Zero-Gas Consortium Ledger',
       travelValidity: `${t.travelStartDate} to ${t.travelEndDate}`
     });
+
+    // Offline Envelope for Cryptographic Local Verification
+    const compactEnvelope = {
+      uuid: t.touristId,
+      bloodGroup: t.bloodGroup || 'O+',
+      exp: t.travelEndDate,
+      checkpointId: t.entryCheckpoint || 'CHK-GW-01',
+      status: t.idVerificationStatus || 'VERIFIED',
+      txHash: block.hash
+    };
+    const ecdsaSignature = blockchainInstance.signOfflineEnvelope(compactEnvelope);
+    compactEnvelope.sig = ecdsaSignature;
 
     return {
       id: `did_${t.touristId}`,
       touristId: t.touristId,
       fullName: t.fullName,
-      verificationStatus: 'VERIFIED',
+      verificationStatus: t.idVerificationStatus || 'VERIFIED',
       touristIdHash,
       digitalIdHash,
       blockIndex: block.index,
       blockchainTxHash: block.hash,
       issuedAt: block.timestamp,
       expiryDate: t.travelEndDate,
-      digitalSignature: `SIG-SHA256-${digitalIdHash.substring(0, 16).toUpperCase()}`,
-      qrCodeData: `https://safetour.gov.in/verify-id/${t.touristId}?hash=${digitalIdHash.substring(0, 16)}`
+      digitalSignature: `SIG-ECDSA-${ecdsaSignature.substring(0, 16).toUpperCase()}`,
+      offlineEnvelope: compactEnvelope,
+      qrCodeData: `https://safetour.gov.in/verify/${digitalIdHash.substring(0, 16)}`
+    };
+  });
+
+  // Medical Profiles
+  const medicalProfiles = tourists.map((t) => ({
+    id: `med_${t.touristId}`,
+    touristId: t.touristId,
+    bloodGroup: t.bloodGroup || 'O+',
+    conditions: t.medicalConditions ? [t.medicalConditions] : ['None reported'],
+    allergies: t.allergies || 'None reported',
+    emergencyContact: t.emergencyContact || { name: 'ERSS Desk', phone: '112', relation: 'Official Emergency' },
+    lastUpdated: new Date().toISOString()
+  }));
+
+  // Verification Records
+  const verificationRecords = tourists.map((t) => {
+    const medDigest = crypto.createHash('sha256').update(`${t.bloodGroup || 'O+'}:${t.medicalConditions || 'None'}:${t.allergies || 'None'}`).digest('hex');
+    const did = digitalIds.find((d) => d.touristId === t.touristId);
+    return {
+      id: `vr_${t.touristId}`,
+      touristId: t.touristId,
+      fullName: t.fullName,
+      status: t.idVerificationStatus || 'VERIFIED',
+      entryCheckpoint: t.entryCheckpoint || 'CHK-GW-01',
+      intendedRoute: t.destination,
+      origin: t.origin || { city: 'Guwahati', state: 'Assam', country: 'India' },
+      govtIdProofType: t.idProofType,
+      govtIdPreviewUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
+      medicalDataDigest: medDigest,
+      approvingOfficerId: t.idVerificationStatus === 'VERIFIED' ? 'usr_auth_02' : (t.idVerificationStatus === 'PROVISIONALLY_ACTIVE' ? 'DIGILOCKER_EKYC_SYSTEM' : null),
+      approvingOfficerName: t.idVerificationStatus === 'VERIFIED' ? 'Insp. Bikram Gogoi' : (t.idVerificationStatus === 'PROVISIONALLY_ACTIVE' ? 'DigiLocker Fast-Track System' : null),
+      approvalTimestamp: t.idVerificationStatus === 'VERIFIED' ? did?.issuedAt : null,
+      rejectionReason: null,
+      blockchainTxHash: did?.blockchainTxHash || null,
+      offlineEnvelope: did?.offlineEnvelope || null,
+      createdAt: new Date(Date.now() - 24 * 3600000).toISOString(),
+      updatedAt: new Date().toISOString()
     };
   });
 
@@ -869,7 +969,10 @@ function getInitialData() {
     digitalIds,
     emergencyServices,
     incidents,
-    trips
+    trips,
+    checkpoints,
+    verificationRecords,
+    medicalProfiles
   };
 }
 

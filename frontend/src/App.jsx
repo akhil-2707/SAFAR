@@ -25,6 +25,8 @@ import SosPage from './pages/SosPage';
 import FaresPage from './pages/FaresPage';
 import EmergencyHelpPage from './pages/EmergencyHelpPage';
 import DeadmanSwitchPage from './pages/DeadmanSwitchPage';
+import MicroStaysPage from './pages/MicroStaysPage';
+import ArtisansPage from './pages/ArtisansPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -469,6 +471,7 @@ function AppContent({
   fetchInitialData,
 }) {
   const location = useLocation();
+  const [sugamyaMode, setSugamyaMode] = useState(false);
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col justify-between" style={{ background: '#F2F2F7', color: '#1C1C1E', fontFamily: "'Inter', -apple-system, 'SF Pro Display', sans-serif" }}>
@@ -505,7 +508,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/micro-stays', '/artisans'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -549,10 +552,25 @@ function AppContent({
                       onSimulateDeviation={handleSimulateDeviation}
                       onTriggerSos={handleTriggerSos}
                       onCancelSos={handleCancelSos}
+                      sugamyaMode={sugamyaMode}
+                      onToggleSugamya={() => setSugamyaMode(!sugamyaMode)}
                     />
                   }
                 />
                 <Route path="/map" element={<Navigate to="/tourist-dashboard" replace />} />
+
+                {/* 🏨 FEATURE 1 & 2: Smart Micro-Stays, Cloakroom Lockers & Satellite Spillover Stays */}
+                <Route
+                  path="/micro-stays"
+                  element={<MicroStaysPage tourist={touristProfile} sugamyaMode={sugamyaMode} />}
+                />
+                <Route path="/hotels" element={<Navigate to="/micro-stays" replace />} />
+
+                {/* 🏺 FEATURE 3: Blockchain GI Master Artisans & Vocal for Local Direct Pay */}
+                <Route
+                  path="/artisans"
+                  element={<ArtisansPage tourist={touristProfile} />}
+                />
 
                 {/* 2. Dedicated Digital ID & Blockchain Pass */}
                 <Route

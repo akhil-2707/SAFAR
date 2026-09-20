@@ -43,6 +43,10 @@ app.use('/api/privacy', require('./routes/privacyRoutes'));
 app.use('/api/mesh-rescue', require('./routes/meshRescueRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/deadman', require('./routes/deadmanRoutes'));
+app.use('/api/authority', require('./routes/authorityRoutes'));
+app.use('/api/verify', require('./routes/verifyRoutes'));
+app.use('/api/hotels', require('./routes/hotelRoutes'));
+app.use('/api/artisans', require('./routes/artisanRoutes'));
 
 // Serve Frontend in Production / Cloud Deployments
 const path = require('path');

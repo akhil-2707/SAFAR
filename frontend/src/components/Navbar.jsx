@@ -3,7 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, LogOut, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
-  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck
+  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck,
+  Building2, Award
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -99,16 +100,14 @@ export default function Navbar({
             })}
           </nav>
         ) : (
-          <nav className="hidden lg:flex items-center gap-1 p-1 rounded-2xl" style={{
-            background: 'rgba(120,120,128,0.1)',
+          <nav className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-2xl" style={{
+            background: 'rgba(120,120,128,0.08)',
           }}>
             {[
-              { to: '/tourist-dashboard', label: 'Safety Map' },
-              { to: '/digital-id', label: 'Digital ID' },
-              { to: '/deadman-switch', label: 'Deadman Switch' },
-              { to: '/fares', label: 'Transport Fares' },
-              { to: '/emergency-help', label: 'Help & 112' },
+              { to: '/micro-stays', label: 'Hotels & Stays', shortLabel: 'Stays', icon: Building2, badge: 'NEW', badgeColor: '#0A84FF' },
+              { to: '/artisans', label: 'GI Artisans', shortLabel: 'Artisans', icon: Award, badge: 'NEW', badgeColor: '#AF52DE' },
             ].map((nl) => {
+              const IconC = nl.icon;
               const active = location.pathname === nl.to;
               return (
                 <Link key={nl.to} to={nl.to}>
@@ -116,14 +115,24 @@ export default function Navbar({
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
                     transition={SPRING}
-                    className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
+                    className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 sm:gap-1.5"
                     style={{
-                      background: active ? 'rgba(255,255,255,0.85)' : 'transparent',
-                      color: active ? '#0A84FF' : 'rgba(60,60,67,0.7)',
+                      background: active ? 'rgba(255,255,255,0.95)' : 'transparent',
+                      color: active ? (nl.badgeColor || '#0A84FF') : 'rgba(60,60,67,0.75)',
                       boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
                     }}
                   >
-                    <span>{nl.label}</span>
+                    <IconC className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{nl.label}</span>
+                    <span className="sm:hidden text-[11px]">{nl.shortLabel || nl.label}</span>
+                    {nl.badge && (
+                      <span
+                        className="text-[8px] sm:text-[9px] font-black px-1 sm:px-1.5 py-0.2 rounded-full text-white"
+                        style={{ background: nl.badgeColor || '#0A84FF' }}
+                      >
+                        {nl.badge}
+                      </span>
+                    )}
                   </motion.div>
                 </Link>
               );
@@ -459,6 +468,26 @@ export default function Navbar({
                     >
                       <Compass className="w-4 h-4 text-blue-500" />
                       <span>Live Safety Map & Zones</span>
+                    </Link>
+                    <Link
+                      to="/micro-stays"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/micro-stays' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <span className="text-sm">🏨</span>
+                      <span>Smart Micro-Stays & Cloakroom (Hotels)</span>
+                    </Link>
+                    <Link
+                      to="/artisans"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/artisans' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <span className="text-sm">🏺</span>
+                      <span>GI Artisans & Vocal for Local (Others)</span>
                     </Link>
                     <Link
                       to="/digital-id"

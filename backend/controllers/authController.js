@@ -5,7 +5,7 @@ const { dbStore } = require('../config/db');
 const { blockchainInstance } = require('../services/blockchainService');
 const { JWT_SECRET } = require('../middleware/authMiddleware');
 
-// Register Tourist & Generate Digital ID + Blockchain Record
+// Register Tourist & Generate Digital ID + State Machine + Linked Records
 function registerTourist(req, res) {
   try {
     const {
@@ -14,13 +14,32 @@ function registerTourist(req, res) {
       gender,
       nationality,
       mobileNumber,
+      email,
+      password,
+      // Origin Details
+      originStreet,
+      originCity,
+      originState,
+      originCountry,
+      originPostalCode,
+      origin,
+      // Travel Context
+      intendedRoute,
+      destination,
+      entryCheckpoint = 'CHK-GW-01',
+      // Govt ID
+      idProofType = 'Aadhaar Card',
+      idProofUrl,
+      // Medical & Emergency Essentials
+      bloodGroup = 'O+',
+      medicalConditions,
+      allergies,
       emergencyContactName,
       emergencyContactPhone,
       emergencyContactRelation,
-      email,
-      password,
-      idProofType,
-      destination,
+      // State Machine Options
+      fastTrackDigiLocker = true, // Default e-KYC passed -> PROVISIONALLY_ACTIVE
+      enforceManualReview = false,
       travelStartDate,
       travelEndDate
     } = req.body;
@@ -30,7 +49,7 @@ function registerTourist(req, res) {
     }
 
     // Check existing email
-    const existingUser = dbStore.findOne('users', (u) => u.email === email);
+    const existingUser = dbStore.findOne('users', (u) => u.email.toLowerCase() === email.toLowerCase());
     if (existingUser) {
       return res.status(400).json({ success: false, error: 'Email already registered' });
     }
@@ -39,19 +58,45 @@ function registerTourist(req, res) {
     const touristId = `TID-${nextIdNum}`;
     const passwordHash = bcrypt.hashSync(password || 'tourist123', 10);
 
+    // Consolidated Origin Object
+    const consolidatedOrigin = origin || {
+      street: originStreet || 'Permanent Residence',
+      city: originCity || 'Guwahati',
+      state: originState || 'Assam',
+      country: originCountry || 'India',
+      postalCode: originPostalCode || '781001'
+    };
+
+    // State Machine Determination:
+    // If fastTrackDigiLocker is true and not enforceManualReview -> PROVISIONALLY_ACTIVE
+    // Else -> PENDING_REVIEW
+    const initialStatus = (fastTrackDigiLocker && !enforceManualReview)
+      ? 'PROVISIONALLY_ACTIVE'
+      : 'PENDING_REVIEW';
+
     // 1. Create User
     const newUser = dbStore.insert('users', {
       name: fullName,
-      email,
+      email: email.toLowerCase(),
       password: passwordHash,
       role: 'TOURIST',
       touristId,
+      origin: consolidatedOrigin,
       isDemo: false,
       isRealUser: true
     });
 
-    // 2. Default initial location (Guwahati Safe Zone)
-    const initialLocation = { lat: 26.1445, lng: 91.7362, address: 'Guwahati Entry Checkpoint' };
+    // 2. Default initial location based on checkpoint
+    const checkpointObj = dbStore.findOne('checkpoints', (c) => c.id === entryCheckpoint) || {
+      id: 'CHK-GW-01',
+      name: 'Guwahati Entry Gateway Desk'
+    };
+    const initialLocation = {
+      lat: 26.1445,
+      lng: 91.7362,
+      address: checkpointObj.name || 'Guwahati Entry Gateway Desk',
+      isLiveGps: false
+    };
 
     // 3. Create Tourist Record
     const newTourist = dbStore.insert('tourists', {
@@ -64,17 +109,24 @@ function registerTourist(req, res) {
       nationality: nationality || 'Indian',
       preferredLanguage: req.body.preferredLanguage || 'en',
       mobileNumber,
+      email: email.toLowerCase(),
+      origin: consolidatedOrigin,
+      entryCheckpoint,
+      destination,
+      intendedRoute: intendedRoute || destination,
+      travelStartDate: travelStartDate || new Date().toISOString().split('T')[0],
+      travelEndDate: travelEndDate || new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
+      idProofType,
+      idProofUrl: idProofUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80',
+      idVerificationStatus: initialStatus,
+      bloodGroup,
+      medicalConditions: medicalConditions || 'None reported',
+      allergies: allergies || 'None reported',
       emergencyContact: {
         name: emergencyContactName || 'Emergency Contact',
         phone: emergencyContactPhone || mobileNumber,
         relation: emergencyContactRelation || 'Family'
       },
-      email,
-      idProofType: idProofType || 'Aadhaar Card',
-      idVerificationStatus: 'VERIFIED',
-      destination,
-      travelStartDate: travelStartDate || new Date().toISOString().split('T')[0],
-      travelEndDate: travelEndDate || new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
       currentLocation: initialLocation,
       riskScore: 10,
       riskLevel: 'LOW',
@@ -83,51 +135,110 @@ function registerTourist(req, res) {
       lastSeen: new Date().toISOString()
     });
 
-    // 4. Generate SHA-256 Hashed Digital ID
-    const rawMeta = `${touristId}:${fullName}:${dob}:${nationality}:${idProofType}`;
+    // 4. Create Linked Medical Profile
+    const newMedicalProfile = dbStore.insert('medicalProfiles', {
+      id: `med_${touristId}`,
+      touristId,
+      bloodGroup,
+      conditions: Array.isArray(medicalConditions) ? medicalConditions : (medicalConditions ? [medicalConditions] : ['None reported']),
+      allergies: allergies || 'None reported',
+      emergencyContact: {
+        name: emergencyContactName || 'Emergency Contact',
+        phone: emergencyContactPhone || mobileNumber,
+        relation: emergencyContactRelation || 'Family'
+      },
+      lastUpdated: new Date().toISOString()
+    });
+
+    // 5. Generate SHA-256 Hashed Digital ID + Consortium Ledger Block
+    const rawMeta = `${touristId}:${fullName}:${dob || '1998'}:${nationality || 'Indian'}:${idProofType}`;
     const touristIdHash = crypto.createHash('sha256').update(touristId).digest('hex');
     const digitalIdHash = crypto.createHash('sha256').update(rawMeta).digest('hex');
 
-    // 5. Add Block to Prototype Blockchain Ledger
     const block = blockchainInstance.addBlock({
       touristId,
       touristIdHash,
       digitalIdHash,
-      verificationStatus: 'VERIFIED',
-      issuer: 'S.A.F.A.R. National Tourism Safety Authority',
-      network: 'Prototype Blockchain Ledger',
+      verificationStatus: initialStatus,
+      issuer: initialStatus === 'PROVISIONALLY_ACTIVE'
+        ? 'S.A.F.A.R. DigiLocker e-KYC Verification Gateway'
+        : 'S.A.F.A.R. National Tourism Safety Authority',
+      network: 'S.A.F.A.R. Zero-Gas Consortium Ledger',
       travelValidity: `${newTourist.travelStartDate} to ${newTourist.travelEndDate}`
     });
+
+    // 6. Generate Compact Offline ECDSA Envelope
+    const offlineEnvelope = {
+      uuid: touristId,
+      bloodGroup,
+      exp: newTourist.travelEndDate,
+      checkpointId: entryCheckpoint,
+      status: initialStatus,
+      txHash: block.hash
+    };
+    const ecdsaSignature = blockchainInstance.signOfflineEnvelope(offlineEnvelope);
+    offlineEnvelope.sig = ecdsaSignature;
 
     const newDigitalId = dbStore.insert('digitalIds', {
       id: `did_${touristId}`,
       touristId,
       fullName,
-      verificationStatus: 'VERIFIED',
+      verificationStatus: initialStatus,
       touristIdHash,
       digitalIdHash,
       blockIndex: block.index,
       blockchainTxHash: block.hash,
       issuedAt: block.timestamp,
       expiryDate: newTourist.travelEndDate,
-      digitalSignature: `SIG-SHA256-${digitalIdHash.substring(0, 16).toUpperCase()}`,
-      qrCodeData: `https://safetour.gov.in/verify-id/${touristId}?hash=${digitalIdHash.substring(0, 16)}`
+      digitalSignature: `SIG-ECDSA-${ecdsaSignature.substring(0, 16).toUpperCase()}`,
+      offlineEnvelope,
+      qrCodeData: `https://safetour.gov.in/verify/${digitalIdHash.substring(0, 16)}`
     });
 
-    // Generate JWT
+    // 7. Create Verification Record
+    const rawMedStr = `${bloodGroup}:${medicalConditions || 'None'}:${allergies || 'None'}`;
+    const medicalDataDigest = crypto.createHash('sha256').update(rawMedStr).digest('hex');
+
+    const newVerificationRecord = dbStore.insert('verificationRecords', {
+      id: `vr_${touristId}`,
+      touristId,
+      fullName,
+      status: initialStatus,
+      entryCheckpoint,
+      intendedRoute: newTourist.destination,
+      origin: consolidatedOrigin,
+      govtIdProofType: idProofType,
+      govtIdPreviewUrl: newTourist.idProofUrl,
+      medicalDataDigest,
+      approvingOfficerId: initialStatus === 'PROVISIONALLY_ACTIVE' ? 'DIGILOCKER_EKYC_SYSTEM' : null,
+      approvingOfficerName: initialStatus === 'PROVISIONALLY_ACTIVE' ? 'DigiLocker Fast-Track System' : null,
+      approvalTimestamp: initialStatus === 'PROVISIONALLY_ACTIVE' ? block.timestamp : null,
+      rejectionReason: null,
+      blockchainTxHash: block.hash,
+      offlineEnvelope,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+
+    // 8. Generate JWT Token
     const token = jwt.sign(
-      { id: newUser.id, role: 'TOURIST', email, touristId },
+      { id: newUser.id, role: 'TOURIST', email: email.toLowerCase(), touristId },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
 
     return res.status(201).json({
       success: true,
-      message: 'Tourist registered and Digital Tourist ID minted on Prototype Blockchain Ledger',
+      message: initialStatus === 'PROVISIONALLY_ACTIVE'
+        ? '✓ Tourist registered & Provisionally Cleared via DigiLocker e-KYC. Travel pass ready!'
+        : '✓ Tourist registered. Pass under review by checkpoint authority.',
       token,
-      user: { id: newUser.id, name: fullName, email, role: 'TOURIST', touristId, isDemo: false, isRealUser: true },
+      status: initialStatus,
+      user: { id: newUser.id, name: fullName, email: email.toLowerCase(), role: 'TOURIST', touristId, isDemo: false, isRealUser: true },
       tourist: newTourist,
-      digitalId: newDigitalId
+      digitalId: newDigitalId,
+      verificationRecord: newVerificationRecord,
+      medicalProfile: newMedicalProfile
     });
   } catch (err) {
     console.error('Registration Error:', err);

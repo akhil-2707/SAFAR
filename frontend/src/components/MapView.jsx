@@ -130,6 +130,36 @@ const createDestinationIcon = (color = '#EF4444') => {
   });
 };
 
+// ♿ Sugamya Accessible Ramp & Lift Marker
+const createSugamyaIcon = () => {
+  const html = `
+    <div style="position: relative; width: 32px; height: 32px; background: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2.5px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.35);">
+      <span style="font-size: 16px; color: white;">♿</span>
+    </div>
+  `;
+  return L.divIcon({ className: '', html, iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] });
+};
+
+// ⚠️ Inaccessible Stair Obstacle Marker
+const createStairObstacleIcon = () => {
+  const html = `
+    <div style="position: relative; width: 30px; height: 30px; background: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.35);">
+      <span style="font-size: 14px;">⚠️</span>
+    </div>
+  `;
+  return L.divIcon({ className: '', html, iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -15] });
+};
+
+// 🏡 Satellite Homestay Spillover Marker
+const createSatelliteHomestayIcon = () => {
+  const html = `
+    <div style="position: relative; width: 38px; height: 38px; background: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 12px rgba(245,158,11,0.5); animation: pulse 2s infinite;">
+      <span style="font-size: 20px;">🏡</span>
+    </div>
+  `;
+  return L.divIcon({ className: '', html, iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -19] });
+};
+
 // Standard Geographic Haversine Distance in Kilometers
 function calculateHaversineDistanceKm(lat1, lon1, lat2, lon2) {
   if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return null;
@@ -221,7 +251,10 @@ export default function MapView({
   emergencyServices = [],
   height = "500px",
   onRealTimeLocationFound = null,
-  showLiveUserLocation = true
+  showLiveUserLocation = true,
+  sugamyaMode = false,
+  spilloverActive = false,
+  onAcceptSpillover = null
 }) {
   const [mapProvider, setMapProvider] = useState('google_streets');
   const [selectedRegion, setSelectedRegion] = useState(
@@ -750,19 +783,127 @@ export default function MapView({
         )}
 
         {/* Direct Connecting Polyline between Live Location and Destination */}
-        {currentLocation && destination && typeof currentLocation.lat === 'number' && typeof destination.lat === 'number' && (
+        {currentLocation && destination && typeof currentLocation.lat === 'number' && typeof destination.lat === 'number' && !spilloverActive && (
           <Polyline
             positions={[
               [currentLocation.lat, currentLocation.lng],
               [destination.lat, destination.lng]
             ]}
             pathOptions={{
-              color: '#2563EB',
-              weight: 2.5,
-              dashArray: '6, 8',
-              opacity: 0.85
+              color: sugamyaMode ? '#059669' : '#2563EB',
+              weight: sugamyaMode ? 4 : 2.5,
+              dashArray: sugamyaMode ? undefined : '6, 8',
+              opacity: 0.9
             }}
           />
+        )}
+
+        {/* ♿ FEATURE 4: SUGAMYA ACCESSIBILITY CORRIDOR OVERLAY */}
+        {sugamyaMode && destination && (
+          <React.Fragment>
+            {/* Emerald Flat-Ramp Safe Corridor */}
+            <Polyline
+              positions={[
+                [currentLocation?.lat || 26.7725, currentLocation?.lng || 82.1450],
+                [(currentLocation?.lat || 26.7725) + 0.006, (currentLocation?.lng || 82.1450) + 0.012],
+                [destination.lat, destination.lng]
+              ]}
+              pathOptions={{ color: '#10B981', weight: 5, opacity: 0.95 }}
+            />
+
+            {/* Wheelchair Ramp Waypoint Marker */}
+            <Marker
+              position={[(currentLocation?.lat || 26.7725) + 0.006, (currentLocation?.lng || 82.1450) + 0.012]}
+              icon={createSugamyaIcon()}
+            >
+              <Popup>
+                <div className="p-2 space-y-1 text-xs text-emerald-950 min-w-[200px]">
+                  <div className="flex items-center space-x-1.5 font-black text-emerald-700">
+                    <span>♿ Sugamya Ramp Point #3</span>
+                  </div>
+                  <p className="text-[11px] text-gray-700 font-medium">
+                    1:12 Gradient Slope Ramp with double handrails. 100% Divyangjan & Senior Citizen Compliant.
+                  </p>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full inline-block">
+                    ✓ Zero Stairs Ahead
+                  </span>
+                </div>
+              </Popup>
+            </Marker>
+
+            {/* Inaccessible Stairs Obstacle Warning */}
+            <Marker
+              position={[(currentLocation?.lat || 26.7725) + 0.009, (currentLocation?.lng || 82.1450) + 0.007]}
+              icon={createStairObstacleIcon()}
+            >
+              <Popup>
+                <div className="p-2 space-y-1 text-xs text-red-950 min-w-[200px]">
+                  <div className="flex items-center space-x-1.5 font-black text-red-600">
+                    <span>⚠️ Inaccessible Steep Stairs</span>
+                  </div>
+                  <p className="text-[11px] text-gray-700">
+                    38 Steep stone steps without elevator. <strong>Bypassed by Sugamya route.</strong>
+                  </p>
+                </div>
+              </Popup>
+            </Marker>
+          </React.Fragment>
+        )}
+
+        {/* 🚗 FEATURE 2: AI FOOTFALL SPILLOVER REROUTE OVERLAY */}
+        {spilloverActive && (
+          <React.Fragment>
+            {/* Choked Hotspot High-Risk Radius Indicator */}
+            <Circle
+              center={[destination?.lat || 26.7922, destination?.lng || 82.1998]}
+              radius={750}
+              pathOptions={{ color: '#EF4444', fillColor: '#EF4444', fillOpacity: 0.25, weight: 2, dashArray: '4, 4' }}
+            />
+
+            {/* Green Spillover Reroute Polyline towards Satellite Homestay */}
+            <Polyline
+              positions={[
+                [currentLocation?.lat || 26.7725, currentLocation?.lng || 82.1450],
+                [(currentLocation?.lat || 26.7725) + 0.015, (currentLocation?.lng || 82.1450) + 0.035],
+                [26.8100, 82.2300] // Satellite Homestay location
+              ]}
+              pathOptions={{ color: '#F59E0B', weight: 4.5, opacity: 0.95 }}
+            />
+
+            {/* Satellite Homestay Marker */}
+            <Marker
+              position={[26.8100, 82.2300]}
+              icon={createSatelliteHomestayIcon()}
+            >
+              <Popup>
+                <div className="p-2 space-y-2 text-xs min-w-[220px]">
+                  <div className="flex items-center justify-between border-b pb-1">
+                    <span className="font-black text-amber-900 text-sm">Saryu Riverfront Rural Retreat</span>
+                    <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full">
+                      56% OFF
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-600">
+                    🌿 Zero Overtourism Satellite Stay. Peaceful riverfront homestay with organic food.
+                  </p>
+                  <div className="bg-amber-50 p-2 rounded-xl border border-amber-200 text-[11px]">
+                    <span className="font-bold text-gray-900">Spillover Deal: ₹1,400</span> (was <span className="line-through text-gray-400">₹3,200</span>)
+                    <p className="text-[10px] text-emerald-700 font-bold mt-0.5">
+                      ✓ Includes Guaranteed Next-Day Morning VIP Pass!
+                    </p>
+                  </div>
+                  {onAcceptSpillover && (
+                    <button
+                      onClick={onAcceptSpillover}
+                      className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm"
+                    >
+                      Accept Spillover & VIP Pass
+                    </button>
+                  )}
+                </div>
+              </Popup>
+            </Marker>
+          </React.Fragment>
         )}
 
         {/* 🔵 Current / Live Location Marker ("You are here") */}

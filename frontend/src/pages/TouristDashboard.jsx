@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import MapView from '../components/MapView';
 import MiniMap from '../components/MiniMap';
@@ -12,11 +13,12 @@ import SafarLogo from '../components/SafarLogo';
 import DeadmanSwitch from '../components/DeadmanSwitch';
 import LocalFareEstimator from '../components/LocalFareEstimator';
 import RedZonePreEntryBanner from '../components/RedZonePreEntryBanner';
+import SilentDuressModal from '../components/SilentDuressModal';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
   PhoneCall, Zap, WifiOff, Sparkles, ShieldAlert, Activity, Wifi, Shield,
-  Phone, AlertCircle, Clock, HeartHandshake
+  Phone, AlertCircle, Clock, HeartHandshake, Percent, Award
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -131,11 +133,21 @@ export default function TouristDashboard({
   onSimulateZone,
   onSimulateDeviation,
   onTriggerSos,
-  onCancelSos
+  onCancelSos,
+  sugamyaMode = false,
+  onToggleSugamya = null
 }) {
   const { t } = useLanguage();
   const [currentTourist, setCurrentTourist] = useState(tourist);
   const [loading, setLoading] = useState(false);
+
+  // Feature 2 & 4 & 5 Local state toggles
+  const [localSugamya, setLocalSugamya] = useState(false);
+  const [spilloverActive, setSpilloverActive] = useState(false);
+  const [showDuressModal, setShowDuressModal] = useState(false);
+  const [showSahayakModal, setShowSahayakModal] = useState(false);
+
+  const isSugamyaActive = sugamyaMode || localSugamya;
 
   // Distinguish between predefined Demo tourists and newly registered / real tourists
   const isDemoTourist = Boolean(
@@ -650,6 +662,108 @@ export default function TouristDashboard({
               </div>
             </div>
 
+            {/* 🌟 INNOVATION ACTION BAR: Sugamya, Spillover, Duress, Micro-Stays, Artisans */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap pb-1">
+              {/* Feature 4: Sugamya Toggle */}
+              <button
+                onClick={() => onToggleSugamya ? onToggleSugamya() : setLocalSugamya(!localSugamya)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all shadow-sm ${
+                  isSugamyaActive
+                    ? 'bg-emerald-600 text-white shadow-emerald-500/30 scale-[1.02]'
+                    : 'bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100'
+                }`}
+                title="Toggle Divyangjan & Senior Citizen Wheelchair Accessible Corridors"
+              >
+                <span>♿</span>
+                <span>{isSugamyaActive ? 'Sugamya ON (Zero-Stairs)' : '♿ Sugamya Mode'}</span>
+              </button>
+
+              {/* Feature 2: Hotspot Spillover Simulator */}
+              <button
+                onClick={() => setSpilloverActive(!spilloverActive)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all shadow-sm ${
+                  spilloverActive
+                    ? 'bg-amber-600 text-white animate-pulse shadow-amber-500/30 scale-[1.02]'
+                    : 'bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100'
+                }`}
+                title="Simulate destination overtourism & auto-reroute to satellite homestays"
+              >
+                <Percent className="w-3.5 h-3.5" />
+                <span>{spilloverActive ? '⚡ Hotspot Choked (>85%)' : 'Simulate Hotspot Rush'}</span>
+              </button>
+
+              {/* Feature 5: Silent Duress Mode Keypad */}
+              <button
+                onClick={() => setShowDuressModal(true)}
+                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-red-50 text-red-700 border border-red-300 hover:bg-red-100 transition-all shadow-sm"
+                title="Cinema-level Reverse-PIN Coercion Decoy Test"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
+                <span>🚨 Silent Duress Mode</span>
+              </button>
+
+              {/* Feature 1 Quick Link: Micro-Stays */}
+              <Link
+                to="/micro-stays"
+                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all shadow-sm"
+              >
+                <span>🏨</span>
+                <span>Day Stays & Lockers</span>
+              </Link>
+
+              {/* Feature 3 Quick Link: GI Artisans */}
+              <Link
+                to="/artisans"
+                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all shadow-sm"
+              >
+                <span>🏺</span>
+                <span>GI Artisans Hub</span>
+              </Link>
+            </div>
+
+            {/* Sugamya Mode Active Banner with 1-Click Sahayak Cart */}
+            {isSugamyaActive && (
+              <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-emerald-900 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <span className="text-base">♿</span>
+                  <div>
+                    <span className="font-extrabold block">Sugamya Accessibility Corridor Active</span>
+                    <span className="text-[11px] text-emerald-800">
+                      Rerouted through Zero-Stair Ramp Tracks. High-steep stairs bypassed for wheelchair & senior citizens.
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowSahayakModal(true)}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-700 text-white font-bold text-xs shrink-0 hover:bg-emerald-800 shadow-sm flex items-center space-x-1"
+                >
+                  <span>⚡ Book Battery Cart / Sahayak</span>
+                </button>
+              </div>
+            )}
+
+            {/* Spillover Choke Alert Banner */}
+            {spilloverActive && (
+              <div className="p-3 bg-amber-50 border-2 border-amber-400 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-amber-900 shadow-md">
+                <div className="flex items-center space-x-2">
+                  <span className="text-base animate-bounce">⚠️</span>
+                  <div>
+                    <span className="font-extrabold block">Hotspot Saturation Alert: Carrying Capacity &gt;85%</span>
+                    <span className="text-[11px] text-amber-800">
+                      Central temple/monument queue is 3.5 hrs. Green Corridor activated: Stay at <strong>Saryu Riverfront Rural Retreat</strong> at 56% OFF + VIP Morning Entry Slot!
+                    </span>
+                  </div>
+                </div>
+                <Link
+                  to="/micro-stays"
+                  className="px-3 py-1.5 rounded-xl bg-amber-600 text-white font-bold text-xs shrink-0 hover:bg-amber-700 shadow-sm flex items-center space-x-1"
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  <span>Claim 56% Flash Stay</span>
+                </Link>
+              </div>
+            )}
+
             <MapView
               destination={destinationData}
               tourists={allTourists && allTourists.length > 0 ? allTourists : (currentTourist ? [currentTourist] : [])}
@@ -658,8 +772,43 @@ export default function TouristDashboard({
               emergencyServices={emergencyServices}
               height="h-[340px] xs:h-[380px] sm:h-[460px] md:h-[500px]"
               showLiveUserLocation={isRealUser || useLiveGpsMode}
+              sugamyaMode={isSugamyaActive}
+              spilloverActive={spilloverActive}
+              onAcceptSpillover={() => alert('✓ Satellite Flash Stay Claimed! Saryu Riverfront Retreat reserved with Next-Day VIP Sunrise pass.')}
             />
           </motion.div>
+
+          {/* Silent Duress Modal (Feature 5) */}
+          <SilentDuressModal
+            isOpen={showDuressModal}
+            onClose={() => setShowDuressModal(false)}
+            tourist={currentTourist}
+          />
+
+          {/* Sahayak Battery Cart Booking Confirmation Modal */}
+          {showSahayakModal && (
+            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 border-2 border-emerald-400">
+                <div className="flex items-center space-x-3 text-emerald-800 font-black text-lg">
+                  <span className="text-2xl">♿</span>
+                  <span>Sugamya Sahayak & Cart Dispatched!</span>
+                </div>
+                <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs font-mono space-y-2 text-gray-800">
+                  <div>Pickup Station: <strong>Ayodhya Cantt Station Gate #1 Accessible Ramp</strong></div>
+                  <div>Assigned Sahayak: <strong>Ramesh Kumar (Volunteer ID: #SAH-412)</strong></div>
+                  <div>Equipment: <strong>Battery-Operated Low-Floor Cart</strong></div>
+                  <div>ETA: <strong className="text-emerald-700">4 Minutes</strong></div>
+                  <div className="text-emerald-800 font-bold">Fare: FREE Govt Supported Divyang Service</div>
+                </div>
+                <button
+                  onClick={() => setShowSahayakModal(false)}
+                  className="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md"
+                >
+                  Done & Close Dispatch
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* ⏳ Automated Deadman's Switch (2h Timer, 15m Check-in, Auto-Arm on Red Zones) */}
           <motion.div variants={itemVariants}>

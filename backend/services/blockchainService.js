@@ -152,6 +152,127 @@ class PrototypeBlockchainLedger {
     };
   }
 
+  // S.A.F.A.R. Authority ECDSA Asymmetric Cryptography Setup (NIST P-256 / prime256v1)
+  initAuthorityKeys() {
+    try {
+      const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'prime256v1'
+      });
+      this.authorityPublicKey = publicKey;
+      this.authorityPrivateKey = privateKey;
+      this.authorityPublicKeyPem = publicKey.export({ type: 'spki', format: 'pem' });
+      this.authorityPublicKeyHex = crypto.createHash('sha256').update(this.authorityPublicKeyPem).digest('hex').substring(0, 32);
+      console.log('✓ S.A.F.A.R. Authority ECDSA (P-256) Keypair Initialized. Public Key Fingerprint:', this.authorityPublicKeyHex);
+    } catch (err) {
+      console.error('Failed to initialize ECDSA keys:', err);
+    }
+  }
+
+  getAuthorityPublicKey() {
+    if (!this.authorityPublicKeyPem) this.initAuthorityKeys();
+    return {
+      format: 'SPKI-PEM',
+      algorithm: 'ECDSA-SHA256 (prime256v1)',
+      fingerprint: this.authorityPublicKeyHex,
+      pem: this.authorityPublicKeyPem
+    };
+  }
+
+  // Cryptographic Dual-Payload: Sign Compact Offline Envelope
+  signOfflineEnvelope(envelopeData) {
+    if (!this.authorityPrivateKey) this.initAuthorityKeys();
+    let dataToSign = envelopeData;
+    if (typeof envelopeData === 'object' && envelopeData !== null) {
+      const { sig, signature, ...rest } = envelopeData;
+      dataToSign = rest;
+    }
+    const canonicalString = typeof dataToSign === 'string' 
+      ? dataToSign 
+      : JSON.stringify(dataToSign, Object.keys(dataToSign).sort());
+    
+    const sign = crypto.createSign('SHA256');
+    sign.update(canonicalString);
+    sign.end();
+    return sign.sign(this.authorityPrivateKey, 'hex');
+  }
+
+  // Verify Offline Envelope Signature Locally / Cryptographically
+  verifyOfflineEnvelope(envelopeData, signatureHex) {
+    if (!this.authorityPublicKey) this.initAuthorityKeys();
+    try {
+      let dataToVerify = envelopeData;
+      let effectiveSig = signatureHex;
+      if (typeof envelopeData === 'object' && envelopeData !== null) {
+        const { sig, signature, ...rest } = envelopeData;
+        dataToVerify = rest;
+        if (!effectiveSig) effectiveSig = sig || signature;
+      }
+      if (!effectiveSig) {
+        return { isValid: false, error: 'Signature is missing' };
+      }
+      const canonicalString = typeof dataToVerify === 'string'
+        ? dataToVerify
+        : JSON.stringify(dataToVerify, Object.keys(dataToVerify).sort());
+      
+      const verify = crypto.createVerify('SHA256');
+      verify.update(canonicalString);
+      verify.end();
+      const isValid = verify.verify(this.authorityPublicKey, effectiveSig, 'hex');
+      return {
+        isValid,
+        fingerprint: this.authorityPublicKeyHex,
+        algorithm: 'ECDSA-SHA256 (prime256v1)'
+      };
+    } catch (err) {
+      return { isValid: false, error: err.message };
+    }
+  }
+
+  // Zero-Gas Consortium Ledger Commit: Approving Entry Pass
+  commitCheckpointPass({
+    touristId,
+    origin,
+    medicalDataDigest,
+    approvingOfficerId,
+    checkpointId = 'CHK-GW-01',
+    timestamp = new Date().toISOString()
+  }) {
+    // Construct immutable cryptographic payload
+    // Hash(TouristUUID + Origin + MedicalDataDigest + ApprovingOfficerID + Timestamp)
+    const rawPayload = `${touristId}:${origin || 'India'}:${medicalDataDigest}:${approvingOfficerId}:${timestamp}`;
+    const cryptographicPayload = crypto.createHash('sha256').update(rawPayload).digest('hex');
+
+    const txData = {
+      type: 'CONSORTIUM_CHECKPOINT_PASS_APPROVAL',
+      touristId,
+      origin: origin || 'India',
+      medicalDataDigest,
+      approvingOfficerId,
+      checkpointId,
+      cryptographicPayload,
+      verificationStatus: 'VERIFIED',
+      network: 'S.A.F.A.R. Zero-Gas Consortium Ledger (PoA)',
+      consensusEngine: 'Proof of Authority (Node Quorum)',
+      gasFee: '0.0000 SAFAR (Consortium Exemption)',
+      issuer: 'Ministry of Tourism & Checkpoint Authority',
+      timestamp
+    };
+
+    // Commit transaction block to consortium chain
+    const block = this.addBlock(txData);
+
+    return {
+      success: true,
+      txHash: block.hash,
+      receiptHash: cryptographicPayload,
+      blockIndex: block.index,
+      timestamp: block.timestamp,
+      checkpointId,
+      gasFee: '0 SAFAR',
+      network: 'S.A.F.A.R. Consortium L2'
+    };
+  }
+
   // SIH Judge Demo Function: Simulate Tampering
   tamperLedgerForDemo(targetIndex = 1) {
     if (this.chain.length <= targetIndex) {
@@ -202,9 +323,11 @@ class PrototypeBlockchainLedger {
 }
 
 const blockchainInstance = new PrototypeBlockchainLedger();
+blockchainInstance.initAuthorityKeys();
 
 module.exports = {
   Block,
   PrototypeBlockchainLedger,
   blockchainInstance
 };
+

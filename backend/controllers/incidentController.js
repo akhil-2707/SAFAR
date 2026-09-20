@@ -286,6 +286,78 @@ const getEmergencyServices = (req, res) => {
   }
 };
 
+// Silent Duress / Reverse-PIN Trigger (Feature 5)
+function triggerSilentDuress(req, res) {
+  try {
+    const { touristId, lat, lng, address } = req.body;
+    const targetId = touristId || (req.user ? req.user.touristId : 'TID-1035');
+
+    const tourist = dbStore.findOne('tourists', (t) => t.touristId === targetId || t.id === targetId);
+    const touristName = tourist ? tourist.fullName : 'Verified Tourist';
+
+    const currentLoc = {
+      lat: parseFloat(lat) || (tourist?.currentLocation?.lat ?? 26.7922),
+      lng: parseFloat(lng) || (tourist?.currentLocation?.lng ?? 82.1998),
+      address: address || tourist?.currentLocation?.address || 'Live Duress Vector'
+    };
+
+    if (tourist) {
+      dbStore.update('tourists', tourist.id, {
+        currentLocation: currentLoc,
+        riskScore: 100,
+        riskLevel: 'CRITICAL',
+        isSosActive: true,
+        status: 'SILENT_DURESS_COERCION',
+        lastSeen: new Date().toISOString()
+      });
+    }
+
+    const incId = `INC-DURESS-${Date.now().toString().slice(-4)}`;
+    const nowIso = new Date().toISOString();
+
+    const newIncident = dbStore.insert('incidents', {
+      id: incId,
+      touristId: targetId,
+      touristName,
+      type: 'SILENT DURESS / COERCION',
+      severity: 'CRITICAL',
+      location: currentLoc,
+      time: nowIso,
+      description: `🚨 HIGH DANGER: REVERSE DURESS PIN ENTERED BY TOURIST ${touristName}. Coercion / Hostage / Abduction suspected. Disguised photo gallery activated on phone. Silent dispatch to nearest Police Patrol initiated.`,
+      aiRiskScore: 100,
+      assignedAuthority: 'State Police Tactical Intervention Unit',
+      status: 'NEW',
+      responseNotes: 'Silent Duress protocol active. Dispatched with silent telemetry & ambient audio beacon.',
+      timeline: [
+        { status: 'NEW', title: 'Reverse PIN Entered under Duress', timestamp: nowIso, note: 'Attacker deceived with dummy gallery screen' },
+        { status: 'ACKNOWLEDGED', title: 'Silent Police CAD Triggered', timestamp: nowIso, note: `Coordinates locked at ${currentLoc.lat}, ${currentLoc.lng}` },
+        { status: 'ASSIGNED', title: 'Tactical Intercept Dispatched', timestamp: nowIso, note: 'Patrol unit en route with silent lights/sirens off' }
+      ]
+    });
+
+    const notif = dbStore.insert('notifications', {
+      id: `notif_duress_${Date.now()}`,
+      type: 'CRITICAL',
+      title: '🚨 SILENT DURESS EMERGENCY (Reverse PIN)',
+      message: `Tourist ${touristName} (${targetId}) entered Reverse PIN under duress at ${currentLoc.address}. Phone disguised. Immediate PCR response required.`,
+      timestamp: nowIso,
+      read: false,
+      touristId: targetId
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Silent duress alert dispatched to Police Command Desk.',
+      incident: newIncident,
+      disguiseMode: 'PHOTO_GALLERY_ACTIVE',
+      notification: notif
+    });
+  } catch (err) {
+    console.error('Duress Error:', err);
+    return res.status(500).json({ success: false, error: 'Failed to trigger silent duress dispatch' });
+  }
+}
+
 module.exports = {
   triggerSOS,
   cancelSOS,
@@ -293,5 +365,7 @@ module.exports = {
   getIncidentById,
   createIncident,
   updateIncidentStatus,
-  getEmergencyServices
+  getEmergencyServices,
+  triggerSilentDuress
 };
+

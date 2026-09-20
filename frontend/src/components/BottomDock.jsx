@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, CreditCard, Siren, Banknote, Phone } from 'lucide-react';
+import { Map, CreditCard, Siren, Banknote, Phone, Building2, Award } from 'lucide-react';
 
 const SPRING = { type: 'spring', stiffness: 380, damping: 28 };
 
@@ -19,7 +19,9 @@ const TOURIST_ROUTES = [
   '/sos',
   '/fares',
   '/deadman-switch',
-  '/emergency-help'
+  '/emergency-help',
+  '/micro-stays',
+  '/artisans'
 ];
 
 export default function BottomDock({ currentUser, onTriggerSos }) {
