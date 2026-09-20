@@ -91,13 +91,28 @@ const CITY_TARIFFS = {
   }
 };
 
+  const getInitialCityKey = (t) => {
+    const dest = (t?.destination || t?.currentLocation?.address || '').toUpperCase();
+    if (dest.includes('AGRA') || dest.includes('TAJ')) return 'AGRA';
+    if (dest.includes('JAMMU') || dest.includes('KATRA') || dest.includes('VAISHNO')) return 'JAMMU';
+    if (dest.includes('DELHI')) return 'DELHI';
+    if (dest.includes('GUWAHATI') || dest.includes('ASSAM') || dest.includes('KAMRUP')) return 'GUWAHATI';
+    return 'AYODHYA';
+  };
+
 export default function FaresPage({ tourist }) {
-  const [selectedCityKey, setSelectedCityKey] = useState('AYODHYA');
+  const [selectedCityKey, setSelectedCityKey] = useState(getInitialCityKey(tourist));
   const [vehicleType, setVehicleType] = useState('ERICKSHAW'); // ERICKSHAW, AUTO, BIKE, CAB
   const [distanceKm, setDistanceKm] = useState(6.5);
   const [isNight, setIsNight] = useState(false);
   const [luggageCount, setLuggageCount] = useState(1);
   const [showOverchargeTips, setShowOverchargeTips] = useState(false);
+
+  React.useEffect(() => {
+    if (tourist) {
+      setSelectedCityKey(getInitialCityKey(tourist));
+    }
+  }, [tourist?.touristId, tourist?.destination]);
 
   const city = CITY_TARIFFS[selectedCityKey] || CITY_TARIFFS.AYODHYA;
 

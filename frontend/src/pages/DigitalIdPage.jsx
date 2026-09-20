@@ -11,7 +11,7 @@ import SafarLogo from '../components/SafarLogo';
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
 export default function DigitalIdPage({ tourist, allTourists = [], onSelectTourist }) {
-  const [currentTourist, setCurrentTourist] = useState(tourist);
+  const [currentTourist, setCurrentTourist] = useState(tourist || (allTourists && allTourists.length > 0 ? allTourists[0] : null));
   const [digitalId, setDigitalId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [verifiedStatus, setVerifiedStatus] = useState(null);
@@ -24,8 +24,9 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
   const rotateY = useTransform(mouseX, [-150, 150], [-10, 10]);
 
   useEffect(() => {
-    if (tourist) setCurrentTourist(tourist);
-  }, [tourist]);
+    const resolved = tourist || (allTourists && allTourists.length > 0 ? allTourists[0] : null);
+    setCurrentTourist(resolved);
+  }, [tourist?.touristId, allTourists]);
 
   useEffect(() => {
     const tid = currentTourist?.touristId || 'TID-1035';

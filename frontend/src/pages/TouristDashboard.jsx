@@ -148,6 +148,7 @@ export default function TouristDashboard({
   const [spilloverActive, setSpilloverActive] = useState(false);
   const [showDuressModal, setShowDuressModal] = useState(false);
   const [showSahayakModal, setShowSahayakModal] = useState(false);
+  const [guideRefreshKey, setGuideRefreshKey] = useState(0);
 
   const isSugamyaActive = sugamyaMode || localSugamya;
 
@@ -836,7 +837,7 @@ export default function TouristDashboard({
 
           {/* 🪪 Certified Local Tourist Guide (Authority Assigned & Rated) */}
           <motion.div variants={itemVariants}>
-            <TouristGuideCard tourist={currentTourist} />
+            <TouristGuideCard key={guideRefreshKey} tourist={currentTourist} />
           </motion.div>
 
           {/* 🛺 Local Transport Budget & Anti-Scam Auto/Cab Fare Guide */}
@@ -1028,6 +1029,7 @@ export default function TouristDashboard({
         isOpen={showGuidePromptModal}
         onClose={() => setShowGuidePromptModal(false)}
         tourist={currentTourist}
+        onRequestSuccess={() => setGuideRefreshKey((k) => k + 1)}
       />
     </motion.div>
   );

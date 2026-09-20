@@ -11,8 +11,16 @@ import HotelOnboardModal from '../components/HotelOnboardModal';
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
 export default function MicroStaysPage({ tourist, sugamyaMode }) {
+  const getCityFromTourist = (t) => {
+    const dest = (t?.destination || t?.currentLocation?.address || '').toLowerCase();
+    if (dest.includes('agra') || dest.includes('taj')) return 'Agra';
+    if (dest.includes('varanasi') || dest.includes('kashi')) return 'Varanasi';
+    if (dest.includes('jaipur') || dest.includes('rajasthan')) return 'Jaipur';
+    return 'Ayodhya';
+  };
+
   const [activeTab, setActiveTab] = useState('MICRO_STAYS'); // MICRO_STAYS, CLOAKROOM, SPILLOVER
-  const [selectedCity, setSelectedCity] = useState('Ayodhya');
+  const [selectedCity, setSelectedCity] = useState(getCityFromTourist(tourist));
   const [duration, setDuration] = useState('4h');
   const [hotels, setHotels] = useState([]);
   const [cloakrooms, setCloakrooms] = useState([]);
@@ -27,6 +35,12 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
   const [cloakroomSuccess, setCloakroomSuccess] = useState(null);
   const [bagCount, setBagCount] = useState(2);
   const [cloakHours, setCloakHours] = useState(6);
+
+  useEffect(() => {
+    if (tourist) {
+      setSelectedCity(getCityFromTourist(tourist));
+    }
+  }, [tourist?.touristId, tourist?.destination]);
 
   useEffect(() => {
     fetchData();
