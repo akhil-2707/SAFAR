@@ -129,7 +129,7 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-xs font-black uppercase tracking-widest text-blue-800">
-                AICTE SIH 2026 • Sector: Hotels & Hospitality
+                Ministry of Tourism • Sector: Verified Hospitality Hub
               </span>
               <span className="bg-blue-100 text-blue-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-blue-200">
                 ZERO OTA COMMISSION

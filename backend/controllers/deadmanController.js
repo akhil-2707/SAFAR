@@ -5,19 +5,19 @@
 // In-memory registry of tourists currently approaching or inside Red Zones
 const activeDeadmanSessions = new Map();
 
-// Seed initial active session for Ayodhya/NorthEast demo
+// Seed initial active session for Ayodhya Saryu River Hazard Buffer demo
 const initialEntryTime = Date.now() - 15 * 60 * 1000; // 15 mins ago
 activeDeadmanSessions.set('TID-1035', {
   touristId: 'TID-1035',
   touristName: 'Ananya Mishra',
-  phone: '+91 94150 00001',
-  enteredZoneName: 'Kamrup Restricted Border Buffer (Red Zone)',
-  zoneType: 'RESTRICTED',
+  phone: '+91 94150 11223',
+  enteredZoneName: 'Saryu River Deep Water Ghats (300m Caution Buffer)',
+  zoneType: 'CAUTION',
   entryTimestamp: initialEntryTime,
   lastGps: {
-    lat: 26.2800,
-    lng: 91.5200,
-    address: 'Kamrup International Border Buffer (150m Pre-Entry Boundary)'
+    lat: 26.7985,
+    lng: 82.2035,
+    address: 'Saryu River Hazard Buffer (300m Caution Breach), Ayodhya'
   },
   durationSeconds: 7200, // 2 Hours
   expiresAt: initialEntryTime + 7200 * 1000,

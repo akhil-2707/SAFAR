@@ -127,7 +127,7 @@ export default function AICraftScannerModal({ isOpen, onClose }) {
                 <div className="flex items-center space-x-2">
                   <h3 className="text-base font-extrabold tracking-tight">S.A.F.A.R. AI Craft Vision Inspector</h3>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-400 text-amber-950 uppercase tracking-wider">
-                    SIH AI Engine
+                    GI Neural Engine
                   </span>
                 </div>
                 <p className="text-xs text-white/80">

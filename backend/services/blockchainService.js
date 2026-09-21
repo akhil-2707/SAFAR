@@ -273,7 +273,7 @@ class PrototypeBlockchainLedger {
     };
   }
 
-  // SIH Judge Demo Function: Simulate Tampering
+  // Security Audit Demo Function: Simulate Tampering
   tamperLedgerForDemo(targetIndex = 1) {
     if (this.chain.length <= targetIndex) {
       targetIndex = Math.max(1, this.chain.length - 1);
@@ -296,7 +296,7 @@ class PrototypeBlockchainLedger {
     };
   }
 
-  // SIH Judge Demo Function: Restore Ledger
+  // Security Audit Demo Function: Restore Ledger
   restoreLedgerForDemo() {
     if (this.backupChain) {
       this.chain = JSON.parse(JSON.stringify(this.backupChain));

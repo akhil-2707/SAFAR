@@ -107,7 +107,7 @@ export default function SilentDuressModal({ isOpen, onClose, tourist }) {
             <div className="p-3 bg-red-50 rounded-2xl border border-red-200 text-xs text-red-900 space-y-1">
               <span className="font-extrabold flex items-center gap-1">
                 <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
-                <span>SIH Evaluator Live Test Instructions:</span>
+                <span>Emergency Duress SOP Protocol:</span>
               </span>
               <div className="text-[11px] space-y-0.5 text-gray-700">
                 <p>• Type <strong>1234</strong>: Normal phone unlock (safe state).</p>

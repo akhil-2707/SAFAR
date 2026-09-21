@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SafarLogo from '../components/SafarLogo';
+import DemoPitchSwitcher from '../components/DemoPitchSwitcher';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
@@ -97,39 +98,19 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
           </p>
         </div>
 
-        {/* Demo Tourist Switcher */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl apple-card">
-          <span className="text-xs font-medium pl-2" style={{ color: 'rgba(60,60,67,0.6)' }}>Profile:</span>
-          <select
-            value={activeTid}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (onSelectTourist) onSelectTourist(val);
+        {/* Discrete Demo Switcher */}
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Govt Authenticated</span>
+          </span>
+          <DemoPitchSwitcher
+            currentTouristId={activeTid}
+            allTourists={allTourists}
+            onSelectTourist={(tid) => {
+              if (onSelectTourist) onSelectTourist(tid);
             }}
-            className="text-xs font-semibold px-3 py-1.5 rounded-xl cursor-pointer focus:outline-none"
-            style={{
-              background: 'rgba(120,120,128,0.1)',
-              border: '0.5px solid rgba(60,60,67,0.15)',
-              color: '#1C1C1E',
-            }}
-          >
-            {allTourists && allTourists.length > 0 ? (
-              allTourists.map((t) => (
-                <option key={t.touristId} value={t.touristId}>
-                  {t.touristId === 'TID-1035' ? '🛕' : t.touristId === 'TID-1036' ? '🏔️' : t.touristId === 'TID-1037' ? '🏰' : t.touristId === 'TID-1038' ? '🦏' : t.touristId === 'TID-1039' ? '🕌' : '👤'} {t.fullName} — {t.destination?.split(' ')[0] || t.city || 'India'}
-                </option>
-              ))
-            ) : (
-              <>
-                <option value="TID-1035">🛕 Aarav Sharma — Ayodhya</option>
-                <option value="TID-1036">🏔️ Vikram Singh — Katra (Jammu)</option>
-                <option value="TID-1037">🏰 Sunita Patel — Jaipur</option>
-                <option value="TID-1038">🦏 Rahul Roy — Kaziranga (Assam)</option>
-                <option value="TID-1039">🕌 Priya Nair — Agra (Taj Mahal)</option>
-              </>
-            )}
-            <option value="TID-REAL">📍 Real-Time Live GPS</option>
-          </select>
+          />
         </div>
       </div>
 

@@ -13,24 +13,51 @@ export default function TouristGuidePromptModal({
   tourist,
   onRequestSuccess
 }) {
-  const [destination, setDestination] = useState(
-    tourist?.destination || 'Ayodhya Ram Janmabhoomi Corridor'
-  );
+  const getInitialDestination = (t) => {
+    if (t?.destination) return t.destination;
+    const tid = t?.touristId;
+    if (tid === 'TID-1036' || t?.fullName?.includes('Vikas')) {
+      return 'Katra Vaishno Devi Shrine & Jammu Pilgrim Track';
+    }
+    if (tid === 'TID-1039' || t?.fullName?.includes('Aarav')) {
+      return 'Taj Mahal & Agra Heritage Promenade';
+    }
+    if (tid === 'TID-1035' || t?.fullName?.includes('Ananya')) {
+      return 'Ayodhya Ram Janmabhoomi & Saryu Heritage Circuit';
+    }
+    return 'Ayodhya Ram Janmabhoomi Corridor';
+  };
+
+  const [destination, setDestination] = useState(getInitialDestination(tourist));
   const [travelDate, setTravelDate] = useState(
     new Date().toISOString().split('T')[0]
   );
-  const [preferredLanguage, setPreferredLanguage] = useState('Hindi');
-  const [tourType, setTourType] = useState('Heritage & Cultural Walk');
+  const [preferredLanguage, setPreferredLanguage] = useState(
+    tourist?.touristId === 'TID-1039' ? 'English' : 'Hindi'
+  );
+  const [tourType, setTourType] = useState(
+    tourist?.touristId === 'TID-1039' ? 'Heritage & Monument History' : 'Spiritual & Temple Darshan'
+  );
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
 
+  // Sync state whenever tourist changes or modal opens
   React.useEffect(() => {
-    if (tourist?.destination) {
-      setDestination(tourist.destination);
+    if (isOpen) {
+      setDestination(getInitialDestination(tourist));
+      if (tourist?.touristId === 'TID-1039') {
+        setPreferredLanguage('English');
+        setTourType('Heritage & Monument History');
+      } else {
+        setPreferredLanguage('Hindi');
+        setTourType('Spiritual & Temple Darshan');
+      }
+      setSuccess(false);
+      setError(null);
     }
-  }, [tourist?.destination]);
+  }, [isOpen, tourist?.touristId, tourist?.destination]);
 
   if (!isOpen) return null;
 

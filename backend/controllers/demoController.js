@@ -30,7 +30,7 @@ function executeScenario(req, res) {
     case '4':
       // Scenario 4: SOS Emergency Trigger
       req.body.touristId = targetId;
-      req.body.address = 'Kaziranga High Hazard Zone (SIH Judge Scenario 4)';
+      req.body.address = 'Kaziranga High Hazard Zone (Emergency Simulation)';
       return triggerSOS(req, res);
 
     case '5':

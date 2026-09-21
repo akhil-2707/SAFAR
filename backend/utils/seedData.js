@@ -4,9 +4,22 @@ const { blockchainInstance } = require('../services/blockchainService');
 
 function getInitialData() {
   const defaultPasswordHash = bcrypt.hashSync('admin123', 10);
+  const masterAuthorityPasswordHash = bcrypt.hashSync('12345678', 10);
 
   // Authority & Admin Accounts
   const users = [
+    {
+      id: 'usr_auth_master',
+      name: 'Akhil Gupta',
+      email: 'akhil@gmail.com',
+      password: masterAuthorityPasswordHash,
+      role: 'AUTHORITY',
+      isMasterAuthority: true,
+      title: 'Director General & Chief Security Officer',
+      department: 'S.A.F.A.R. National Tourism Security Command',
+      phone: '+91 98765 00001',
+      status: 'APPROVED'
+    },
     {
       id: 'usr_auth_01',
       name: 'Dr. Ananya Sharma',
@@ -14,7 +27,9 @@ function getInitialData() {
       password: defaultPasswordHash,
       role: 'AUTHORITY',
       department: 'S.A.F.A.R. Central Command Desk',
-      phone: '+91 98640 12345'
+      phone: '+91 98640 12345',
+      status: 'APPROVED',
+      approvedBy: 'DG Akhil Gupta'
     },
     {
       id: 'usr_auth_02',
@@ -23,7 +38,9 @@ function getInitialData() {
       password: defaultPasswordHash,
       role: 'AUTHORITY',
       department: 'Assam Tourist Police Headquarters',
-      phone: '+91 98640 54321'
+      phone: '+91 98640 54321',
+      status: 'APPROVED',
+      approvedBy: 'DG Akhil Gupta'
     },
     {
       id: 'usr_auth_03',
@@ -32,7 +49,9 @@ function getInitialData() {
       password: defaultPasswordHash,
       role: 'AUTHORITY',
       department: 'State Disaster Management Unit',
-      phone: '+91 98640 99887'
+      phone: '+91 98640 99887',
+      status: 'APPROVED',
+      approvedBy: 'DG Akhil Gupta'
     },
     {
       id: 'usr_tourist_01',

@@ -159,7 +159,7 @@ function updateLocation(req, res) {
   });
 }
 
-// SIH Judge Demo Simulation Endpoint (Upgraded for 300m, 150m, 0m approach)
+// Field Corridor Simulation Endpoint (Upgraded for 300m, 150m, 0m approach)
 function simulateZone(req, res) {
   const { targetZoneType, touristId } = req.body; // 'SAFE' | 'APPROACH_300M' | 'APPROACH_150M' | 'RESTRICTED' | 'HIGH_RISK'
   const targetId = touristId || 'TID-1024';

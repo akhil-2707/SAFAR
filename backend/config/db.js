@@ -120,6 +120,143 @@ async function connectMongoDB() {
         console.warn(`Could not sync collection ${colName}:`, err.message);
       }
     }
+
+    // Guarantee Master Authority (akhil@gmail.com / 12345678) exists in both memory and MongoDB Atlas
+    try {
+      const bcrypt = require('bcryptjs');
+      const masterHash = bcrypt.hashSync('12345678', 10);
+      const masterUser = {
+        id: 'usr_auth_master',
+        name: 'Akhil Gupta',
+        email: 'akhil@gmail.com',
+        password: masterHash,
+        role: 'AUTHORITY',
+        isMasterAuthority: true,
+        title: 'Director General & Chief Security Officer',
+        department: 'S.A.F.A.R. National Tourism Security Command',
+        phone: '+91 98765 00001'
+      };
+
+      await db.collection('users').updateOne(
+        { email: 'akhil@gmail.com' },
+        { $set: masterUser },
+        { upsert: true }
+      );
+
+      if (state && state.users) {
+        const idx = state.users.findIndex((u) => u.email.toLowerCase() === 'akhil@gmail.com');
+        if (idx !== -1) {
+          state.users[idx] = { ...state.users[idx], ...masterUser };
+        } else {
+          state.users.unshift(masterUser);
+        }
+      }
+      console.log('✓ Master Authority (akhil@gmail.com) verified & synced to MongoDB Atlas');
+
+      // Guarantee all seed users (guides, tourists, authority officers) exist in state & MongoDB Atlas
+      const initialUsers = getInitialData().users;
+      for (const su of initialUsers) {
+        if (state && state.users) {
+          const found = state.users.find(u => u.email.toLowerCase() === su.email.toLowerCase());
+          if (!found) {
+            state.users.push(su);
+            await db.collection('users').updateOne(
+              { email: su.email.toLowerCase() },
+              { $set: su },
+              { upsert: true }
+            );
+          }
+        }
+      }
+
+      // Guarantee Ananya Mishra (TID-1035) has active Caution Zone / Red Buffer (300m breach) telemetry
+      const ayodhyaTouristUpdate = {
+        currentLocation: {
+          lat: 26.7985,
+          lng: 82.2035,
+          address: 'Saryu River Hazard Buffer (300m Caution Breach), Ayodhya',
+          speedKmH: 2.8,
+          accuracyMeters: 6,
+          isLiveGps: false,
+          lastUpdated: new Date().toISOString()
+        },
+        riskScore: 68,
+        riskLevel: 'HIGH',
+        status: 'CAUTION',
+        riskAnalysis: {
+          score: 68,
+          level: 'HIGH',
+          zone: 'Saryu River Deep Water Ghats Hazard Zone',
+          zoneType: 'CAUTION',
+          proximityWarning: {
+            tier: 'APPROACH',
+            severity: 'HIGH',
+            zoneName: 'Saryu River Deep Water Ghats Hazard Zone',
+            distanceMeters: 300,
+            message: '⚠️ CAUTION BUFFER BREACH: Approaching Saryu River Deep Water Ghats Hazard Zone (300m buffer breach).'
+          },
+          contributingFactors: [
+            {
+              factor: 'Hazard Buffer Proximity',
+              weight: 68,
+              description: 'Approaching Saryu River deep currents buffer (300m boundary breach)'
+            }
+          ],
+          detectedAnomalies: [
+            'Pre-entry buffer proximity detected at Saryu River Ghats'
+          ],
+          recommendedActions: [
+            'Monitor tourist telemetry on radar and dispatch advisory'
+          ],
+          lastEvaluatedAt: new Date().toISOString()
+        }
+      };
+
+      if (state && state.tourists) {
+        const tIdx = state.tourists.findIndex(t => t.touristId === 'TID-1035' || t.id === 'tourist_ayodhya');
+        if (tIdx !== -1) {
+          state.tourists[tIdx] = { ...state.tourists[tIdx], ...ayodhyaTouristUpdate };
+        }
+      }
+      await db.collection('tourists').updateOne(
+        { touristId: 'TID-1035' },
+        { $set: ayodhyaTouristUpdate }
+      );
+
+      // Guarantee pending guide request exists for Authority Officer allocation demonstration
+      const pendingDemoRequest = {
+        id: 'req_demo_02',
+        touristId: 'TID-1039',
+        touristName: 'Aarav Sharma',
+        touristPhone: '+91 99887 76655',
+        destination: 'Taj Mahal Monument Safe Heritage Perimeter',
+        city: 'Agra',
+        preferredLanguage: 'English & Hindi',
+        travelDate: '2026-09-22',
+        tourType: 'Heritage & Architectural Photography',
+        notes: 'Sunrise visit to eastern gate and Mehtab Bagh reflection spot. Need verified local guide.',
+        status: 'PENDING_ASSIGNMENT',
+        assignedGuideId: null,
+        assignedGuideName: null,
+        assignedGuidePhone: null,
+        assignedAt: null,
+        createdAt: new Date(Date.now() - 25 * 60000).toISOString()
+      };
+
+      if (state && state.guideRequests) {
+        const hasPending = state.guideRequests.some(r => r.status === 'PENDING_ASSIGNMENT');
+        if (!hasPending) {
+          state.guideRequests.unshift(pendingDemoRequest);
+          await db.collection('guiderequests').updateOne(
+            { id: 'req_demo_02' },
+            { $set: pendingDemoRequest },
+            { upsert: true }
+          );
+        }
+      }
+    } catch (e) {
+      console.warn('Notice syncing master authority and seed users:', e.message);
+    }
   } catch (err) {
     console.warn('⚠️ MongoDB Atlas connection notice (using fallback in-memory store):', err.message);
   }

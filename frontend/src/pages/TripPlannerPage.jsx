@@ -87,7 +87,7 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
 
             {/* Deviation Simulation Button */}
             <div className="pt-2 border-t border-gray-100 space-y-2">
-              <span className="text-[10px] text-gray-500 uppercase font-bold block">SIH Evaluator Route Anomaly Test</span>
+              <span className="text-[10px] text-gray-500 uppercase font-bold block">Live Route Deviation Anomaly Test</span>
               <button
                 disabled={loading}
                 onClick={handleDeviate}

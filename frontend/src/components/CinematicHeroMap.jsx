@@ -540,7 +540,7 @@ export default function CinematicHeroMap({ onScenarioTrigger }) {
           </div>
 
           <div className="text-[10px] sm:text-[11px] text-gray-500 font-semibold hidden md:block">
-            SIH Mode: <span className="text-emerald-700 font-bold">13-Scene Storyboard</span>
+            Safety Grid: <span className="text-emerald-700 font-bold">13-Circuit Storyboard</span>
           </div>
         </div>
       </div>

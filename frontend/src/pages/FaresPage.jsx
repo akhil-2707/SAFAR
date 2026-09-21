@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Banknote, Navigation, ShieldCheck, AlertTriangle, Info, CheckCircle2, 
-  MapPin, Clock, Moon, Luggage, HelpCircle, PhoneCall, ChevronRight, Calculator, Sparkles
+  MapPin, Clock, Moon, Luggage, HelpCircle, PhoneCall, ChevronRight, Calculator, Sparkles, Zap
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import RideCompareView from '../components/RideCompareView';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
@@ -101,6 +102,24 @@ const CITY_TARIFFS = {
   };
 
 export default function FaresPage({ tourist }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'local' ? 'LOCAL' : 'COMPARE';
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSearchParams({ tab: tab.toLowerCase() });
+  };
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'local') {
+      setActiveTab('LOCAL');
+    } else if (tabParam === 'compare') {
+      setActiveTab('COMPARE');
+    }
+  }, [searchParams]);
+
   const [selectedCityKey, setSelectedCityKey] = useState(getInitialCityKey(tourist));
   const [vehicleType, setVehicleType] = useState('ERICKSHAW'); // ERICKSHAW, AUTO, BIKE, CAB
   const [distanceKm, setDistanceKm] = useState(6.5);
@@ -108,7 +127,7 @@ export default function FaresPage({ tourist }) {
   const [luggageCount, setLuggageCount] = useState(1);
   const [showOverchargeTips, setShowOverchargeTips] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (tourist) {
       setSelectedCityKey(getInitialCityKey(tourist));
     }
@@ -162,36 +181,73 @@ export default function FaresPage({ tourist }) {
             <span>Local Transit & Budget</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight" style={{ color: '#1C1C1E', letterSpacing: '-0.025em' }}>
-            Local Transport Fare Estimator
+            Transit Fare Estimator & Ride Comparison
           </h1>
           <p className="text-sm mt-0.5" style={{ color: 'rgba(60,60,67,0.6)' }}>
-            Official government regulated tariffs & anti-scam price transparency engine.
+            Compare ride-hailing options across Uber, Ola, and Rapido, or view local official meter benchmarks.
           </p>
         </div>
 
-        {/* City Picker Dropdown */}
-        <div className="p-1.5 rounded-2xl apple-card flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-orange-500 pl-1" />
-          <select
-            value={selectedCityKey}
-            onChange={(e) => setSelectedCityKey(e.target.value)}
-            className="text-xs font-semibold px-3 py-1.5 rounded-xl cursor-pointer focus:outline-none"
-            style={{
-              background: 'rgba(120,120,128,0.1)',
-              border: '0.5px solid rgba(60,60,67,0.15)',
-              color: '#1C1C1E',
-            }}
-          >
-            <option value="AYODHYA">🛕 Ayodhya (UP)</option>
-            <option value="JAMMU">🏔️ Jammu & Katra (J&K)</option>
-            <option value="AGRA">🕌 Agra / Taj Mahal (UP)</option>
-            <option value="DELHI">🏛️ Delhi NCR</option>
-            <option value="GUWAHATI">🌿 Guwahati (Assam)</option>
-          </select>
-        </div>
+        {/* City Picker Dropdown (Only in local benchmark tab) */}
+        {activeTab === 'LOCAL' && (
+          <div className="p-1.5 rounded-2xl apple-card flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-orange-500 pl-1" />
+            <select
+              value={selectedCityKey}
+              onChange={(e) => setSelectedCityKey(e.target.value)}
+              className="text-xs font-semibold px-3 py-1.5 rounded-xl cursor-pointer focus:outline-none"
+              style={{
+                background: 'rgba(120,120,128,0.1)',
+                border: '0.5px solid rgba(60,60,67,0.15)',
+                color: '#1C1C1E',
+              }}
+            >
+              <option value="AYODHYA">🛕 Ayodhya (UP)</option>
+              <option value="JAMMU">🏔️ Jammu & Katra (J&K)</option>
+              <option value="AGRA">🕌 Agra / Taj Mahal (UP)</option>
+              <option value="DELHI">🏛️ Delhi NCR</option>
+              <option value="GUWAHATI">🌿 Guwahati (Assam)</option>
+            </select>
+          </div>
+        )}
       </div>
 
-      {/* Main Fare Calculator Glassmorphic Card */}
+      {/* Dual Tab Mode Switcher */}
+      <div className="flex items-center justify-center p-1.5 rounded-2xl bg-slate-100/90 border border-slate-200/80 max-w-xl mx-auto shadow-xs text-xs font-bold">
+        <button
+          onClick={() => handleTabChange('COMPARE')}
+          className={`flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
+            activeTab === 'COMPARE'
+              ? 'bg-white text-slate-900 shadow-sm border border-slate-200 font-black'
+              : 'text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          <Zap className={`w-3.5 h-3.5 ${activeTab === 'COMPARE' ? 'text-orange-500' : 'text-slate-400'}`} />
+          <span>⚡ Ride-Hailing Comparison</span>
+        </button>
+
+        <button
+          onClick={() => handleTabChange('LOCAL')}
+          className={`flex-1 py-2.5 px-3 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
+            activeTab === 'LOCAL'
+              ? 'bg-white text-slate-900 shadow-sm border border-slate-200 font-black'
+              : 'text-slate-500 hover:text-slate-900'
+          }`}
+        >
+          <Banknote className={`w-3.5 h-3.5 ${activeTab === 'LOCAL' ? 'text-emerald-600' : 'text-slate-400'}`} />
+          <span>🛺 Local Fare Benchmark</span>
+        </button>
+      </div>
+
+      {/* TAB 1: RIDE-HAILING COMPARISON (UBER, OLA, RAPIDO) */}
+      {activeTab === 'COMPARE' && (
+        <RideCompareView tourist={tourist} />
+      )}
+
+      {/* TAB 2: LOCAL TRANSPORT FARE BENCHMARK & METER RATE CARD */}
+      {activeTab === 'LOCAL' && (
+        <>
+          {/* Main Fare Calculator Glassmorphic Card */}
       <div className="p-6 sm:p-8 rounded-3xl apple-card space-y-6">
         
         {/* Vehicle Selection Chips */}
@@ -393,12 +449,15 @@ export default function FaresPage({ tourist }) {
           </div>
           <a
             href="tel:112"
-            className="inline-flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
+            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1.5 transition-all"
           >
-            <span>Dial 112 / Tourist Police Helpdesk</span>
+            <PhoneCall className="w-3.5 h-3.5" />
+            <span>Call 112 Control Room</span>
           </a>
         </div>
       </div>
+        </>
+      )}
     </motion.div>
   );
 }

@@ -16,6 +16,7 @@ import TouristGuideCard from '../components/TouristGuideCard';
 import TouristGuidePromptModal from '../components/TouristGuidePromptModal';
 import RedZonePreEntryBanner from '../components/RedZonePreEntryBanner';
 import SilentDuressModal from '../components/SilentDuressModal';
+import DemoPitchSwitcher from '../components/DemoPitchSwitcher';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
@@ -465,54 +466,40 @@ export default function TouristDashboard({
               </motion.span>
             </div>
 
-            {/* Demo Location Switcher */}
+            {/* Authenticated Tourist Circuit & Verification Badge */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'rgba(60,60,67,0.5)' }}>Location:</span>
-              <select
-                value={currentTourist?.touristId || 'TID-1035'}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === 'TID-REAL') {
-                    if (isAutoWandering) { clearInterval(wanderIntervalRef.current); setIsAutoWandering(false); }
-                    setUseLiveGpsMode(true); startTracking();
-                  } else if (useLiveGpsMode) { setUseLiveGpsMode(false); stopTracking(); }
-                  if (onSelectTourist) onSelectTourist(val);
-                }}
-                className="text-[11px] sm:text-xs font-semibold px-2 py-1 rounded-xl cursor-pointer focus:outline-none max-w-full"
-                style={{
-                  background: 'rgba(120,120,128,0.1)',
-                  border: '0.5px solid rgba(60,60,67,0.12)',
-                  color: '#1C1C1E',
-                }}
-              >
-                {allTourists && allTourists.length > 0 ? (
-                  allTourists.map((t) => (
-                    <option key={t.touristId} value={t.touristId}>
-                      {t.touristId === 'TID-1035' ? '🛕' : t.touristId === 'TID-1036' ? '🏔️' : t.touristId === 'TID-1037' ? '🏰' : t.touristId === 'TID-1038' ? '🦏' : t.touristId === 'TID-1039' ? '🕌' : '👤'} {t.fullName} — {t.destination?.split(' ')[0] || t.city || 'India'}
-                    </option>
-                  ))
-                ) : (
-                  <>
-                    <option value="TID-1035">🛕 Aarav Sharma — Ayodhya</option>
-                    <option value="TID-1036">🏔️ Vikram Singh — Katra (Jammu)</option>
-                    <option value="TID-1037">🏰 Sunita Patel — Jaipur</option>
-                    <option value="TID-1038">🦏 Rahul Roy — Kaziranga (Assam)</option>
-                    <option value="TID-1039">🕌 Priya Nair — Agra (Taj Mahal)</option>
-                  </>
-                )}
-                <option value="TID-REAL">📍 Real-Time Device — Live GPS</option>
-              </select>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Verified e-KYC
+              </span>
+              <span className="text-[11px] font-medium text-slate-500">
+                Circuit: <strong className="text-slate-800">{currentTourist?.destination?.split(' ')[0] || currentTourist?.city || 'Safe National Corridor'}</strong>
+              </span>
             </div>
 
             <p className="text-[11px] sm:text-xs flex items-center space-x-1" style={{ color: 'rgba(60,60,67,0.55)' }}>
               <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" style={{ color: '#FF9F0A' }} />
-              <span className="truncate max-w-[250px] sm:max-w-none">{currentTourist?.currentLocation?.address || 'Ayodhya Safe Tourism Hub'}</span>
+              <span className="truncate max-w-[250px] sm:max-w-none">{currentTourist?.currentLocation?.address || 'Safe Tourism Hub'}</span>
             </p>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 relative z-10 w-full md:w-auto justify-start md:justify-end">
+          {/* Discrete Demo Pitch Switcher for Jury Presentation */}
+          <DemoPitchSwitcher
+            currentTouristId={currentTourist?.touristId}
+            allTourists={allTourists}
+            onSelectTourist={(tid) => {
+              if (onSelectTourist) onSelectTourist(tid);
+            }}
+            onActivateLiveGps={() => {
+              if (isAutoWandering) { clearInterval(wanderIntervalRef.current); setIsAutoWandering(false); }
+              setUseLiveGpsMode(true);
+              startTracking();
+            }}
+          />
+
           <motion.button
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }} transition={SPRING}
             onClick={handleToggleAutoWander}
@@ -898,7 +885,7 @@ export default function TouristDashboard({
 
 
 
-          {/* SIH Evaluator Zone Simulator */}
+          {/* Field Protocol Zone Simulator */}
           <motion.div
             variants={itemVariants}
             className="apple-card p-4 space-y-3"
@@ -906,10 +893,10 @@ export default function TouristDashboard({
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold flex items-center gap-2" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
                 <Sparkles className="w-4 h-4" style={{ color: '#FF9F0A' }} />
-                <span>Zone Simulator</span>
+                <span>Field Zone Simulator</span>
               </span>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: 'rgba(255,159,10,0.1)', color: '#CC7A00', border: '0.5px solid rgba(255,159,10,0.2)' }}>
-                SIH Evaluator
+                Field Test Mode
               </span>
             </div>
             <p className="text-xs" style={{ color: 'rgba(60,60,67,0.5)' }}>Test geofence proximity alerts and zone breaches:</p>

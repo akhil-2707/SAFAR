@@ -127,13 +127,13 @@ export default function DeadmanSwitch({
 
   // Fast-forward demo helpers
   const handleSimulate15MinWarning = () => {
-    if (!isActive) handleArmSwitch('SIH Demo Test');
+    if (!isActive) handleArmSwitch('Patrol Safety Test');
     setSecondsRemaining(899); // 14 mins 59 secs
     setShowCheckInModal(true);
   };
 
   const handleSimulate5SecExpiry = () => {
-    if (!isActive) handleArmSwitch('SIH Demo Test');
+    if (!isActive) handleArmSwitch('Patrol Safety Test');
     setSecondsRemaining(5);
   };
 
@@ -294,9 +294,9 @@ export default function DeadmanSwitch({
           </div>
         )}
 
-        {/* Demo Fast-Forward Simulation Bar (For Evaluators / Demonstration) */}
+        {/* Demo Fast-Forward Simulation Bar (For Field Demonstration) */}
         <div className="pt-2 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-          <span className="font-bold text-gray-400 uppercase tracking-wide">SIH Fast-Forward Simulator:</span>
+          <span className="font-bold text-gray-400 uppercase tracking-wide">Patrol Countdown Simulator:</span>
           <div className="flex flex-wrap items-center gap-1.5">
             <button
               onClick={handleSimulate15MinWarning}

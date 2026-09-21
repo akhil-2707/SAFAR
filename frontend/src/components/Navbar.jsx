@@ -130,7 +130,7 @@ export default function Navbar({
               );
             })}
           </nav>
-        ) : (
+        ) : currentUser?.role === 'TOURIST' ? (
           <nav className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-2xl" style={{
             background: 'rgba(120,120,128,0.08)',
           }}>
@@ -170,7 +170,7 @@ export default function Navbar({
               );
             })}
           </nav>
-        )}
+        ) : null}
 
         {/* Right Section */}
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -368,7 +368,7 @@ export default function Navbar({
               </motion.div>
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
                 <Link
-                  to="/authority-dashboard"
+                  to={currentUser?.role === 'AUTHORITY' ? '/authority-dashboard' : '/login?role=authority&redirect=/authority-dashboard'}
                   className="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1 text-purple-800 bg-purple-50 hover:bg-purple-100 transition-all border border-purple-300 shadow-sm"
                   title="Authority Police & CAD Command Desk"
                 >
@@ -552,7 +552,7 @@ export default function Navbar({
                       <span>Immutable Blockchain Ledger</span>
                     </Link>
                   </>
-                ) : (
+                ) : currentUser?.role === 'TOURIST' ? (
                   <>
                     <Link
                       to="/tourist-dashboard"
@@ -582,7 +582,7 @@ export default function Navbar({
                       }`}
                     >
                       <span className="text-sm">🏺</span>
-                      <span>GI Artisans & Vocal for Local (Others)</span>
+                      <span>GI Artisans & Vocal for Local</span>
                     </Link>
                     <Link
                       to="/guide-dashboard"
@@ -645,6 +645,36 @@ export default function Navbar({
                       <span>112 ERSS Helpline & Police</span>
                     </Link>
                   </>
+                ) : (
+                  <div className="space-y-2 pt-1 pb-2">
+                    <p className="text-[11px] font-black uppercase tracking-wider text-slate-400 px-1">
+                      Choose Safety Portal:
+                    </p>
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-orange-700 bg-orange-50/90 border border-orange-200 shadow-xs"
+                    >
+                      <span>🎒</span>
+                      <span>Tourist Safety Sign In</span>
+                    </Link>
+                    <Link
+                      to="/login?role=guide"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-amber-800 bg-amber-50/90 border border-amber-200 shadow-xs"
+                    >
+                      <span>🪪</span>
+                      <span>Certified Guide Portal</span>
+                    </Link>
+                    <Link
+                      to="/login?role=authority"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-purple-900 bg-purple-50/90 border border-purple-200 shadow-xs"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-purple-600" />
+                      <span>Authority Command Desk</span>
+                    </Link>
+                  </div>
                 )}
 
                 {/* Additional Quick Utility Actions */}

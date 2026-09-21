@@ -260,13 +260,37 @@ function login(req, res) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
-    const isMatch = bcrypt.compareSync(password, user.password) || password === 'admin123' || password === 'tourist123' || password === 'guide123';
+    let isMatch = false;
+    if (user.password && user.password.startsWith('$2')) {
+      isMatch = bcrypt.compareSync(password, user.password);
+    } else {
+      isMatch = (password === user.password);
+    }
+
     if (!isMatch) {
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+      return res.status(401).json({ success: false, error: 'Invalid email or password' });
+    }
+
+    // Check Supreme Authority Clearance for Officers
+    const isDG = Boolean(user.isMasterAuthority || user.email?.toLowerCase() === 'akhil@gmail.com');
+    if (user.role === 'AUTHORITY' && !isDG) {
+      const officerStatus = user.status || 'APPROVED';
+      if (officerStatus === 'PENDING_APPROVAL') {
+        return res.status(403).json({
+          success: false,
+          error: 'Officer Clearance Pending: Your account has been registered but is awaiting supreme approval from Director General Akhil Gupta (akhil@gmail.com).'
+        });
+      }
+      if (officerStatus === 'REJECTED') {
+        return res.status(403).json({
+          success: false,
+          error: `Officer Clearance Denied: Your registration was rejected by Supreme Authority (Director General Akhil Gupta). Reason: ${user.rejectionReason || 'Credentials unverified'}`
+        });
+      }
     }
 
     const token = jwt.sign(
-      { id: user.id, role: user.role, email: user.email, touristId: user.touristId, guideId: user.guideId },
+      { id: user.id, role: user.role, email: user.email, touristId: user.touristId, guideId: user.guideId, isMasterAuthority: isDG },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -295,6 +319,8 @@ function login(req, res) {
         touristId: user.touristId,
         guideId: user.guideId,
         phone: user.phone,
+        isMasterAuthority: isDG,
+        status: isDG ? 'APPROVED' : (user.status || 'APPROVED'),
         isDemo: user.isDemo ?? (touristProfile?.isDemo ?? false),
         isRealUser: user.isRealUser ?? (touristProfile?.isRealUser ?? (user.role === 'TOURIST' && !touristProfile?.isDemo))
       },
@@ -325,6 +351,8 @@ function getMe(req, res) {
     digitalId = guideProfile?.digitalId || null;
   }
 
+  const isDG = Boolean(user.isMasterAuthority || user.email?.toLowerCase() === 'akhil@gmail.com');
+
   return res.json({
     success: true,
     user: {
@@ -336,6 +364,8 @@ function getMe(req, res) {
       touristId: user.touristId,
       guideId: user.guideId,
       phone: user.phone,
+      isMasterAuthority: isDG,
+      status: isDG ? 'APPROVED' : (user.status || 'APPROVED'),
       isDemo: user.isDemo ?? (touristProfile?.isDemo ?? false),
       isRealUser: user.isRealUser ?? (touristProfile?.isRealUser ?? (user.role === 'TOURIST' && !touristProfile?.isDemo))
     },
@@ -463,8 +493,201 @@ function verifyEmailOTP(req, res) {
   }
 }
 
+// Register Authority Officer / Employee under Command Desk
+function registerAuthority(req, res) {
+  try {
+    const {
+      fullName,
+      name,
+      email,
+      password,
+      phone,
+      department,
+      jurisdiction,
+      serviceBadgeId,
+      designation
+    } = req.body;
+
+    const officerName = (fullName || name || '').trim();
+
+    if (!officerName || !email || !password || !department) {
+      return res.status(400).json({ success: false, error: 'Full name, email, password, and official department are required' });
+    }
+
+    const existingUser = dbStore.findOne('users', (u) => u.email.toLowerCase() === email.toLowerCase());
+    if (existingUser) {
+      return res.status(400).json({ success: false, error: 'Email is already registered in S.A.F.A.R. system' });
+    }
+
+    const passwordHash = bcrypt.hashSync(password, 10);
+    const userId = `usr_auth_${Date.now()}`;
+
+    const newAuthority = dbStore.insert('users', {
+      id: userId,
+      name: officerName,
+      email: email.toLowerCase(),
+      password: passwordHash,
+      role: 'AUTHORITY',
+      department: department || 'S.A.F.A.R. Incident Response Unit',
+      jurisdiction: jurisdiction || 'National Tourism Safety Grid',
+      serviceBadgeId: serviceBadgeId || `GOV-${Math.floor(1000 + Math.random() * 9000)}`,
+      designation: designation || 'Security Operations Officer',
+      phone: phone || '+91 98000 00000',
+      status: 'PENDING_APPROVAL',
+      isMasterAuthority: false,
+      createdAt: new Date().toISOString()
+    });
+
+    // Notify Central Command Desk for DG Akhil Gupta
+    dbStore.insert('notifications', {
+      id: `notif_officer_${Date.now()}`,
+      type: 'MEDIUM',
+      title: 'New Officer Clearance Request',
+      message: `Officer ${officerName} (${department}, Badge: ${newAuthority.serviceBadgeId}) registered. Awaiting clearance approval by DG Akhil Gupta.`,
+      timestamp: new Date().toISOString(),
+      read: false
+    });
+
+    return res.status(201).json({
+      success: true,
+      pendingApproval: true,
+      status: 'PENDING_APPROVAL',
+      message: 'Officer registration submitted! Clearance is PENDING supreme approval from Director General Akhil Gupta (akhil@gmail.com). You cannot log in until DG Akhil Gupta grants your security clearance.',
+      user: {
+        id: newAuthority.id,
+        name: newAuthority.name,
+        email: newAuthority.email,
+        role: newAuthority.role,
+        department: newAuthority.department,
+        jurisdiction: newAuthority.jurisdiction,
+        serviceBadgeId: newAuthority.serviceBadgeId,
+        designation: newAuthority.designation,
+        status: 'PENDING_APPROVAL',
+        isMasterAuthority: false
+      }
+    });
+  } catch (err) {
+    console.error('Register Authority Error:', err);
+    return res.status(500).json({ success: false, error: 'Failed to register authority officer: ' + err.message });
+  }
+}
+
+// Get Authority Officers / Staff List
+function getAuthorityOfficers(req, res) {
+  try {
+    const users = dbStore.get('users') || [];
+    const officers = users.filter((u) => u.role === 'AUTHORITY').map((u) => {
+      const isDG = Boolean(u.isMasterAuthority || u.email?.toLowerCase() === 'akhil@gmail.com');
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        department: u.department,
+        jurisdiction: u.jurisdiction || 'Central Command Desk',
+        serviceBadgeId: u.serviceBadgeId || (isDG ? 'DG-COMMAND-01' : 'HQ-COMMAND'),
+        designation: u.designation || (isDG ? 'Director General & Chief Security Officer' : 'Security Operations Officer'),
+        isMasterAuthority: isDG,
+        status: isDG ? 'APPROVED' : (u.status || 'APPROVED'),
+        approvedBy: isDG ? 'President of India / Ministry of Tourism' : (u.approvedBy || 'DG Akhil Gupta'),
+        approvedAt: u.approvedAt || u.createdAt,
+        rejectionReason: u.rejectionReason || null,
+        phone: u.phone,
+        createdAt: u.createdAt
+      };
+    });
+
+    return res.json({ success: true, count: officers.length, officers });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+// Approve Officer Clearance (Strictly Director General Akhil Gupta)
+function approveOfficer(req, res) {
+  try {
+    const { id } = req.params;
+    const isDG = Boolean(req.user?.isMasterAuthority || req.user?.email?.toLowerCase() === 'akhil@gmail.com');
+    if (!isDG) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Supreme Authority (Director General Akhil Gupta) has clearance to approve departmental officers.'
+      });
+    }
+
+    const officer = dbStore.findOne('users', (u) => (u.id === id || u.email?.toLowerCase() === id.toLowerCase()) && u.role === 'AUTHORITY');
+    if (!officer) {
+      return res.status(404).json({ success: false, error: 'Officer account not found' });
+    }
+
+    const updated = dbStore.update('users', officer.id, {
+      status: 'APPROVED',
+      approvedBy: req.user.name || 'Director General Akhil Gupta',
+      approvedAt: new Date().toISOString()
+    });
+
+    // Notify Central Command Desk
+    dbStore.insert('notifications', {
+      id: `notif_officer_approved_${Date.now()}`,
+      type: 'LOW',
+      title: 'Officer Clearance Granted',
+      message: `Director General Akhil Gupta granted supreme clearance to Officer ${officer.name} (${officer.department}).`,
+      timestamp: new Date().toISOString(),
+      read: false
+    });
+
+    return res.json({
+      success: true,
+      message: `Clearance successfully granted to Officer ${officer.name}! Account is now fully authorized to access the Command Desk.`,
+      officer: updated
+    });
+  } catch (err) {
+    console.error('Approve Officer Error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+// Reject Officer Clearance (Strictly Director General Akhil Gupta)
+function rejectOfficer(req, res) {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body || {};
+    const isDG = Boolean(req.user?.isMasterAuthority || req.user?.email?.toLowerCase() === 'akhil@gmail.com');
+    if (!isDG) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Supreme Authority (Director General Akhil Gupta) has clearance to reject departmental officers.'
+      });
+    }
+
+    const officer = dbStore.findOne('users', (u) => (u.id === id || u.email?.toLowerCase() === id.toLowerCase()) && u.role === 'AUTHORITY');
+    if (!officer) {
+      return res.status(404).json({ success: false, error: 'Officer account not found' });
+    }
+
+    const updated = dbStore.update('users', officer.id, {
+      status: 'REJECTED',
+      rejectedBy: req.user.name || 'Director General Akhil Gupta',
+      rejectionReason: reason || 'Service credentials unverified or failed background screening',
+      rejectedAt: new Date().toISOString()
+    });
+
+    return res.json({
+      success: true,
+      message: `Clearance for Officer ${officer.name} was rejected.`,
+      officer: updated
+    });
+  } catch (err) {
+    console.error('Reject Officer Error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
 module.exports = {
   registerTourist,
+  registerAuthority,
+  getAuthorityOfficers,
+  approveOfficer,
+  rejectOfficer,
   login,
   getMe,
   sendOTP,

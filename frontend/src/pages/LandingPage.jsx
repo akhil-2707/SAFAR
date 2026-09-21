@@ -58,7 +58,7 @@ const Orb = ({ color, size, x, y, delay = 0 }) => (
   />
 );
 
-export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
+export default function LandingPage({ onScenarioTrigger, onSwitchUser, currentUser }) {
   const navigate = useNavigate();
   const [executingScenario, setExecutingScenario] = useState(null);
 
@@ -69,7 +69,11 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
         await onScenarioTrigger(scenarioId);
       }
       if (path) {
-        navigate(path);
+        if (currentUser || path === '/blockchain-ledger') {
+          navigate(path);
+        } else {
+          navigate(`/login?role=tourist&redirect=${encodeURIComponent(path)}`);
+        }
       }
     } catch (err) {
       console.error('Scenario execution failed:', err);
@@ -98,7 +102,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               { icon: '🔒', text: 'SHA-256 DIGITAL ID: TAMPER-PROOF LEDGER', color: '#f97316' },
               { icon: '🚨', text: 'POLICE CAD: 112 ERSS LINKED', color: '#ef4444' },
               { icon: '🛰️', text: 'SATELLITE CORRIDORS: LIVE TRACKING ACTIVE', color: '#3b82f6' },
-              { icon: '🇮🇳', text: 'SIH 2026 — MINISTRY OF TOURISM, GOVT OF INDIA', color: '#f97316' },
+              { icon: '🇮🇳', text: 'NATIONAL TOURISM SAFETY COMMAND — MINISTRY OF TOURISM, GOVT OF INDIA', color: '#f97316' },
             ].map((item, i) => (
               <span key={i} className="flex items-center space-x-2" style={{ color: item.color }}>
                 <span>{item.icon}</span>
@@ -162,7 +166,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               <span className="text-sm sm:text-base">🇮🇳</span>
               <span className="tracking-wider sm:tracking-widest">GOVERNMENT OF INDIA • MINISTRY OF TOURISM</span>
               <span className="text-gray-300 hidden sm:inline">•</span>
-              <span style={{ color: '#7c3aed' }}>SMART INDIA HACKATHON 2026</span>
+              <span style={{ color: '#7c3aed' }}>NATIONAL TOURISM SAFETY GRID</span>
             </motion.div>
 
             {/* Title */}
@@ -203,71 +207,90 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               </motion.p>
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - Strictly Auth-Aware (No Anonymous Tourist Bypasses) */}
             <motion.div variants={fadeInUp} custom={0.5}
               className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 w-full max-w-xs sm:max-w-none px-4 sm:px-0">
-              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
-                <Link to="/register"
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 text-white font-black text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 relative overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(135deg, #f97316, #8b5cf6)',
-                    backgroundSize: '200% 200%',
-                    boxShadow: '0 8px 30px rgba(139,92,246,0.4)',
-                  }}>
-                  <motion.span className="absolute inset-0 rounded-2xl"
-                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }}
-                    animate={{ x: ['-100%', '200%'] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
-                  <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
-                  <span className="relative z-10">Issue Digital Tourist Pass</span>
-                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10" />
-                </Link>
-              </motion.div>
+              
+              {currentUser ? (
+                /* Authenticated State: Direct Link to Active Persona Dashboard */
+                <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+                  <Link
+                    to={currentUser.role === 'AUTHORITY' ? '/authority-dashboard' : currentUser.role === 'GUIDE' ? '/guide-dashboard' : '/tourist-dashboard'}
+                    className="w-full sm:w-auto px-7 py-3.5 sm:py-4 text-white font-black text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 relative overflow-hidden shadow-lg shadow-purple-600/30"
+                    style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
+                  >
+                    <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>Enter Your {currentUser.role === 'AUTHORITY' ? 'Command Desk' : currentUser.role === 'GUIDE' ? 'Guide Portal' : 'Tourist Safety Hub'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </motion.div>
+              ) : (
+                /* Unauthenticated State: Clean Registration & Dedicated Sign In Portals */
+                <>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+                    <Link to="/register"
+                      className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 text-white font-black text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 relative overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(135deg, #f97316, #8b5cf6)',
+                        backgroundSize: '200% 200%',
+                        boxShadow: '0 8px 30px rgba(139,92,246,0.4)',
+                      }}>
+                      <motion.span className="absolute inset-0 rounded-2xl"
+                        style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }}
+                        animate={{ x: ['-100%', '200%'] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} />
+                      <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                      <span className="relative z-10">Issue Digital Tourist Pass</span>
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 relative z-10" />
+                    </Link>
+                  </motion.div>
 
-              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
-                <Link to="/tourist-dashboard"
-                  className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 border-2"
-                  style={{
-                    background: 'rgba(255,255,255,0.9)',
-                    border: '2px solid rgba(16,185,129,0.4)',
-                    color: '#059669',
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '0 8px 25px rgba(16,185,129,0.15)',
-                  }}>
-                  <Activity className="w-4 h-4" />
-                  <span>Tourist Safety Hub</span>
-                </Link>
-              </motion.div>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+                    <Link to="/login?role=tourist"
+                      className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 border-2"
+                      style={{
+                        background: 'rgba(255,255,255,0.95)',
+                        border: '2px solid rgba(16,185,129,0.4)',
+                        color: '#059669',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 8px 25px rgba(16,185,129,0.15)',
+                      }}>
+                      <UserCheck className="w-4 h-4" />
+                      <span>Tourist Sign In</span>
+                    </Link>
+                  </motion.div>
 
-              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
-                <Link to="/authority-dashboard"
-                  className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2"
-                  style={{
-                    background: 'rgba(255,255,255,0.9)',
-                    border: '2px solid rgba(139,92,246,0.4)',
-                    color: '#7c3aed',
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '0 8px 25px rgba(139,92,246,0.15)',
-                  }}>
-                  <Compass className="w-4 h-4" />
-                  <span>Authority Command Desk</span>
-                </Link>
-              </motion.div>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+                    <Link to="/guide-register"
+                      className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 border-2"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,251,235,0.95), rgba(254,243,199,0.9))',
+                        border: '2px solid rgba(245,158,11,0.55)',
+                        color: '#b45309',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 8px 25px rgba(245,158,11,0.18)',
+                      }}>
+                      <Award className="w-4 h-4 text-amber-600" />
+                      <span>Certified Guide Portal</span>
+                    </Link>
+                  </motion.div>
 
-              <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
-                <Link to="/guide-register"
-                  className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2 border-2"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255,251,235,0.95), rgba(254,243,199,0.9))',
-                    border: '2px solid rgba(245,158,11,0.55)',
-                    color: '#b45309',
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '0 8px 25px rgba(245,158,11,0.18)',
-                  }}>
-                  <Award className="w-4 h-4 text-amber-600" />
-                  <span>Local Guide Portal</span>
-                </Link>
-              </motion.div>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
+                    <Link to="/login?role=authority"
+                      className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center space-x-2"
+                      style={{
+                        background: 'rgba(255,255,255,0.95)',
+                        border: '2px solid rgba(139,92,246,0.4)',
+                        color: '#7c3aed',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 8px 25px rgba(139,92,246,0.15)',
+                      }}>
+                      <ShieldCheck className="w-4 h-4 text-purple-700" />
+                      <span>Supreme Command Desk</span>
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </motion.div>
 
             {/* KPI Pills */}
@@ -300,17 +323,17 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
         </div>
       </section>
 
-      {/* 🏆 AICTE PROBLEM STATEMENT 26204 PILLARS SHOWCASE */}
+      {/* 🏆 S.A.F.A.R. NATIONAL SAFETY MATRIX */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center space-y-2 mb-8">
           <span className="text-xs font-black uppercase tracking-widest text-orange-600 bg-orange-100 px-3 py-1 rounded-full border border-orange-300">
-            AICTE MIC STUDENT INNOVATION (PS ID: 26204)
+            S.A.F.A.R. NATIONAL TOURISM ARCHITECTURE
           </span>
           <h2 className="text-2xl sm:text-4xl font-black text-gray-900">
-            Comprehensive Boost for Hotels, Travel & Local Economy
+            Unified Ecosystem for Hospitality, Transit & Citizen Safety
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto">
-            Addressing every keyword of the hackathon problem statement with 5 category-1 world-first innovations.
+            Ministry of Tourism & MeitY national security framework delivering next-generation digital protection across Indian tourist corridors.
           </p>
         </div>
 
@@ -349,8 +372,8 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                 ✓ Offline BLE Ghost-Mesh (0-Signal Rescue)
               </div>
             </div>
-            <Link to="/tourist-dashboard" className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
-              <span>Open Live Safety Radar & Map</span>
+            <Link to={currentUser ? "/tourist-dashboard" : "/login?role=tourist"} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
+              <span>{currentUser ? "Open Live Safety Radar & Map" : "Login to Access Safety Radar"}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -427,7 +450,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
         </motion.div>
       </section>
 
-      {/* 🎯 SIH EVALUATOR GUIDED SCENARIO SECTION (INLINE BELOW INDIAN MAP) */}
+      {/* 🎯 S.A.F.A.R. REAL-TIME SAFETY PROTOCOLS & TELEMETRY SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -449,24 +472,21 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                 style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)' }}>
                 <Sparkles className="w-4 h-4 text-orange-600 animate-spin-slow" />
                 <span className="text-[11px] font-black text-orange-600 uppercase tracking-widest">
-                  SIH 2026 EVALUATOR LAB • GUIDED TESTBED
+                  S.A.F.A.R. NATIONAL SAFETY MATRIX • PROTOCOLS & RESPONSE TELEMETRY
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-                SIH Evaluator Guided Scenarios & Live Triggers
+                Real-Time Geo-Safety Corridors & Incident Protocols
               </h2>
               <p className="text-sm text-gray-600 max-w-2xl font-medium">
-                Execute real-time edge cases with 1-click: trigger buffer warnings, geo-fence breaches, automated 112 ERSS police patrol dispatch, and cryptographic blockchain pass validation.
+                Unified intelligence framework: high-resolution buffer containment, geo-fence breach protocols, automated 112 ERSS police patrol dispatch, and cryptographic tamper-proof pass validation.
               </p>
             </div>
 
-            {/* Quick Role Switches */}
+            {/* Official Role Portals */}
             <div className="flex items-center gap-2 flex-wrap shrink-0">
-              <button
-                onClick={() => {
-                  if (onSwitchUser) onSwitchUser('TOURIST');
-                  navigate('/tourist-dashboard');
-                }}
+              <Link
+                to={currentUser ? "/tourist-dashboard" : "/login?role=tourist"}
                 className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: 'rgba(16,185,129,0.12)',
@@ -475,14 +495,11 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                 }}
               >
                 <UserCheck className="w-4 h-4" />
-                <span>Tourist Safety Hub</span>
-              </button>
+                <span>{currentUser ? 'Tourist Safety Hub' : 'Tourist Portal'}</span>
+              </Link>
 
-              <button
-                onClick={() => {
-                  if (onSwitchUser) onSwitchUser('AUTHORITY');
-                  navigate('/authority-dashboard');
-                }}
+              <Link
+                to={currentUser?.role === 'AUTHORITY' ? "/authority-dashboard" : "/login?role=authority"}
                 className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: 'rgba(139,92,246,0.12)',
@@ -491,14 +508,11 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                 }}
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>Command Desk</span>
-              </button>
+                <span>{currentUser?.role === 'AUTHORITY' ? 'Command Desk' : 'Officer Login'}</span>
+              </Link>
 
-              <button
-                onClick={() => {
-                  if (onSwitchUser) onSwitchUser('GUIDE');
-                  navigate('/guide-dashboard');
-                }}
+              <Link
+                to={currentUser?.role === 'GUIDE' ? "/guide-dashboard" : "/login?role=guide"}
                 className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: 'rgba(245,158,11,0.12)',
@@ -507,8 +521,8 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                 }}
               >
                 <Award className="w-4 h-4 text-amber-600" />
-                <span>Guide Cockpit</span>
-              </button>
+                <span>{currentUser?.role === 'GUIDE' ? 'Guide Cockpit' : 'Guide Portal'}</span>
+              </Link>
             </div>
           </div>
 
@@ -804,7 +818,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
           © 2026 S.A.F.A.R. | Smart AI Framework for Assured & Responsible Tourism
         </p>
         <p className="text-xs text-gray-400">
-          Developed for Smart India Hackathon 2026 | Ministry of Tourism, Govt. of India
+          National Tourism Safety Architecture | Ministry of Tourism & MeitY, Govt. of India
         </p>
         {/* Tricolor footer bar */}
         <div className="h-1 max-w-xs mx-auto rounded-full"

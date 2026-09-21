@@ -433,16 +433,36 @@ export default function AuthorityGuideDesk({ onRefreshData }) {
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                          {matchedGuides.slice(0, 3).map((g) => (
+                          {matchedGuides.slice(0, 2).map((g) => (
                             <button
                               key={g.id}
                               onClick={() => handleAssignGuide(req.id, g.guideId)}
-                              className="px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-900 border border-orange-300 font-bold text-xs flex items-center space-x-1.5 transition-colors shadow-sm"
+                              className="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center space-x-1.5 transition-colors shadow-sm cursor-pointer"
                             >
                               <span>Assign {g.fullName}</span>
-                              <span className="text-[10px] font-mono text-orange-600">({g.rating > 0 ? g.rating.toFixed(1) : '5.0'}★)</span>
+                              <span className="text-[10px] font-mono text-orange-200">({g.rating > 0 ? g.rating.toFixed(1) : '5.0'}★)</span>
                             </button>
                           ))}
+
+                          {verifiedGuides.length > 0 && (
+                            <select
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  handleAssignGuide(req.id, e.target.value);
+                                  e.target.value = '';
+                                }
+                              }}
+                              defaultValue=""
+                              className="px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-300 text-xs font-semibold text-gray-700 cursor-pointer focus:outline-none focus:border-orange-500"
+                            >
+                              <option value="" disabled>Or select any verified guide...</option>
+                              {verifiedGuides.map((g) => (
+                                <option key={g.id} value={g.guideId}>
+                                  {g.fullName} ({g.city || 'India'}) • {g.rating > 0 ? g.rating.toFixed(1) : '5.0'}★
+                                </option>
+                              ))}
+                            </select>
+                          )}
                         </div>
                       </div>
                     )}
