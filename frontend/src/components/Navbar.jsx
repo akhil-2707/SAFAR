@@ -3,8 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, LogOut, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
-  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award,
-  Navigation, Hotel
+  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award, Leaf
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -134,13 +133,12 @@ export default function Navbar({
             background: 'rgba(120,120,128,0.1)',
           }}>
             {[
-              { to: '/explore', label: 'Explore' },
-              { to: '/trip-planner', label: 'Trip Planner' },
-              { to: '/tourist-dashboard', label: 'My Trip' },
-              { to: '/fares', label: 'Smart Fares' },
-              { to: '/hotels', label: 'Stays' },
-              { to: '/vendor-marketplace', label: 'Guides & Market' },
-              { to: '/sos', label: 'Safety & SOS', isSafety: true },
+              { to: '/tourist-dashboard', label: 'Safety Map' },
+              { to: '/digital-id', label: 'Digital ID' },
+              { to: '/deadman-switch', label: 'Deadman Switch' },
+              { to: '/fares', label: 'Transport Fares' },
+              { to: '/green-rewards', label: '🌿 Green Rewards', green: true },
+              { to: '/emergency-help', label: 'Help & 112' },
             ].map((nl) => {
               const active = location.pathname === nl.to;
               return (
@@ -149,19 +147,13 @@ export default function Navbar({
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
                     transition={SPRING}
-                    className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
                     style={{
-                      background: active 
-                        ? (nl.isSafety ? 'rgba(255,59,48,0.12)' : 'rgba(255,255,255,0.85)') 
-                        : (nl.isSafety ? 'rgba(255,59,48,0.06)' : 'transparent'),
-                      color: active 
-                        ? (nl.isSafety ? '#FF3B30' : '#0A84FF') 
-                        : (nl.isSafety ? '#FF3B30' : 'rgba(60,60,67,0.7)'),
-                      border: nl.isSafety ? '0.5px solid rgba(255,59,48,0.25)' : 'none',
+                      background: active ? (nl.green ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.85)') : 'transparent',
+                      color: active ? (nl.green ? '#047857' : '#0A84FF') : 'rgba(60,60,67,0.7)',
                       boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
                     }}
                   >
-                    {nl.isSafety && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
                     <span>{nl.label}</span>
                   </motion.div>
                 </Link>
@@ -552,102 +544,85 @@ export default function Navbar({
                 ) : (
                   <>
                     <Link
-                      to="/explore"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/explore' ? 'bg-orange-50 text-orange-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <Compass className="w-4 h-4 text-orange-500" />
-                      <span>Explore Destinations</span>
-                    </Link>
-                    <Link
-                      to="/trip-planner"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/trip-planner' ? 'bg-violet-50 text-violet-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <Sparkles className="w-4 h-4 text-violet-500" />
-                      <span>Smart Trip Planner</span>
-                    </Link>
-                    <Link
                       to="/tourist-dashboard"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
                         location.pathname === '/tourist-dashboard' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <Navigation className="w-4 h-4 text-blue-500" />
-                      <span>My Trip & Safety Hub</span>
+                      <Compass className="w-4 h-4 text-blue-500" />
+                      <span>Live Safety Map & Zones</span>
+                    </Link>
+                    <Link
+                      to="/digital-id"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/digital-id' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <UserCheck className="w-4 h-4 text-emerald-500" />
+                      <span>3D Holographic Digital ID</span>
+                    </Link>
+                    <Link
+                      to="/sos"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/sos' ? 'bg-red-50 text-red-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Radio className="w-4 h-4 text-red-500" />
+                      <span>Emergency SOS Cockpit</span>
+                    </Link>
+                    <Link
+                      to="/deadman-switch"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/deadman-switch' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Clock className="w-4 h-4 text-amber-500" />
+                      <span>Deadman Automated Check-in</span>
                     </Link>
                     <Link
                       to="/fares"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/fares' ? 'bg-amber-50 text-amber-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                        location.pathname === '/fares' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <CreditCard className="w-4 h-4 text-amber-500" />
-                      <span>Smart Transport & Fares</span>
+                      <CreditCard className="w-4 h-4 text-purple-500" />
+                      <span>Pre-paid Taxi & Auto Fares</span>
                     </Link>
                     <Link
-                      to="/hotels"
+                      to="/emergency-help"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/hotels' ? 'bg-emerald-50 text-emerald-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                        location.pathname === '/emergency-help' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <Hotel className="w-4 h-4 text-emerald-500" />
-                      <span>Hotels & Curated Stays</span>
+                      <PhoneCall className="w-4 h-4 text-green-500" />
+                      <span>112 ERSS Helpline & Police</span>
                     </Link>
                     <Link
-                      to="/vendor-marketplace"
+                      to="/green-rewards"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/vendor-marketplace' ? 'bg-teal-50 text-teal-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                        location.pathname === '/green-rewards' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <Award className="w-4 h-4 text-teal-500" />
-                      <span>Verified Guides & Market</span>
+                      <Leaf className="w-4 h-4 text-emerald-500" />
+                      <span>🌿 Green Rewards & Eco Wallet</span>
                     </Link>
-
-                    {/* Integrated Safety & Trust Section on Mobile */}
-                    <div className="pt-2 border-t border-slate-200 mt-1">
-                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-1">Safety & Emergency</p>
-                      <Link
-                        to="/digital-id"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
-                      >
-                        <UserCheck className="w-4 h-4 text-emerald-500" />
-                        <span>Holographic Digital ID Pass</span>
-                      </Link>
-                      <Link
-                        to="/sos"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50"
-                      >
-                        <Radio className="w-4 h-4 text-red-500" />
-                        <span>Emergency SOS Cockpit</span>
-                      </Link>
-                      <Link
-                        to="/deadman-switch"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
-                      >
-                        <Clock className="w-4 h-4 text-amber-500" />
-                        <span>Deadman Automated Check-in</span>
-                      </Link>
-                      <Link
-                        to="/emergency-help"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
-                      >
-                        <PhoneCall className="w-4 h-4 text-green-500" />
-                        <span>112 ERSS Emergency Help</span>
-                      </Link>
-                    </div>
+                    <Link
+                      to="/partner-pay"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/partner-pay' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <CreditCard className="w-4 h-4 text-emerald-600" />
+                      <span>Partner Discount Payment</span>
+                    </Link>
                   </>
                 )}
 

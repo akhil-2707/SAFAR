@@ -1,122 +1,75 @@
 # S.A.F.A.R. — Smart AI Framework for Assured & Responsible Tourism
 
-**Smart India Hackathon 2026**  
-**Problem Statement ID:** 26204  
-**Title:** *“Student Innovation - A solution/idea that can boost the current situation of the tourism industries including hotels, travel and others.”*  
-**Theme:** Travel & Tourism • **Category:** Software • **Organization:** AICTE  
+**Project:** S.A.F.A.R. (SIH 2026)  
+**Title:** Smart Tourist Safety Monitoring & Incident Response System using AI, Geo-Fencing, Ghost-Mesh, and Blockchain-based Digital ID  
+**Ministry:** Ministry of Tourism, Government of India  
+**Theme:** Travel & Tourism / Student Innovation  
+**Category:** Software  
 
 ---
 
-## 🌟 Vision & Platform Overview
+## 🌟 Solution Overview
 
-**S.A.F.A.R.** is a unified, tourism-first digital enablement platform engineered to invigorate local tourism economies, boost hospitality and hotel occupancy, streamline transparent travel mobility, and protect travelers across India.
-
-The platform is structured around the seamless traveler lifecycle:
-
-$$\mathbf{DISCOVER} \longrightarrow \mathbf{PLAN} \longrightarrow \mathbf{COMPARE} \longrightarrow \mathbf{CONNECT} \longrightarrow \mathbf{TRAVEL} \longrightarrow \mathbf{STAY\ SAFE}$$
-
-Rather than functioning as an emergency surveillance tool, S.A.F.A.R. leads with discovery, AI itinerary planning, fair-fare mobility, and curated stays—while embedding a robust, 24x7 **Travel Safety & Trust Layer** as an invisible, reassuring safety net throughout the traveler's journey.
+**SafeTour NE** is a centralized, government-grade smart tourist safety platform tailored specifically for the North Eastern Region of India. It integrates **cryptographic SHA-256 Digital Tourist IDs**, **explainable AI risk scoring**, **map-based geo-fencing**, and an **automated incident response workflow** into a unified, real-time command platform.
 
 ---
 
-## 🧭 Core Functional Modules
+## Key Features
 
-### 1. Discover Indian Circuits (`/explore`)
-- Searchable and filterable directory of major Indian tourism corridors:
-  - **Ayodhya Dham & Ram Janmabhoomi Corridor** (Uttar Pradesh)
-  - **Katra Vaishno Devi & Jammu Pilgrim Track** (Jammu & Kashmir)
-  - **Agra World Heritage Corridor & Taj Mahal** (Uttar Pradesh)
-  - **Kashi Vishwanath & Ganga Ghats** (Varanasi, Uttar Pradesh)
-  - **Shillong & Cherrapunji Monsoon Corridor** (Meghalaya)
-  - **Jaipur Pink City & Aravalli Forts** (Rajasthan)
-- Provides key highlights, best seasons, ideal duration, moderate daily budgets, and verified safe boundary corridors.
-
-### 2. Smart AI Trip Planner (`/trip-planner`)
-- **Deterministic AI Travel Intelligence Service:** 100% offline and deterministic fallback with zero paid API dependencies.
-- Generates personalized day-by-day itineraries tailored to traveler count, duration (1–7 days), budget tier (Budget, Moderate, Luxury), and transport preference.
-- Produces itemized budget estimations (accommodation, transport, entry fees & local dining).
-- Maps interactive waypoints with route polylines and cultural insights.
-- 1-Click **"Save Itinerary to My Trip"** synchronization (`POST /api/trips`).
-
-### 3. Multi-Provider Fare Comparison (`/fares`)
-- Side-by-side benchmark fare comparisons across **Uber**, **Ola**, and **Rapido**.
-- **Transparent Prototype Estimation:** Every ride option is clearly marked with an `🏷️ ESTIMATED FARE` badge and calibrated formula breakdown.
-- Deep-link handoff directly opens official provider apps/portals with pre-filled destination coordinates.
-- **Anti-Scam Meter Estimator:** Live tariff calculator based on local city transport regulations for autos, taxis, and night surcharges to prevent transit extortion.
-
-### 4. Curated Hotels & Pilgrim Stays (`/hotels`)
-- Curated directory of authentic local accommodations: pilgrim yatri niwas, ashram guest houses, and eco-homestays.
-- Search and filter by circuit, accommodation type, and maximum price.
-- **Prototype Registry Notice:** Stay tariffs reflect realistic calibrated benchmark pricing for trip planning and hackathon demonstration; no live payment transactions are processed.
-- SHA-256 digital record verification modal for authentic stays.
-
-### 5. Verified Local Guides & Artisan Marketplace (`/vendor-marketplace` & `/guide-dashboard`)
-- **Prototype Trust Ledger:** SHA-256 ledger records authenticate certified local tour guides and authentic artisan stalls.
-- QR hash validation verifies operator credentials and review history, eliminating unauthorized touts.
-- Dedicated **Guide Cockpit** (`/guide-dashboard`) allows certified local guides to verify digital credentials and manage assigned tourists.
-
-### 6. My Trip & Tourist Hub (`/tourist-dashboard`)
-- **Tourism-First Hierarchy:** Above the fold, travelers immediately see their active destination, day-by-day itinerary timeline, recommended stays, daily budget tracker, and assigned guide details.
-- Seamless circuit switcher with live location sensor simulation (`Live Walk`, `GPS`, `Mesh`).
-
-### 7. Integrated Travel Safety & Trust Layer
-- **1-Click Emergency SOS (`/sos`):** Instant panic packet dispatch with live GPS coordinates, automated police CAD patrol response ETA calculation, and nearby hospital/police mapping.
-- **Dynamic Geo-Fencing Sentinel:** Real-time polygon containment engine with proactive 300m and 150m pre-entry hazard proximity warnings before restricted zones.
-- **Automated Deadman's Switch (`/deadman-switch`):** Configurable safety countdowns for solo or night travelers; automatically prompts for check-ins and triggers emergency escalation if inactive.
-- **0-Signal Ghost-Mesh Protocol:** Multi-hop peer-to-peer Bluetooth LE relay simulator enabling offline distress packets in zero-cellular remote valleys.
-- **Holographic Digital ID (`/digital-id`):** Cryptographically signed tourist credentials with QR verification for rapid checkpoint clearance.
+1. **Digital Tourist ID & QR Code**: Generates holographic digital credentials with SHA-256 cryptographic signature, travel validity dates, emergency contacts, and public verification endpoints.
+2. **Prototype Blockchain Ledger**: A tamper-evident ledger architecture storing non-sensitive verification hashes. Features 1-click **Integrity Auditing** and interactive **Tampering Simulation** for SIH judges.
+3. **Map-Based Dynamic Geo-Fencing**: Point-in-polygon containment engine mapping Safe (Green 🟢), Caution (Yellow 🟡), Restricted (Red 🔴), and High-Risk (Dark Red 🛑) zones in North-East terrain.
+4. **Explainable AI Safety Engine**: Transparent multi-factor risk score calculation (0–100) evaluating zone hazard weight, time of day, inactivity duration, route deviation offset, and active SOS triggers with natural language diagnostics.
+5. **1-Click Emergency SOS Dispatch**: Prominent red SOS button with 3-second confirmation, GPS lock, response timer, nearby emergency services mapping, and cancel option.
+6. **Central Authority Command Desk**: Live risk-colored tourist tracking map, real-time alert notifications, incident status transitions (New → Acknowledged → Assigned → In Progress → Resolved), and team dispatching console.
+7. **Authority Analytics**: Recharts graphs showing incident trends, severities, category breakdowns, risk distributions, and average emergency response times.
+8. **SIH Evaluator Demo Control Panel**: Floating toolbar permitting 1-click automated execution of all 6 judge test scenarios.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend:** React 18, Vite, Tailwind CSS, Framer Motion, React Leaflet (OpenStreetMap), Recharts, Lucide React, QRCode.react.
+- **Frontend:** React 18, Vite, Tailwind CSS, Leaflet + React-Leaflet, Recharts, QRCode.react, Lucide React.
 - **Backend:** Node.js, Express.js, JWT Authentication, Bcryptjs password hashing, Native Crypto SHA-256.
-- **Data Persistence:** Dual-mode architecture:
-  - Connects to MongoDB (`mongodb://127.0.0.1:27017/safar_db`) when available.
-  - Automatically falls back to a high-speed, zero-dependency in-memory JSON state store with pre-seeded pan-India demo circuits.
+- **Data Persistence:** Dual-mode architecture (Connects to MongoDB `mongodb://127.0.0.1:27017/safetour_ne` if present, with automatic zero-setup fallback to an internal JSON state store populated with pre-seeded demo data).
 
 ---
 
-## 📁 Repository Structure
+## 📁 Project Structure
 
-```text
-SAFAR/
+```
+sih_project/
 ├── backend/
-│   ├── config/              # In-memory store & MongoDB connector (db.js)
-│   ├── controllers/         # AI, Fares, Trips, Incidents, Auth, Blockchain, Analytics
-│   ├── middleware/          # JWT & Role authorization
-│   ├── routes/              # Express API Routes (/api/ai, /api/fares, /api/trips, /api/sos...)
-│   ├── services/            # AI Travel Service, Fare Compare Service, Risk Engine
-│   ├── utils/               # Geofence Polygon Ray-casting, Haversine Math, Seed Dataset
-│   ├── .env.example         # Environment template
+│   ├── config/              # Database connection & seed state store (db.js)
+│   ├── controllers/         # API Controllers (auth, tourist, digitalId, incident, geofence, blockchain, trip, analytics, demo, notification)
+│   ├── middleware/          # JWT & Role authorization middleware
+│   ├── routes/              # Express API Routes
+│   ├── services/            # Core AI Risk Engine, Blockchain Ledger, Incident Classifier
+│   ├── utils/               # Polygon Ray-casting, Haversine Math, Seed Dataset
+│   ├── .env.example         # Environment configuration template
 │   ├── package.json
-│   └── server.js            # Express server entry point
+│   └── server.js            # Main Express server entry point
 │
 ├── frontend/
-│   ├── public/              # Static assets & manifest
+│   ├── public/              # Static assets
 │   ├── src/
-│   │   ├── components/      # Navbar, BottomDock, MapView, RideCompareCard, SOSButtonModal, DeadmanSwitch
-│   │   ├── pages/           # LandingPage, ExploreDestinationsPage, TripPlannerPage, HotelsPage,
-│   │   │                    # FaresPage, TouristDashboard, GuideDashboard, AuthorityDashboard, AnalyticsPage
-│   │   ├── App.jsx          # Route definitions & global state orchestration
-│   │   ├── index.css        # Tailwind & Glassmorphism design tokens
+│   │   ├── components/      # Navbar, Sidebar, MapView, DigitalIdCard, ExplainableAIPanel, SOSButtonModal, IncidentTimeline, DemoControlPanel
+│   │   ├── pages/           # LandingPage, TouristDashboard, TouristRegister, LoginPage, VerifyDigitalIdPage, AuthorityDashboard, IncidentManagementPage, BlockchainLedgerPage, AnalyticsPage, TripPlannerPage
+│   │   ├── App.jsx          # Router & Global Application State
+│   │   ├── index.css        # Tailwind & Glassmorphism styles
 │   │   └── main.jsx
 │   ├── index.html
 │   ├── package.json
+│   ├── tailwind.config.js
 │   └── vite.config.js
 └── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Installation & Running Instructions
 
-### 1. Prerequisites
-- **Node.js:** v18.0.0 or higher
-- **npm:** v9.0.0 or higher
-
-### 2. Backend Setup
+### 1. Backend Server Setup
 ```bash
 cd backend
 npm install
@@ -124,54 +77,48 @@ npm start
 ```
 *Backend runs on `http://localhost:5000` (Health Check: `http://localhost:5000/api/health`)*
 
-### 3. Frontend Setup
+### 2. Frontend Application Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*Frontend dev server runs on `http://localhost:3000` (or `http://localhost:5173` depending on port availability)*
-
-### 4. Production Build
-```bash
-npm --prefix frontend run build
-```
+*Frontend runs on `http://localhost:3000`*
 
 ---
 
 ## 🔑 Pre-Seeded Demo Credentials
 
-| Role | Email | Password | Persona & Focus |
+| Role | Email | Password | Details |
 | :--- | :--- | :--- | :--- |
-| **Tourist** | `rohan.verma@example.com` | `tourist123` | Rohan Verma • Ayodhya Pilgrim Circuit (`TID-1035`) |
-| **Authority** | `authority@safetour.gov.in` | `admin123` | National Tourism Oversight & Command Desk |
-| **Certified Guide** | `vikas.guide@example.com` | `guide123` | Vikas Chandel • Katra Vaishno Devi Specialist |
+| **Tourist (Rohan Verma)** | `rohan.verma@example.com` | `tourist123` | Tourist ID: `TID-1024` |
+| **Authority (National Safety Desk)** | `authority@safetour.gov.in` | `admin123` | Central Safety Desk Officer |
+| **Tourist Police HQ** | `police@safetour.gov.in` | `admin123` | Assam Tourist Police Patrol |
+| **Disaster Response** | `disaster@safetour.gov.in` | `admin123` | Emergency Rescue Force |
 
 ---
 
-## 🎯 SIH Evaluator 5-Minute Demonstration Script
+## 🎯 5–7 Minute SIH Evaluator Demonstration Flow
 
-1. **DISCOVER:** Open the landing page (`/`). View the 10-second tourism pitch and browse popular Indian circuits. Navigate to `/explore` to search and filter spiritual, heritage, and adventure corridors.
-2. **PLAN:** Click **Plan Trip Here** on any destination (e.g., Ayodhya or Katra). Enter duration, travelers, and budget. Generate the AI Smart Itinerary to view morning/afternoon/evening schedules, budget breakdown, and route map. Click **Save Itinerary to My Trip**.
-3. **COMPARE:** Navigate to `/fares`. Compare Uber, Ola, and Rapido benchmark estimated fares with formula calculation details and official app handoff links. Review regulated local auto/taxi tariffs.
-4. **CONNECT:** Visit `/hotels` to browse curated pilgrim niwas and homestays. Visit `/vendor-marketplace` to view certified guide profiles with SHA-256 QR verification.
-5. **TRAVEL & STAY SAFE:** Open `/tourist-dashboard`. Notice the active trip and itinerary displayed above the fold. Scroll to the Travel Safety & Trust Layer:
-   - Trigger the **1-Click Panic SOS** (`/sos`) to see instant CAD patrol dispatch ETA.
-   - Run any of the **8 Evaluator Scenarios** on the Landing Page to test 300m/150m pre-entry hazard buffers, route deviations, and blockchain audits.
+Use the floating **SIH Evaluator Demo Control Panel** at the bottom-right corner of the application to execute the scenarios in real-time:
 
----
-
-## ⚖️ Disclaimer & Prototype Data Governance
-
-- **Estimated Fares:** Fares shown for ride-hailing services are calibrated benchmark estimates computed using distance, duration, and regional transit baselines. Deep links redirect users to official provider applications (Uber, Ola, Rapido) where live booking and payment take place.
-- **Curated Accommodations:** Accommodations listed are curated prototype representations of regional pilgrim niwas and homestays with realistic seasonal benchmark pricing.
-- **Prototype Trust Ledger:** Blockchain verification features utilize standard SHA-256 cryptographic hashing to demonstrate tamper-evident audit logging for hackathon evaluation.
-- **No Official Validation Claimed:** S.A.F.A.R. is an academic hackathon innovation prototype and does not claim official government endorsement or live government database integration.
+1. **Scenario 1 — Normal Safe Tourist:** Click `1. Normal Safe Tourist`. Tourist moves to Guwahati Safe Hub. Risk score = 15 (LOW 🟢). Map marker turns green.
+2. **Scenario 2 — Geo-fence Breach:** Click `2. Geo-fence Violation`. Tourist enters Kamrup Restricted Border Buffer (Red Zone). Risk score jumps to 75 (HIGH 🟠). Incident logged & authority notified.
+3. **Scenario 3 — Route Deviation Anomaly:** Click `3. Route Deviation`. Tourist moves 3.8 km off-route. AI Anomaly Engine flags route deviation (+20 pts risk).
+4. **Scenario 4 — 1-Click SOS Emergency:** Click `4. Trigger SOS Emergency`. Emergency SOS dispatches with CRITICAL 🔴 severity, 100 risk score, active dispatch timer, and nearby police/hospital mapping.
+5. **Scenario 5 — Blockchain Ledger Verification:** Click `5. Verify Blockchain`. Opens Blockchain Audit page. SHA-256 integrity check passes: `✓ Prototype Blockchain Ledger Integrity Verified`.
+6. **Scenario 6 — Blockchain Tampering Simulation:** Click `6. Simulate Tampering`. Modifies Block #1 data. Integrity audit instantly flags: `✗ Tampering Detected! Current block #1 hash mismatch.` Click `Restore Ledger` to repair chain.
 
 ---
 
-## 📄 Hackathon Attribution & License
+## 🔐 Security & Privacy Architecture
 
-Developed for the **Smart India Hackathon (SIH 2026)**  
-**Problem Statement ID:** 26204 • **Category:** Software • **Organization:** AICTE  
-© 2026 S.A.F.A.R. Team. Released under the MIT License.
+- **Zero Raw Document Exposure:** No raw sensitive identity documents are stored directly on the blockchain. Hashing algorithms ensure privacy compliance.
+- **JWT & Password Security:** Passwords are hashed using `bcryptjs` with salt rounds. Protected routes verify JWT tokens.
+- **Explainable AI:** Risk scores are calculated transparently with clear natural language reasons rather than unexplainable black-box metrics.
+
+---
+
+## 📄 License & Credits
+
+Developed for the **Smart India Hackathon (SIH 2026)** — **S.A.F.A.R.** (Ministry of Tourism, Government of India).

@@ -19,10 +19,6 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import PrivacyCompliancePage from './pages/PrivacyCompliancePage';
 import VendorMarketplacePage from './pages/VendorMarketplacePage';
 
-import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
-import TripPlannerPage from './pages/TripPlannerPage';
-import HotelsPage from './pages/HotelsPage';
-
 // Dedicated New Pages for Every Button
 import DigitalIdPage from './pages/DigitalIdPage';
 import SosPage from './pages/SosPage';
@@ -32,6 +28,9 @@ import DeadmanSwitchPage from './pages/DeadmanSwitchPage';
 import GuideDashboard from './pages/GuideDashboard';
 import GuideRegisterPage from './pages/GuideRegisterPage';
 import GuideVerifyPage from './pages/GuideVerifyPage';
+import GreenRewardsPage from './pages/GreenRewardsPage';
+import PartnerPaymentPage from './pages/PartnerPaymentPage';
+import TripPlannerPage from './pages/TripPlannerPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -524,7 +523,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/plan'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -550,13 +549,6 @@ function AppContent({
                   path="/login"
                   element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
                 />
-
-                {/* Tourism-First Core Routes: Discover, Plan, Stays */}
-                <Route path="/explore" element={<ExploreDestinationsPage />} />
-                <Route path="/trip-planner" element={<TripPlannerPage tourist={touristProfile} />} />
-                <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
-                <Route path="/hotels" element={<HotelsPage />} />
-                <Route path="/stays" element={<Navigate to="/hotels" replace />} />
 
                 {/* 1. Dedicated Live Safety Map & Tracking Dashboard */}
                 <Route
@@ -721,6 +713,22 @@ function AppContent({
                 <Route
                   path="/guide/verify/:guideId"
                   element={<GuideVerifyPage />}
+                />
+
+                {/* Green Rewards & Partner Payment */}
+                <Route
+                  path="/green-rewards"
+                  element={<GreenRewardsPage />}
+                />
+                <Route
+                  path="/partner-pay"
+                  element={<PartnerPaymentPage />}
+                />
+
+                {/* Trip Planner */}
+                <Route
+                  path="/trip-planner"
+                  element={<TripPlannerPage tourist={touristProfile} />}
                 />
 
                 <Route path="*" element={<Navigate to="/" replace />} />

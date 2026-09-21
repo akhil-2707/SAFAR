@@ -147,7 +147,7 @@ export default function RideCompareCard({ option, onViewBreakdown }) {
           ) : (
             <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-extrabold flex items-center space-x-1">
               <span>🏷️</span>
-              <span>ESTIMATED FARE</span>
+              <span>PROTOTYPE ESTIMATE</span>
             </span>
           )}
         </div>

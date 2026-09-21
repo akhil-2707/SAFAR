@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Route, Banknote, Home, Siren } from 'lucide-react';
+import { Map, CreditCard, Siren, Banknote, Phone } from 'lucide-react';
 
 const SPRING = { type: 'spring', stiffness: 380, damping: 28 };
 
 const TOURIST_TABS = [
-  { id: 'explore', to: '/explore',        icon: Compass,  label: 'Explore', color: '#f97316' },
-  { id: 'plan',    to: '/trip-planner',   icon: Route,    label: 'Plan',    color: '#8b5cf6' },
-  { id: 'fares',   to: '/fares',          icon: Banknote, label: 'Fares',   color: '#FF9F0A' },
-  { id: 'stays',   to: '/hotels',         icon: Home,     label: 'Stays',   color: '#10b981' },
-  { id: 'sos',     to: '/sos',            icon: Siren,    label: 'Safety',  color: '#FF3B30', isSos: true },
+  { id: 'map',   to: '/tourist-dashboard', icon: Map,        label: 'Map',    color: '#0A84FF' },
+  { id: 'id',    to: '/digital-id',        icon: CreditCard, label: 'ID',     color: '#5E5CE6' },
+  { id: 'sos',   to: '/sos',               icon: Siren,      label: 'SOS',    color: '#FF3B30', isSos: true },
+  { id: 'fares', to: '/fares',             icon: Banknote,   label: 'Fares',  color: '#FF9F0A' },
+  { id: 'help',  to: '/emergency-help',    icon: Phone,      label: 'Help',   color: '#34C759' },
 ];
 
 const TOURIST_ROUTES = [
-  '/explore',
-  '/trip-planner',
   '/tourist-dashboard',
-  '/fares',
-  '/hotels',
-  '/vendor-marketplace',
   '/digital-id',
   '/sos',
+  '/fares',
   '/deadman-switch',
-  '/emergency-help'
+  '/emergency-help',
+  '/green-rewards',
+  '/partner-pay',
+  '/trip-planner'
 ];
 
 export default function BottomDock({ currentUser, onTriggerSos }) {

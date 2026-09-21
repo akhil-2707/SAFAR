@@ -25,6 +25,10 @@ function getFallbackInitialState() {
     guides: initialData.guides || [],
     guideRequests: initialData.guideRequests || [],
     guideComplaints: initialData.guideComplaints || [],
+    partners: initialData.partners || [],
+    rewardConfig: initialData.rewardConfig || [],
+    greenRewards: initialData.greenRewards || [],
+    greenCoinTransactions: initialData.greenCoinTransactions || [],
     notifications: [
       {
         id: 'notif_01',
@@ -85,7 +89,11 @@ async function connectMongoDB() {
 
     // Sync from MongoDB into state
     const db = mongoose.connection.db;
-    const collectionsToSync = ['users', 'tourists', 'digitalids', 'geofences', 'incidents', 'emergencyservices', 'trips', 'guides', 'guiderequests', 'guidecomplaints'];
+    const collectionsToSync = [
+      'users', 'tourists', 'digitalids', 'geofences', 'incidents', 
+      'emergencyservices', 'trips', 'guides', 'guiderequests', 'guidecomplaints',
+      'partners', 'rewardconfig', 'greenrewards', 'greencointransactions'
+    ];
 
     for (const colName of collectionsToSync) {
       try {
@@ -100,6 +108,9 @@ async function connectMongoDB() {
             : colName === 'emergencyservices' ? 'emergencyServices' 
             : colName === 'guiderequests' ? 'guideRequests'
             : colName === 'guidecomplaints' ? 'guideComplaints'
+            : colName === 'rewardconfig' ? 'rewardConfig'
+            : colName === 'greenrewards' ? 'greenRewards'
+            : colName === 'greencointransactions' ? 'greenCoinTransactions'
             : colName;
           state[targetKey] = cleanDocs;
           console.log(`✓ Loaded ${cleanDocs.length} ${targetKey} from MongoDB Atlas`);

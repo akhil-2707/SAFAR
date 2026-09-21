@@ -329,7 +329,7 @@ export default function FaresPage({ tourist }) {
               <Moon className={`w-4 h-4 ${isNight ? 'text-indigo-600' : 'text-gray-400'}`} />
               <div>
                 <span className="text-xs font-bold block text-gray-800">Night Tariff (11 PM - 5 AM)</span>
-                <span className="text-[10px] text-gray-500">+{city.nightSurchargePercent}% Benchmark Night Tariff</span>
+                <span className="text-[10px] text-gray-500">+{city.nightSurchargePercent}% Govt Approved Premium</span>
               </div>
             </div>
             <input

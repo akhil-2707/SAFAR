@@ -5,11 +5,12 @@ import MiniMap from '../components/MiniMap';
 import CreateDangerAreaModal from '../components/CreateDangerAreaModal';
 import DeadmanAuthoritySentinel from '../components/DeadmanAuthoritySentinel';
 import AuthorityGuideDesk from '../components/AuthorityGuideDesk';
+import AuthorityGreenRewardsDesk from '../components/AuthorityGreenRewardsDesk';
 import SafarLogo from '../components/SafarLogo';
 import { 
   ShieldCheck, AlertTriangle, Users, AlertOctagon, CheckCircle2, 
   Radio, Plus, Trash2, Power, ExternalLink, Settings, BarChart3,
-  ShieldAlert, Zap, Activity, Radar, Phone, Award, Building2, Luggage, MapPin, Compass
+  ShieldAlert, Zap, Activity, Radar, Phone, Award, Leaf
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -209,11 +210,25 @@ export default function AuthorityDashboard({
             <Award className="w-4 h-4" />
             <span>Local Guides Desk</span>
           </button>
+
+          <button
+            onClick={() => setActiveView(activeView === 'GREEN_REWARDS' ? 'OVERVIEW' : 'GREEN_REWARDS')}
+            className="col-span-2 sm:col-span-1 px-4 py-2 rounded-xl sm:rounded-2xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all"
+            style={{
+              background: activeView === 'GREEN_REWARDS' ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.95)',
+              color: activeView === 'GREEN_REWARDS' ? '#ffffff' : '#047857',
+              border: '1.5px solid rgba(16,185,129,0.5)',
+              boxShadow: activeView === 'GREEN_REWARDS' ? '0 4px 15px rgba(16,185,129,0.35)' : 'none'
+            }}
+          >
+            <Leaf className="w-4 h-4" />
+            <span>Green Rewards Desk</span>
+          </button>
         </div>
       </motion.div>
 
       {/* View Mode Switcher Header Pills */}
-      <div className="flex items-center space-x-2 bg-slate-200/70 p-1.5 rounded-2xl w-fit backdrop-blur-md">
+      <div className="flex items-center space-x-2 bg-slate-200/70 p-1.5 rounded-2xl w-fit backdrop-blur-md flex-wrap gap-y-1">
         <button
           onClick={() => setActiveView('OVERVIEW')}
           className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${
@@ -239,15 +254,15 @@ export default function AuthorityDashboard({
         </button>
 
         <button
-          onClick={() => setActiveView('CIRCUITS')}
+          onClick={() => setActiveView('GREEN_REWARDS')}
           className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${
-            activeView === 'CIRCUITS'
-              ? 'bg-sky-600 text-white shadow-md'
+            activeView === 'GREEN_REWARDS'
+              ? 'bg-emerald-600 text-white shadow-md'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          <Building2 className="w-3.5 h-3.5" />
-          <span>Tourism Circuits & Curated Stays</span>
+          <Leaf className="w-3.5 h-3.5" />
+          <span>🌱 Green Rewards Desk (Proof Verification & Partners)</span>
         </button>
       </div>
 
@@ -271,163 +286,14 @@ export default function AuthorityDashboard({
         )}
       </AnimatePresence>
 
-      {/* Main Content Area: Overview, Guides Desk, or Tourism Circuits */}
+      {/* Main Content Area: Overview, Guides Desk, or Green Rewards Desk */}
       {activeView === 'GUIDES' ? (
         <motion.div variants={itemVariants}>
           <AuthorityGuideDesk onRefreshData={onRefreshData} />
         </motion.div>
-      ) : activeView === 'CIRCUITS' ? (
-        <motion.div variants={itemVariants} className="space-y-6">
-          {/* Header Card */}
-          <div className="bg-white/95 border border-sky-200 rounded-3xl p-6 shadow-md">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300">
-                  SIH 2026 • PS ID: 26204 • TOURISM OVERSIGHT
-                </span>
-                <h3 className="text-xl font-black text-gray-900 mt-1 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-sky-600" />
-                  <span>National Tourism Circuits & Curated Stays Registry</span>
-                </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Authority oversight of tourist footfall, verified homestay benchmarks, and certified guides across active Indian tourism corridors.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/hotels"
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 transition-all flex items-center gap-1.5 shadow-sm"
-                >
-                  <Building2 className="w-3.5 h-3.5" />
-                  <span>Tourist Stays Portal</span>
-                </Link>
-                <Link
-                  to="/explore"
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all flex items-center gap-1.5"
-                >
-                  <Compass className="w-3.5 h-3.5" />
-                  <span>Explore Circuits</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Circuit Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              {
-                id: 'ayodhya',
-                name: 'Ayodhya Ram Janmabhoomi Heritage',
-                state: 'Uttar Pradesh',
-                tourists: '38 Active',
-                guideCount: '12 Certified',
-                curatedStay: 'Sita Rasoi Pilgrim Niwas',
-                stayType: 'Pilgrim Niwas',
-                rate: '₹1,400/night',
-                trustBadge: 'Blockchain Audited'
-              },
-              {
-                id: 'katra',
-                name: 'Katra Vaishno Devi Shrine Corridor',
-                state: 'Jammu & Kashmir',
-                tourists: '32 Active',
-                guideCount: '9 Certified',
-                curatedStay: 'Mata Vaishno Devi Shrine Board Niwas',
-                stayType: 'Shrine Trust Niwas',
-                rate: '₹1,100/night',
-                trustBadge: 'Board Verified'
-              },
-              {
-                id: 'agra',
-                name: 'Taj Mahal & Mughal Promenade',
-                state: 'Uttar Pradesh',
-                tourists: '26 Active',
-                guideCount: '14 Certified',
-                curatedStay: 'Fatehpur Sikri Heritage Haveli',
-                stayType: 'Heritage Haveli',
-                rate: '₹2,200/night',
-                trustBadge: 'Curated Demo'
-              },
-              {
-                id: 'varanasi',
-                name: 'Varanasi Ghats Cultural Corridor',
-                state: 'Uttar Pradesh',
-                tourists: '21 Active',
-                guideCount: '8 Certified',
-                curatedStay: 'Assi Ghat Heritage Homestay',
-                stayType: 'Ghatside Homestay',
-                rate: '₹1,600/night',
-                trustBadge: 'Curated Demo'
-              },
-              {
-                id: 'meghalaya',
-                name: 'Meghalaya Living Roots Circuit',
-                state: 'Meghalaya',
-                tourists: '18 Active',
-                guideCount: '6 Certified',
-                curatedStay: 'Nongriat Community Eco-Lodge',
-                stayType: 'Village Community',
-                rate: '₹1,200/night',
-                trustBadge: 'Eco-Certified'
-              },
-              {
-                id: 'jaipur',
-                name: 'Jaipur Royal Heritage Circuit',
-                state: 'Rajasthan',
-                tourists: '24 Active',
-                guideCount: '11 Certified',
-                curatedStay: 'Amer Fort Traditional Haveli',
-                stayType: 'Heritage Stay',
-                rate: '₹2,400/night',
-                trustBadge: 'Curated Demo'
-              }
-            ].map((circuit) => (
-              <div
-                key={circuit.id}
-                className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-sm hover:shadow-md transition-all space-y-3"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
-                      {circuit.state}
-                    </span>
-                    <h4 className="text-sm font-bold text-gray-900 mt-1.5">{circuit.name}</h4>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
-                    {circuit.tourists}
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1 text-xs">
-                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
-                    <span>Curated Stay / Niwas:</span>
-                    <span className="font-semibold text-gray-800">{circuit.curatedStay}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
-                    <span>Estimated Benchmark:</span>
-                    <span className="font-mono font-bold text-sky-700">{circuit.rate}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
-                    <span>Verification Trust:</span>
-                    <span className="font-semibold text-emerald-700">{circuit.trustBadge}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-[11px] text-gray-500 font-medium">
-                    Guides: <strong className="text-amber-700">{circuit.guideCount}</strong>
-                  </span>
-                  <Link
-                    to="/hotels"
-                    className="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1"
-                  >
-                    <span>View Stays</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+      ) : activeView === 'GREEN_REWARDS' ? (
+        <motion.div variants={itemVariants}>
+          <AuthorityGreenRewardsDesk onRefreshData={onRefreshData} />
         </motion.div>
       ) : (
         <>
