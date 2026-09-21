@@ -231,7 +231,7 @@ export default function PatrioticLoader({ onLoadingComplete }) {
                 <p className="text-sm font-semibold tracking-wide text-gray-600">
                   Smart AI Framework for Assured & Responsible Tourism
                 </p>
-                <p className="text-[11px] text-gray-400 font-mono">National Tourism Safety Standard NTS-2026 • Autonomous Safety Matrix</p>
+                <p className="text-[11px] text-gray-400 font-mono">SIH 2026 • Problem Statement ID: 26204 • AICTE</p>
               </div>
             </div>
 

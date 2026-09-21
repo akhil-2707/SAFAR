@@ -398,10 +398,10 @@ export default function RideCompareView({ tourist }) {
       <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-300 text-amber-950 text-xs space-y-1.5 shadow-sm">
         <div className="flex items-center space-x-2 font-bold text-amber-900">
           <Info className="w-4 h-4 text-amber-700 shrink-0" />
-          <span className="uppercase tracking-wider">National Transit Fare Advisory & Transparency Note</span>
+          <span className="uppercase tracking-wider">SIH Prototype Transparency Note</span>
         </div>
         <p className="leading-relaxed text-slate-700">
-          Regional fare estimates from multi-provider adapters appear side-by-side. Calculated via official state RTO tariff benchmarks and calibrated models. Real-time on-demand APIs operate via direct provider integration. Official booking links provided below to confirm real-time rides on provider apps.
+          Prototype fare estimates from multiple provider adapters appear side-by-side. Calculated via regional tariff models. Real-world live fare APIs require enterprise commercial agreements with Uber, Ola, and Rapido. Official booking links provided below to confirm real-time fares on provider apps.
         </p>
       </div>
 

@@ -1,35 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Map, CreditCard, Siren, Banknote, Phone, Building2, Award } from 'lucide-react';
+import { Compass, Route, Banknote, Home, Siren } from 'lucide-react';
 
 const SPRING = { type: 'spring', stiffness: 380, damping: 28 };
 
 const TOURIST_TABS = [
-  { id: 'map',   to: '/tourist-dashboard', icon: Map,        label: 'Map',    color: '#0A84FF' },
-  { id: 'id',    to: '/digital-id',        icon: CreditCard, label: 'ID',     color: '#5E5CE6' },
-  { id: 'sos',   to: '/sos',               icon: Siren,      label: 'SOS',    color: '#FF3B30', isSos: true },
-  { id: 'fares', to: '/fares',             icon: Banknote,   label: 'Fares',  color: '#FF9F0A' },
-  { id: 'help',  to: '/emergency-help',    icon: Phone,      label: 'Help',   color: '#34C759' },
+  { id: 'explore', to: '/explore',        icon: Compass,  label: 'Explore', color: '#f97316' },
+  { id: 'plan',    to: '/trip-planner',   icon: Route,    label: 'Plan',    color: '#8b5cf6' },
+  { id: 'fares',   to: '/fares',          icon: Banknote, label: 'Fares',   color: '#FF9F0A' },
+  { id: 'stays',   to: '/hotels',         icon: Home,     label: 'Stays',   color: '#10b981' },
+  { id: 'sos',     to: '/sos',            icon: Siren,    label: 'Safety',  color: '#FF3B30', isSos: true },
 ];
 
 const TOURIST_ROUTES = [
+  '/explore',
+  '/trip-planner',
   '/tourist-dashboard',
+  '/fares',
+  '/hotels',
+  '/vendor-marketplace',
   '/digital-id',
   '/sos',
-  '/fares',
   '/deadman-switch',
-  '/emergency-help',
-  '/micro-stays',
-  '/artisans'
+  '/emergency-help'
 ];
 
 export default function BottomDock({ currentUser, onTriggerSos }) {
   const location = useLocation();
 
-  // Render on designated tourist routes for tourists or visitors exploring the tourist portal
-  const isAuthorityOrGuide = currentUser?.role === 'AUTHORITY' || currentUser?.role === 'GUIDE';
-  if (isAuthorityOrGuide || !TOURIST_ROUTES.includes(location.pathname)) {
+  // Only render on designated tourist routes
+  if (!currentUser || currentUser.role !== 'TOURIST' || !TOURIST_ROUTES.includes(location.pathname)) {
     return null;
   }
 

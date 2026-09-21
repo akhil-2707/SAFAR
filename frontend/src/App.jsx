@@ -19,21 +19,22 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import PrivacyCompliancePage from './pages/PrivacyCompliancePage';
 import VendorMarketplacePage from './pages/VendorMarketplacePage';
 
+import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
+import TripPlannerPage from './pages/TripPlannerPage';
+import HotelsPage from './pages/HotelsPage';
+
 // Dedicated New Pages for Every Button
 import DigitalIdPage from './pages/DigitalIdPage';
 import SosPage from './pages/SosPage';
 import FaresPage from './pages/FaresPage';
 import EmergencyHelpPage from './pages/EmergencyHelpPage';
 import DeadmanSwitchPage from './pages/DeadmanSwitchPage';
-import MicroStaysPage from './pages/MicroStaysPage';
-import ArtisansPage from './pages/ArtisansPage';
 import GuideDashboard from './pages/GuideDashboard';
 import GuideRegisterPage from './pages/GuideRegisterPage';
 import GuideVerifyPage from './pages/GuideVerifyPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
-import GhostMeshPermissionModal from './components/GhostMeshPermissionModal';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
@@ -45,13 +46,6 @@ export default function App() {
     }
   });
   const [showMeshModal, setShowMeshModal] = useState(false);
-  const [showBlePermissionModal, setShowBlePermissionModal] = useState(() => {
-    try {
-      return !localStorage.getItem('safar_device_permissions') && !localStorage.getItem('safar_ble_mesh_permission');
-    } catch {
-      return false;
-    }
-  });
 
   // Authenticated user recovered from localStorage or initialized as null
   const [currentUser, setCurrentUser] = useState(() => {
@@ -127,9 +121,7 @@ export default function App() {
         const targetUser = activeUser || currentUser;
         if (targetUser && targetUser.touristId) {
           const myProfile = dataT.tourists.find((t) => t.touristId === targetUser.touristId);
-          setTouristProfile(myProfile || null);
-        } else {
-          setTouristProfile(null);
+          if (myProfile) setTouristProfile(myProfile);
         }
       }
 
@@ -139,9 +131,7 @@ export default function App() {
         fetch(`/api/digital-id/${targetUser.touristId}`, { headers: authHeaders })
           .then((r) => r.json())
           .then((d) => { if (d.success) setDigitalId(d.digitalId); })
-          .catch(() => setDigitalId(null));
-      } else {
-        setDigitalId(null);
+          .catch(() => {});
       }
 
       // 3. Fetch Geo-Fences
@@ -155,9 +145,9 @@ export default function App() {
       if (dataI.success) {
         setIncidents(dataI.incidents);
         const myTid = targetUser?.touristId;
-        const sosInc = myTid ? dataI.incidents.find(
-          (i) => i.touristId === myTid && i.type === 'SOS Emergency' && i.status !== 'RESOLVED'
-        ) : null;
+        const sosInc = dataI.incidents.find(
+          (i) => myTid && i.touristId === myTid && i.type === 'SOS Emergency' && i.status !== 'RESOLVED'
+        );
         setActiveSosIncident(sosInc || null);
       }
 
@@ -188,17 +178,13 @@ export default function App() {
     }
     if (authData?.tourist) {
       setTouristProfile(authData.tourist);
-      setAllTourists((prev) => {
-        const exists = prev.some((t) => t.touristId === authData.tourist.touristId);
-        return exists ? prev : [authData.tourist, ...prev];
-      });
     }
     if (authData?.digitalId) {
       setDigitalId(authData.digitalId);
     }
   };
 
-  // Logout Handler: Cleans up all storage and state gracefully
+  // Logout Handler: Cleans up all storage and state
   const handleLogout = () => {
     localStorage.removeItem('safar_token');
     localStorage.removeItem('safar_user');
@@ -244,7 +230,7 @@ export default function App() {
     }
   };
 
-  // Trigger National Safety Simulation Scenario
+  // Trigger SIH Judge Demo Scenario
   const handleTriggerScenario = async (scenarioId) => {
     try {
       const activeTid = touristProfile?.touristId || currentUser?.touristId || 'TID-1035';
@@ -276,9 +262,9 @@ export default function App() {
     } else if (role === 'GUIDE') {
       const guideUser = {
         id: 'usr_guide_01',
-        guideId: 'GID-2026-AYODHYA',
-        name: 'Ramesh Pathak',
-        email: 'ramesh.guide@safetour.gov.in',
+        guideId: 'GUIDE-AYO-01',
+        name: 'Rajesh Sharma',
+        email: 'rajesh.guide@ayodhya.tour.in',
         role: 'GUIDE',
         status: 'VERIFIED',
         assignedDestination: 'Ayodhya Ram Janmabhoomi Corridor'
@@ -438,8 +424,6 @@ export default function App() {
         setShowPatrioticLoader={setShowPatrioticLoader}
         showMeshModal={showMeshModal}
         setShowMeshModal={setShowMeshModal}
-        showBlePermissionModal={showBlePermissionModal}
-        setShowBlePermissionModal={setShowBlePermissionModal}
         currentUser={currentUser}
         setCurrentUser={setCurrentUser}
         touristProfile={touristProfile}
@@ -471,37 +455,11 @@ export default function App() {
   );
 }
 
-function AuthorityRouteGuard({ currentUser, children }) {
-  const location = useLocation();
-  if (!currentUser || currentUser.role !== 'AUTHORITY') {
-    return <Navigate to={`/login?role=authority&redirect=${encodeURIComponent(location.pathname)}`} replace />;
-  }
-  return children;
-}
-
-function TouristRouteGuard({ currentUser, children }) {
-  const location = useLocation();
-  if (!currentUser) {
-    return <Navigate to={`/login?role=tourist&redirect=${encodeURIComponent(location.pathname)}`} replace />;
-  }
-  return children;
-}
-
-function GuideRouteGuard({ currentUser, children }) {
-  const location = useLocation();
-  if (!currentUser || currentUser.role !== 'GUIDE') {
-    return <Navigate to={`/login?role=guide&redirect=${encodeURIComponent(location.pathname)}`} replace />;
-  }
-  return children;
-}
-
 function AppContent({
   showPatrioticLoader,
   setShowPatrioticLoader,
   showMeshModal,
   setShowMeshModal,
-  showBlePermissionModal,
-  setShowBlePermissionModal,
   currentUser,
   setCurrentUser,
   touristProfile,
@@ -530,7 +488,6 @@ function AppContent({
   fetchInitialData,
 }) {
   const location = useLocation();
-  const [sugamyaMode, setSugamyaMode] = useState(false);
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col justify-between" style={{ background: '#F2F2F7', color: '#1C1C1E', fontFamily: "'Inter', -apple-system, 'SF Pro Display', sans-serif" }}>
@@ -551,20 +508,12 @@ function AppContent({
         onMarkRead={handleMarkRead}
         onOpenMeshModal={() => setShowMeshModal(true)}
         onShowLoader={() => setShowPatrioticLoader(true)}
-        onSwitchUser={handleSwitchUser}
       />
 
       {/* Offline Ghost-Mesh Rescue Modal Simulator */}
       <OfflineGhostMeshModal
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
-      />
-
-      {/* Zero-Signal Ghost-Mesh BLE Life-Beacon Permission Handshake */}
-      <GhostMeshPermissionModal
-        isOpen={showBlePermissionModal}
-        onClose={() => setShowBlePermissionModal(false)}
-        onGranted={() => setShowBlePermissionModal(false)}
       />
 
       {/* Bottom Dock — iPhone-style tab navigation for tourists */}
@@ -575,7 +524,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        ((!currentUser || currentUser?.role === 'TOURIST') && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/micro-stays', '/artisans'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/plan'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -590,7 +539,7 @@ function AppContent({
               className="page-transition-container"
             >
               <Routes location={location}>
-                <Route path="/" element={<LandingPage onScenarioTrigger={handleTriggerScenario} onSwitchUser={handleSwitchUser} currentUser={currentUser} />} />
+                <Route path="/" element={<LandingPage onScenarioTrigger={handleTriggerScenario} onSwitchUser={handleSwitchUser} />} />
 
                 <Route
                   path="/register"
@@ -602,56 +551,44 @@ function AppContent({
                   element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
                 />
 
+                {/* Tourism-First Core Routes: Discover, Plan, Stays */}
+                <Route path="/explore" element={<ExploreDestinationsPage />} />
+                <Route path="/trip-planner" element={<TripPlannerPage tourist={touristProfile} />} />
+                <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
+                <Route path="/hotels" element={<HotelsPage />} />
+                <Route path="/stays" element={<Navigate to="/hotels" replace />} />
+
                 {/* 1. Dedicated Live Safety Map & Tracking Dashboard */}
                 <Route
                   path="/tourist-dashboard"
                   element={
-                    <TouristRouteGuard currentUser={currentUser}>
-                      <TouristDashboard
-                        tourist={touristProfile}
-                        allTourists={allTourists}
-                        onSelectTourist={handleSelectTourist}
-                        digitalId={digitalId}
-                        geofences={geofences}
-                        emergencyServices={emergencyServices}
-                        activeSosIncident={activeSosIncident}
-                        onUpdateLocation={handleUpdateLocation}
-                        onSimulateZone={handleSimulateZone}
-                        onSimulateDeviation={handleSimulateDeviation}
-                        onTriggerSos={handleTriggerSos}
-                        onCancelSos={handleCancelSos}
-                        sugamyaMode={sugamyaMode}
-                        onToggleSugamya={() => setSugamyaMode(!sugamyaMode)}
-                      />
-                    </TouristRouteGuard>
+                    <TouristDashboard
+                      tourist={touristProfile}
+                      allTourists={allTourists}
+                      onSelectTourist={handleSelectTourist}
+                      digitalId={digitalId}
+                      geofences={geofences}
+                      emergencyServices={emergencyServices}
+                      activeSosIncident={activeSosIncident}
+                      onUpdateLocation={handleUpdateLocation}
+                      onSimulateZone={handleSimulateZone}
+                      onSimulateDeviation={handleSimulateDeviation}
+                      onTriggerSos={handleTriggerSos}
+                      onCancelSos={handleCancelSos}
+                    />
                   }
                 />
                 <Route path="/map" element={<Navigate to="/tourist-dashboard" replace />} />
-
-                {/* 🏨 FEATURE 1 & 2: Smart Micro-Stays, Cloakroom Lockers & Satellite Spillover Stays */}
-                <Route
-                  path="/micro-stays"
-                  element={<MicroStaysPage tourist={touristProfile} sugamyaMode={sugamyaMode} />}
-                />
-                <Route path="/hotels" element={<Navigate to="/micro-stays" replace />} />
-
-                {/* 🏺 FEATURE 3: Blockchain GI Master Artisans & Vocal for Local Direct Pay */}
-                <Route
-                  path="/artisans"
-                  element={<ArtisansPage tourist={touristProfile} />}
-                />
 
                 {/* 2. Dedicated Digital ID & Blockchain Pass */}
                 <Route
                   path="/digital-id"
                   element={
-                    <TouristRouteGuard currentUser={currentUser}>
-                      <DigitalIdPage
-                        tourist={touristProfile}
-                        allTourists={allTourists}
-                        onSelectTourist={handleSelectTourist}
-                      />
-                    </TouristRouteGuard>
+                    <DigitalIdPage
+                      tourist={touristProfile}
+                      allTourists={allTourists}
+                      onSelectTourist={handleSelectTourist}
+                    />
                   }
                 />
                 
@@ -706,22 +643,19 @@ function AppContent({
                   }
                 />
 
-
-                {/* Authority & Management Command Desks (Strictly Protected by AuthorityRouteGuard) */}
+                {/* Authority & Management Command Desks */}
                 <Route
                   path="/authority-dashboard"
                   element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <AuthorityDashboard
-                        tourists={allTourists}
-                        geofences={geofences}
-                        incidents={incidents}
-                        notifications={notifications}
-                        emergencyServices={emergencyServices}
-                        onUpdateIncidentStatus={handleUpdateIncidentStatus}
-                        onRefreshData={fetchInitialData}
-                      />
-                    </AuthorityRouteGuard>
+                    <AuthorityDashboard
+                      tourists={allTourists}
+                      geofences={geofences}
+                      incidents={incidents}
+                      notifications={notifications}
+                      emergencyServices={emergencyServices}
+                      onUpdateIncidentStatus={handleUpdateIncidentStatus}
+                      onRefreshData={fetchInitialData}
+                    />
                   }
                 />
                 <Route path="/authority" element={<Navigate to="/authority-dashboard" replace />} />
@@ -729,25 +663,21 @@ function AppContent({
                 <Route
                   path="/geo-fence-management"
                   element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <GeoFenceManagementPage
-                        geofences={geofences}
-                        onRefreshData={fetchInitialData}
-                      />
-                    </AuthorityRouteGuard>
+                    <GeoFenceManagementPage
+                      geofences={geofences}
+                      onRefreshData={fetchInitialData}
+                    />
                   }
                 />
 
                 <Route
                   path="/incidents"
                   element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <IncidentManagementPage
-                        incidents={incidents}
-                        geofences={geofences}
-                        onUpdateStatus={handleUpdateIncidentStatus}
-                      />
-                    </AuthorityRouteGuard>
+                    <IncidentManagementPage
+                      incidents={incidents}
+                      geofences={geofences}
+                      onUpdateStatus={handleUpdateIncidentStatus}
+                    />
                   }
                 />
 
@@ -758,11 +688,7 @@ function AppContent({
 
                 <Route
                   path="/analytics"
-                  element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <AnalyticsPage />
-                    </AuthorityRouteGuard>
-                  }
+                  element={<AnalyticsPage />}
                 />
 
                 <Route
@@ -779,12 +705,10 @@ function AppContent({
                 <Route
                   path="/guide-dashboard"
                   element={
-                    <GuideRouteGuard currentUser={currentUser}>
-                      <GuideDashboard
-                        currentUser={currentUser}
-                        onLogout={handleLogout}
-                      />
-                    </GuideRouteGuard>
+                    <GuideDashboard
+                      currentUser={currentUser}
+                      onLogout={handleLogout}
+                    />
                   }
                 />
                 <Route path="/guide" element={<Navigate to="/guide-dashboard" replace />} />

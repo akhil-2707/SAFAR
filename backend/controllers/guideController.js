@@ -461,28 +461,6 @@ function assignGuideToRequest(req, res) {
   }
 }
 
-// Tourist or Authority: Cancel a Guide Request
-function cancelGuideRequest(req, res) {
-  try {
-    const { requestId } = req.params;
-    const request = dbStore.findOne('guideRequests', (r) => r.id === requestId);
-    if (!request) {
-      return res.status(404).json({ success: false, error: 'Guide request not found' });
-    }
-    const updated = dbStore.update('guideRequests', request.id, {
-      status: 'CANCELLED',
-      cancelledAt: new Date().toISOString()
-    });
-    return res.json({
-      success: true,
-      message: 'Guide request cancelled successfully.',
-      request: updated
-    });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
-  }
-}
-
 // Tourist: Rate & Review Assigned Guide
 function reviewGuide(req, res) {
   try {
@@ -651,7 +629,6 @@ module.exports = {
   createGuideRequest,
   getGuideRequests,
   assignGuideToRequest,
-  cancelGuideRequest,
   reviewGuide,
   complainAgainstGuide,
   getGuideComplaints,

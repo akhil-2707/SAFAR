@@ -1,7 +1,7 @@
 {
-  "name": "safetour-ne-root",
+  "name": "safar-root",
   "version": "1.0.0",
-  "description": "Smart Tourist Safety Monitoring & Incident Response System (SIH25002)",
+  "description": "S.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism (SIH 2026 PS ID: 26204)",
   "scripts": {
     "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue.bold,green.bold\" \"node backend/server.js\" \"npm --prefix frontend run dev\"",
     "start": "node backend/server.js",

@@ -21,9 +21,15 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ONLINE',
-    service: 'S.A.F.A.R. - Smart Tourist Safety System Backend',
+    service: 'S.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism Backend',
     framework: 'Smart AI Framework for Assured & Responsible Tourism',
-    ministry: 'Ministry of Tourism, Govt. of India',
+    problemStatement: {
+      id: '26204',
+      title: 'Student Innovation-A solution/idea that can boost the current situation of the tourism industries including hotels, travel and others.',
+      theme: 'Travel & Tourism',
+      category: 'Software',
+      organization: 'AICTE'
+    },
     timestamp: new Date().toISOString()
   });
 });
@@ -33,6 +39,11 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/tourists', require('./routes/touristRoutes'));
 app.use('/api/digital-id', require('./routes/digitalIdRoutes'));
 app.use('/api/incidents', require('./routes/incidentRoutes'));
+// Direct SOS route compatibility for frontend calls (/api/sos and /api/sos/cancel)
+const { triggerSOS, cancelSOS } = require('./controllers/incidentController');
+app.post('/api/sos', triggerSOS);
+app.post('/api/sos/cancel', cancelSOS);
+
 app.use('/api/geofences', require('./routes/geoFenceRoutes'));
 app.use('/api/blockchain', require('./routes/blockchainRoutes'));
 app.use('/api/trips', require('./routes/tripRoutes'));
@@ -43,10 +54,6 @@ app.use('/api/privacy', require('./routes/privacyRoutes'));
 app.use('/api/mesh-rescue', require('./routes/meshRescueRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/deadman', require('./routes/deadmanRoutes'));
-app.use('/api/authority', require('./routes/authorityRoutes'));
-app.use('/api/verify', require('./routes/verifyRoutes'));
-app.use('/api/hotels', require('./routes/hotelRoutes'));
-app.use('/api/artisans', require('./routes/artisanRoutes'));
 app.use('/api/guides', require('./routes/guideRoutes'));
 app.use('/api/fares', require('./routes/fareRoutes'));
 
@@ -76,6 +83,7 @@ app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(` S.A.F.A.R. API Server Running on Port ${PORT}`);
   console.log(` Health Check: http://localhost:${PORT}/api/health`);
-  console.log(` S.A.F.A.R. Tourist Safety & Blockchain Network`);
+  console.log(` Smart AI Framework for Assured & Responsible Tourism`);
+  console.log(` SIH 2026 | Problem Statement ID: 26204 | AICTE`);
   console.log(`=======================================================`);
 });

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Menu, X, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck,
-  Building2, Award, ShieldCheck, AlertTriangle, Activity, LogOut, Bell, CheckCircle
+  Bell, LogOut, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
+  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award,
+  Navigation, Hotel
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -17,11 +18,9 @@ export default function Navbar({
   notifications = [], 
   onMarkRead,
   onOpenMeshModal,
-  onShowLoader,
-  onSwitchUser
+  onShowLoader
 }) {
   const location = useLocation();
-  const navigate = useNavigate();
   const [showNotifs, setShowNotifs] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
@@ -130,16 +129,19 @@ export default function Navbar({
               );
             })}
           </nav>
-        ) : currentUser?.role === 'TOURIST' ? (
-          <nav className="flex items-center gap-1 sm:gap-1.5 p-1 rounded-2xl" style={{
-            background: 'rgba(120,120,128,0.08)',
+        ) : (
+          <nav className="hidden lg:flex items-center gap-1 p-1 rounded-2xl" style={{
+            background: 'rgba(120,120,128,0.1)',
           }}>
             {[
-              { to: '/micro-stays', label: 'Hotels & Stays', shortLabel: 'Stays', icon: Building2, badge: 'NEW', badgeColor: '#0A84FF' },
-              { to: '/artisans', label: 'GI Artisans', shortLabel: 'Artisans', icon: Award, badge: 'NEW', badgeColor: '#AF52DE' },
-              { to: '/guide-dashboard', label: 'Local Guide', shortLabel: 'Guide', icon: Award, badge: 'NEW', badgeColor: '#F59E0B' },
+              { to: '/explore', label: 'Explore' },
+              { to: '/trip-planner', label: 'Trip Planner' },
+              { to: '/tourist-dashboard', label: 'My Trip' },
+              { to: '/fares', label: 'Smart Fares' },
+              { to: '/hotels', label: 'Stays' },
+              { to: '/vendor-marketplace', label: 'Guides & Market' },
+              { to: '/sos', label: 'Safety & SOS', isSafety: true },
             ].map((nl) => {
-              const IconC = nl.icon;
               const active = location.pathname === nl.to;
               return (
                 <Link key={nl.to} to={nl.to}>
@@ -147,30 +149,26 @@ export default function Navbar({
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
                     transition={SPRING}
-                    className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 sm:gap-1.5"
+                    className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1"
                     style={{
-                      background: active ? 'rgba(255,255,255,0.95)' : 'transparent',
-                      color: active ? (nl.badgeColor || '#0A84FF') : 'rgba(60,60,67,0.75)',
+                      background: active 
+                        ? (nl.isSafety ? 'rgba(255,59,48,0.12)' : 'rgba(255,255,255,0.85)') 
+                        : (nl.isSafety ? 'rgba(255,59,48,0.06)' : 'transparent'),
+                      color: active 
+                        ? (nl.isSafety ? '#FF3B30' : '#0A84FF') 
+                        : (nl.isSafety ? '#FF3B30' : 'rgba(60,60,67,0.7)'),
+                      border: nl.isSafety ? '0.5px solid rgba(255,59,48,0.25)' : 'none',
                       boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
                     }}
                   >
-                    <IconC className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">{nl.label}</span>
-                    <span className="sm:hidden text-[11px]">{nl.shortLabel || nl.label}</span>
-                    {nl.badge && (
-                      <span
-                        className="text-[8px] sm:text-[9px] font-black px-1 sm:px-1.5 py-0.2 rounded-full text-white"
-                        style={{ background: nl.badgeColor || '#0A84FF' }}
-                      >
-                        {nl.badge}
-                      </span>
-                    )}
+                    {nl.isSafety && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
+                    <span>{nl.label}</span>
                   </motion.div>
                 </Link>
               );
             })}
           </nav>
-        ) : null}
+        )}
 
         {/* Right Section */}
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -368,13 +366,13 @@ export default function Navbar({
               </motion.div>
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
                 <Link
-                  to={currentUser?.role === 'AUTHORITY' ? '/authority-dashboard' : '/login?role=authority&redirect=/authority-dashboard'}
-                  className="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1 text-purple-800 bg-purple-50 hover:bg-purple-100 transition-all border border-purple-300 shadow-sm"
-                  title="Authority Police & CAD Command Desk"
+                  to="/guide-register"
+                  className="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1 text-amber-800 bg-amber-50 hover:bg-amber-100 transition-all border border-amber-300 shadow-sm"
+                  title="Certified Local Guide Portal (Register / Login)"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
-                  <span className="hidden sm:inline">Command</span>
-                  <span>Desk</span>
+                  <Award className="w-3.5 h-3.5 text-amber-600" />
+                  <span className="hidden sm:inline">Guide</span>
+                  <span>Portal</span>
                 </Link>
               </motion.div>
             </div>
@@ -414,7 +412,6 @@ export default function Navbar({
             }}
           >
             <div className="px-4 py-4 space-y-3 max-h-[calc(100vh-64px)] overflow-y-auto">
-
               {/* User badge on mobile drawer / Account Access */}
               {currentUser ? (
                 <div className="p-3 rounded-2xl bg-slate-100/80 border border-slate-200/80 flex items-center justify-between">
@@ -552,8 +549,28 @@ export default function Navbar({
                       <span>Immutable Blockchain Ledger</span>
                     </Link>
                   </>
-                ) : currentUser?.role === 'TOURIST' ? (
+                ) : (
                   <>
+                    <Link
+                      to="/explore"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/explore' ? 'bg-orange-50 text-orange-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Compass className="w-4 h-4 text-orange-500" />
+                      <span>Explore Destinations</span>
+                    </Link>
+                    <Link
+                      to="/trip-planner"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/trip-planner' ? 'bg-violet-50 text-violet-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Sparkles className="w-4 h-4 text-violet-500" />
+                      <span>Smart Trip Planner</span>
+                    </Link>
                     <Link
                       to="/tourist-dashboard"
                       onClick={() => setMobileMenuOpen(false)}
@@ -561,120 +578,77 @@ export default function Navbar({
                         location.pathname === '/tourist-dashboard' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <Compass className="w-4 h-4 text-blue-500" />
-                      <span>Live Safety Map & Zones</span>
-                    </Link>
-                    <Link
-                      to="/micro-stays"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/micro-stays' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <span className="text-sm">🏨</span>
-                      <span>Smart Micro-Stays & Cloakroom (Hotels)</span>
-                    </Link>
-                    <Link
-                      to="/artisans"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/artisans' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <span className="text-sm">🏺</span>
-                      <span>GI Artisans & Vocal for Local</span>
-                    </Link>
-                    <Link
-                      to="/guide-dashboard"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/guide-dashboard' ? 'bg-amber-50 text-amber-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <Award className="w-4 h-4 text-amber-500" />
-                      <span>Certified Local Guide</span>
-                    </Link>
-                    <Link
-                      to="/digital-id"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/digital-id' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <UserCheck className="w-4 h-4 text-emerald-500" />
-                      <span>3D Holographic Digital ID</span>
-                    </Link>
-                    <Link
-                      to="/sos"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/sos' ? 'bg-red-50 text-red-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <Radio className="w-4 h-4 text-red-500" />
-                      <span>Emergency SOS Cockpit</span>
-                    </Link>
-                    <Link
-                      to="/deadman-switch"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/deadman-switch' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
-                      }`}
-                    >
-                      <Clock className="w-4 h-4 text-amber-500" />
-                      <span>Deadman Automated Check-in</span>
+                      <Navigation className="w-4 h-4 text-blue-500" />
+                      <span>My Trip & Safety Hub</span>
                     </Link>
                     <Link
                       to="/fares"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/fares' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                        location.pathname === '/fares' ? 'bg-amber-50 text-amber-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <CreditCard className="w-4 h-4 text-purple-500" />
-                      <span>Pre-paid Taxi & Auto Fares</span>
+                      <CreditCard className="w-4 h-4 text-amber-500" />
+                      <span>Smart Transport & Fares</span>
                     </Link>
                     <Link
-                      to="/emergency-help"
+                      to="/hotels"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                        location.pathname === '/emergency-help' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                        location.pathname === '/hotels' ? 'bg-emerald-50 text-emerald-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
                       }`}
                     >
-                      <PhoneCall className="w-4 h-4 text-green-500" />
-                      <span>112 ERSS Helpline & Police</span>
+                      <Hotel className="w-4 h-4 text-emerald-500" />
+                      <span>Hotels & Curated Stays</span>
                     </Link>
+                    <Link
+                      to="/vendor-marketplace"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/vendor-marketplace' ? 'bg-teal-50 text-teal-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Award className="w-4 h-4 text-teal-500" />
+                      <span>Verified Guides & Market</span>
+                    </Link>
+
+                    {/* Integrated Safety & Trust Section on Mobile */}
+                    <div className="pt-2 border-t border-slate-200 mt-1">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-1">Safety & Emergency</p>
+                      <Link
+                        to="/digital-id"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                      >
+                        <UserCheck className="w-4 h-4 text-emerald-500" />
+                        <span>Holographic Digital ID Pass</span>
+                      </Link>
+                      <Link
+                        to="/sos"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50"
+                      >
+                        <Radio className="w-4 h-4 text-red-500" />
+                        <span>Emergency SOS Cockpit</span>
+                      </Link>
+                      <Link
+                        to="/deadman-switch"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                      >
+                        <Clock className="w-4 h-4 text-amber-500" />
+                        <span>Deadman Automated Check-in</span>
+                      </Link>
+                      <Link
+                        to="/emergency-help"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100"
+                      >
+                        <PhoneCall className="w-4 h-4 text-green-500" />
+                        <span>112 ERSS Emergency Help</span>
+                      </Link>
+                    </div>
                   </>
-                ) : (
-                  <div className="space-y-2 pt-1 pb-2">
-                    <p className="text-[11px] font-black uppercase tracking-wider text-slate-400 px-1">
-                      Choose Safety Portal:
-                    </p>
-                    <Link
-                      to="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-orange-700 bg-orange-50/90 border border-orange-200 shadow-xs"
-                    >
-                      <span>🎒</span>
-                      <span>Tourist Safety Sign In</span>
-                    </Link>
-                    <Link
-                      to="/login?role=guide"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-amber-800 bg-amber-50/90 border border-amber-200 shadow-xs"
-                    >
-                      <span>🪪</span>
-                      <span>Certified Guide Portal</span>
-                    </Link>
-                    <Link
-                      to="/login?role=authority"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-purple-900 bg-purple-50/90 border border-purple-200 shadow-xs"
-                    >
-                      <ShieldCheck className="w-4 h-4 text-purple-600" />
-                      <span>Authority Command Desk</span>
-                    </Link>
-                  </div>
                 )}
 
                 {/* Additional Quick Utility Actions */}

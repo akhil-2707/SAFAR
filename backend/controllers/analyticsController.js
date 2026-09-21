@@ -50,6 +50,24 @@ function getAnalytics(req, res) {
     { day: 'Sun (Today)', incidents: incidents.length, sos: sosAlerts, resolved: resolvedIncidents }
   ];
 
+  // Tourism Circuit Distribution & Hospitality Demand (SIH 2026 PS ID: 26204)
+  const circuitDistribution = [
+    { circuit: 'Ayodhya', tourists: 38, stayEnquiries: 85, guideRequests: 24, avgDailyBudget: 2100 },
+    { circuit: 'Katra / Jammu', tourists: 32, stayEnquiries: 74, guideRequests: 19, avgDailyBudget: 2400 },
+    { circuit: 'Agra Heritage', tourists: 26, stayEnquiries: 62, guideRequests: 22, avgDailyBudget: 3200 },
+    { circuit: 'Varanasi', tourists: 21, stayEnquiries: 51, guideRequests: 15, avgDailyBudget: 1900 },
+    { circuit: 'Meghalaya', tourists: 18, stayEnquiries: 43, guideRequests: 12, avgDailyBudget: 2800 },
+    { circuit: 'Jaipur', tourists: 24, stayEnquiries: 58, guideRequests: 17, avgDailyBudget: 3100 }
+  ];
+
+  const tourismMetrics = {
+    totalItinerariesGenerated: 1420,
+    curatedStaysViewed: 3180,
+    ridesCompared: 2450,
+    certifiedGuidesActive: 48,
+    antiScamSavingsEstimated: '₹1,84,000'
+  };
+
   return res.json({
     success: true,
     overview: {
@@ -64,7 +82,9 @@ function getAnalytics(req, res) {
     riskDistribution,
     incidentsByType,
     incidentsBySeverity,
-    dailyTrend
+    dailyTrend,
+    circuitDistribution,
+    tourismMetrics
   });
 }
 

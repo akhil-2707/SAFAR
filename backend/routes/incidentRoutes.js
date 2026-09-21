@@ -7,14 +7,12 @@ const {
   getIncidentById,
   createIncident,
   updateIncidentStatus,
-  getEmergencyServices,
-  triggerSilentDuress
+  getEmergencyServices
 } = require('../controllers/incidentController');
 
 router.get('/emergency-services', getEmergencyServices);
 router.post('/sos', triggerSOS);
 router.post('/sos/cancel', cancelSOS);
-router.post('/duress', triggerSilentDuress);
 router.get('/', getIncidents);
 router.get('/:id', getIncidentById);
 router.post('/', createIncident);
