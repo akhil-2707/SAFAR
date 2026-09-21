@@ -33,6 +33,8 @@ import PartnerPaymentPage from './pages/PartnerPaymentPage';
 import TripPlannerPage from './pages/TripPlannerPage';
 import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
 import HotelsPage from './pages/HotelsPage';
+import MicroStaysPage from './pages/MicroStaysPage';
+import ArtisansPage from './pages/ArtisansPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -721,7 +723,9 @@ function AppContent({
                 <Route path="/explore" element={<ExploreDestinationsPage />} />
                 <Route path="/destinations" element={<Navigate to="/explore" replace />} />
                 <Route path="/hotels" element={<HotelsPage />} />
+                <Route path="/micro-stays" element={<MicroStaysPage tourist={touristProfile} />} />
                 <Route path="/stays" element={<Navigate to="/hotels" replace />} />
+                <Route path="/artisans" element={<ArtisansPage tourist={touristProfile} />} />
                 <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
 
                 {/* Green Rewards & Partner Payment */}

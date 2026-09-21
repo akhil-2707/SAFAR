@@ -15,6 +15,8 @@ import TouristGuideCard from '../components/TouristGuideCard';
 import TouristGuidePromptModal from '../components/TouristGuidePromptModal';
 import RedZonePreEntryBanner from '../components/RedZonePreEntryBanner';
 import GreenWalletCard from '../components/GreenWalletCard';
+import SilentDuressModal from '../components/SilentDuressModal';
+import DemoPitchSwitcher from '../components/DemoPitchSwitcher';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
@@ -156,6 +158,7 @@ export default function TouristDashboard({
   const [showMeshModal, setShowMeshModal] = useState(false);
   const [show112Modal, setShow112Modal] = useState(false);
   const [showGuidePromptModal, setShowGuidePromptModal] = useState(false);
+  const [showDuressModal, setShowDuressModal] = useState(false);
   const [guideRefreshTrigger, setGuideRefreshTrigger] = useState(0);
   const [aiAdvice, setAiAdvice] = useState(null);
   const [aiAdviceLoading, setAiAdviceLoading] = useState(false);
@@ -510,6 +513,20 @@ export default function TouristDashboard({
 
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 relative z-10 w-full md:w-auto justify-start md:justify-end">
+          {/* Discrete Demo Pitch Switcher for Jury Presentation */}
+          <DemoPitchSwitcher
+            currentTouristId={currentTourist?.touristId}
+            allTourists={allTourists}
+            onSelectTourist={(tid) => {
+              if (onSelectTourist) onSelectTourist(tid);
+            }}
+            onActivateLiveGps={() => {
+              if (isAutoWandering) { clearInterval(wanderIntervalRef.current); setIsAutoWandering(false); }
+              setUseLiveGpsMode(true);
+              startTracking();
+            }}
+          />
+
           <motion.button
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }} transition={SPRING}
             onClick={handleToggleAutoWander}
@@ -920,6 +937,13 @@ export default function TouristDashboard({
         onClose={() => setShowMeshModal(false)}
         tourist={currentTourist}
         isRedZoneTriggered={isDangerZoneActive}
+      />
+
+      {/* Silent Duress Decoy Keypad Modal */}
+      <SilentDuressModal
+        isOpen={showDuressModal}
+        onClose={() => setShowDuressModal(false)}
+        tourist={currentTourist}
       />
 
       {/* Certified Local Guide Prompt Modal */}
