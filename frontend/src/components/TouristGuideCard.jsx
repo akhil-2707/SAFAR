@@ -272,6 +272,7 @@ export default function TouristGuideCard({ tourist, refreshTrigger }) {
         onClose={() => setShowPromptModal(false)}
         tourist={tourist}
         onRequestSuccess={handleRequestSuccess}
+        initialStep="FORM"
       />
 
       {/* Digital ID Card Modal */}
