@@ -371,6 +371,7 @@ function submitRewardProof(req, res) {
       savedFilePath,
       savedFileUrl,
       proofHash,
+      isLiveCameraCaptured: Boolean(req.body.isLiveCameraCaptured !== false),
       notes: notes || null,
       taggedAuthorityDesk: 'S.A.F.A.R. Central Command Desk',
       submittedAt: new Date().toISOString(),
@@ -864,14 +865,29 @@ function getPublicGallery(req, res) {
     const allRewards = dbStore.get('greenRewards') || [];
     const publicPhotos = allRewards
       .filter((r) => 
-        r.activityType === 'TOURIST_PLACE' &&
+        (r.activityType === 'TOURIST_PLACE' || r.placeName) &&
         r.proofImage &&
         typeof r.proofImage === 'string' &&
-        r.proofImage.length > 50 &&
-        r.placeName &&
-        r.placeLocation &&
-        r.status !== 'REJECTED' // Never show rejected or failed uploads
+        r.proofImage.trim().length > 3 &&
+        r.status !== 'REJECTED' // Never show rejected uploads
       )
+      .map((r) => ({
+        id: r.id,
+        touristId: r.touristId,
+        touristName: r.touristName || 'Verified Tourist',
+        activityType: r.activityType || 'TOURIST_PLACE',
+        placeName: r.placeName || r.partnerName || 'Tourist Destination',
+        placeLocation: r.placeLocation || 'India',
+        placeCategory: r.placeCategory || (r.activityType === 'TOURIST_PLACE' ? 'Heritage Site' : 'Eco Partner'),
+        placeReview: r.placeReview || null,
+        proofImage: r.proofImage,
+        coins: r.coins || 2,
+        status: r.status,
+        isLiveCameraCaptured: r.isLiveCameraCaptured !== false,
+        taggedAuthorityDesk: r.taggedAuthorityDesk || 'S.A.F.A.R. Central Command Desk',
+        submittedAt: r.submittedAt,
+        verifiedAt: r.verifiedAt
+      }))
       .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
 
     return res.json({

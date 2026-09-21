@@ -8,6 +8,7 @@ import {
   Landmark, Eye
 } from 'lucide-react';
 import SafarLogo from '../components/SafarLogo';
+import LiveCameraCaptureModal from '../components/LiveCameraCaptureModal';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 26 };
 
@@ -427,6 +428,13 @@ export default function GreenRewardsPage() {
     notes: ''
   });
   const [publicGallery, setPublicGallery] = useState([]);
+  const [cameraModalConfig, setCameraModalConfig] = useState({
+    isOpen: false,
+    targetForm: null,
+    title: 'Live Camera Photo Verification',
+    category: '',
+    placeName: ''
+  });
 
   useEffect(() => {
     fetchInitialPageData();
@@ -794,6 +802,47 @@ export default function GreenRewardsPage() {
     touristPlaceForm.taggedPlaceName
   );
 
+  const openCameraFor = (target) => {
+    if (target === 'PARTNER' && !isPartnerFormComplete) return;
+    if (target === 'TOURIST' && !isTouristFormComplete) return;
+
+    let title = 'Live Camera Photo Verification';
+    let category = '';
+    let placeName = '';
+
+    if (target === 'ECO') {
+      title = 'Eco-Vehicle Journey Verification';
+      category = ecoForm.vehicleType || 'Eco Travel';
+      placeName = ecoForm.vehicleNumber || 'Vehicle Proof';
+    } else if (target === 'PARTNER') {
+      title = 'SAFAR Partner Visit Verification';
+      category = selectedPartnerObj?.type || 'Partner Visit';
+      placeName = selectedPartnerObj?.name || 'Partner Location';
+    } else if (target === 'TOURIST') {
+      title = 'Tourist Place Photo Verification';
+      category = touristPlaceForm.placeCategory || 'Heritage Site';
+      placeName = touristPlaceForm.placeName || 'Tourist Place';
+    }
+
+    setCameraModalConfig({
+      isOpen: true,
+      targetForm: target,
+      title,
+      category,
+      placeName
+    });
+  };
+
+  const handleCameraCaptured = (dataUrl) => {
+    if (cameraModalConfig.targetForm === 'ECO') {
+      setEcoForm((prev) => ({ ...prev, proofImage: dataUrl }));
+    } else if (cameraModalConfig.targetForm === 'TOURIST') {
+      setTouristPlaceForm((prev) => ({ ...prev, proofImage: dataUrl }));
+    } else if (cameraModalConfig.targetForm === 'PARTNER') {
+      setPartnerForm((prev) => ({ ...prev, proofImage: dataUrl }));
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-6" style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}>
       
@@ -1123,22 +1172,41 @@ export default function GreenRewardsPage() {
                 </div>
               </div>
 
-              {/* Photo Proof Upload & Presets */}
+              {/* Photo Proof Upload with Camera */}
               <div className="space-y-2">
-                <label className="font-bold text-slate-700 block">
-                  Upload Photograph / Journey Proof
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="font-bold text-slate-700 block">
+                    Capture Photograph / Journey Proof <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center space-x-1">
+                    <Camera className="w-3 h-3 text-emerald-600" />
+                    <span>Live Camera Only</span>
+                  </span>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="sm:col-span-2 border-2 border-dashed border-slate-300 rounded-2xl p-4 text-center hover:border-emerald-500 transition-colors bg-slate-50 flex flex-col items-center justify-center space-y-2">
-                    <Upload className="w-6 h-6 text-slate-400" />
-                    <span className="text-xs text-slate-600 font-medium">Click to select photo from device</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileUpload(e, 'ECO')}
-                      className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-800 cursor-pointer"
-                    />
+                  <div 
+                    onClick={() => openCameraFor('ECO')}
+                    className="sm:col-span-2 border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50/80 rounded-2xl p-5 text-center transition-all cursor-pointer flex flex-col items-center justify-center space-y-2 group shadow-sm"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 group-hover:bg-emerald-200 text-emerald-700 flex items-center justify-center transition-colors shadow-inner">
+                      <Camera className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-black text-slate-800 block group-hover:text-emerald-900">
+                        {ecoForm.proofImage ? 'Click to Retake Photo with Camera' : 'Open Camera to Click Photo'}
+                      </span>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">
+                        Real-time camera verification required · Gallery uploads disabled
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="px-3.5 py-1.5 rounded-xl bg-emerald-600 group-hover:bg-emerald-700 text-white text-xs font-bold shadow transition-all flex items-center space-x-1.5"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>{ecoForm.proofImage ? 'Retake Photo' : 'Take Photo'}</span>
+                    </button>
                   </div>
 
                   {/* Preset Demo Photos */}
@@ -1166,11 +1234,33 @@ export default function GreenRewardsPage() {
                 </div>
 
                 {ecoForm.proofImage && (
-                  <div className="mt-2 flex items-center space-x-3 p-2 rounded-xl bg-emerald-50 border border-emerald-200">
-                    <img src={ecoForm.proofImage} alt="Selected Proof" className="w-16 h-12 rounded-lg object-cover" />
-                    <div className="text-xs">
-                      <span className="font-bold text-emerald-800 block">Photograph Attached</span>
-                      <span className="text-[10px] text-emerald-600">SHA-256 hash will be computed for duplicate check</span>
+                  <div className="mt-2 flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 border border-emerald-300">
+                    <div className="flex items-center space-x-3">
+                      <img src={ecoForm.proofImage} alt="Selected Proof" className="w-16 h-12 rounded-lg object-cover border border-emerald-400" />
+                      <div className="text-xs">
+                        <span className="font-bold text-emerald-800 flex items-center space-x-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Live Camera Verified Photo Attached</span>
+                        </span>
+                        <span className="text-[10px] text-emerald-600">SHA-256 hash will be computed for on-chain duplicate check</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => openCameraFor('ECO')}
+                        className="px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-[11px] font-bold transition-colors flex items-center space-x-1"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span>Retake</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEcoForm((prev) => ({ ...prev, proofImage: '' }))}
+                        className="p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1323,39 +1413,62 @@ export default function GreenRewardsPage() {
                 </div>
               </div>
 
-              {/* Photo Upload - strictly disabled until all 4 tags complete */}
+              {/* Photo Upload with Live Camera - strictly disabled until all 4 tags complete */}
               <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <label className="font-bold text-slate-700">
-                    Upload Visit Photograph / Dine-in Proof <span className="text-red-500">*</span>
-                  </label>
-                  {!isPartnerFormComplete && (
-                    <span className="text-[10px] font-black text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full animate-pulse">
-                      🔒 Complete all 4 tags above first
-                    </span>
-                  )}
-                  {isPartnerFormComplete && (
-                    <span className="text-[10px] font-black text-green-700 bg-green-100 border border-green-300 px-2 py-0.5 rounded-full">
-                      🔓 Photo upload unlocked!
-                    </span>
-                  )}
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <div className="flex items-center space-x-2">
+                    <label className="font-bold text-slate-700">
+                      Capture Visit Photograph / Dine-in Proof <span className="text-red-500">*</span>
+                    </label>
+                    {!isPartnerFormComplete && (
+                      <span className="text-[10px] font-black text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full animate-pulse">
+                        🔒 Complete all 4 tags above first
+                      </span>
+                    )}
+                    {isPartnerFormComplete && (
+                      <span className="text-[10px] font-black text-green-700 bg-green-100 border border-green-300 px-2 py-0.5 rounded-full">
+                        🔓 Live Camera unlocked!
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full flex items-center space-x-1">
+                    <Camera className="w-3 h-3 text-indigo-600" />
+                    <span>Live Camera Only</span>
+                  </span>
                 </div>
 
                 <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 transition-opacity ${!isPartnerFormComplete ? 'opacity-40 pointer-events-none select-none' : ''}`}>
-                  <div className={`sm:col-span-2 border-2 border-dashed rounded-2xl p-4 text-center transition-colors bg-slate-50 flex flex-col items-center justify-center space-y-2 ${
-                    isPartnerFormComplete ? 'border-indigo-400 hover:border-indigo-600 cursor-pointer' : 'border-slate-200 cursor-not-allowed'
-                  }`}>
-                    <Upload className={`w-6 h-6 ${isPartnerFormComplete ? 'text-indigo-500' : 'text-slate-300'}`} />
-                    <span className="text-xs text-slate-600 font-medium">
-                      {isPartnerFormComplete ? 'Click to select photo from device' : '🔒 Fill all 4 tags to unlock upload'}
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      disabled={!isPartnerFormComplete}
-                      onChange={(e) => handleFileUpload(e, 'PARTNER')}
-                      className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-800 cursor-pointer disabled:cursor-not-allowed"
-                    />
+                  <div 
+                    onClick={() => isPartnerFormComplete && openCameraFor('PARTNER')}
+                    className={`sm:col-span-2 border-2 border-dashed rounded-2xl p-5 text-center transition-all flex flex-col items-center justify-center space-y-2 group shadow-sm ${
+                      isPartnerFormComplete
+                        ? 'border-indigo-400 hover:border-indigo-600 bg-indigo-50/40 hover:bg-indigo-50/80 cursor-pointer'
+                        : 'border-slate-200 bg-slate-50 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors shadow-inner ${
+                      isPartnerFormComplete ? 'bg-indigo-100 group-hover:bg-indigo-200 text-indigo-700' : 'bg-slate-200 text-slate-400'
+                    }`}>
+                      <Camera className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-black text-slate-800 block group-hover:text-indigo-950">
+                        {partnerForm.proofImage ? 'Click to Retake Photo with Camera' : (isPartnerFormComplete ? 'Open Camera to Click Visit Photo' : '🔒 Fill all 4 tags to unlock camera')}
+                      </span>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">
+                        {isPartnerFormComplete ? 'Real-time on-site camera verification required · Gallery uploads disabled' : 'Mandatory tags must be confirmed before clicking photo'}
+                      </span>
+                    </div>
+                    {isPartnerFormComplete && (
+                      <button
+                        type="button"
+                        className="px-3.5 py-1.5 rounded-xl bg-indigo-600 group-hover:bg-indigo-700 text-white text-xs font-bold shadow transition-all flex items-center space-x-1.5"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                        <span>{partnerForm.proofImage ? 'Retake Photo' : 'Take Photo'}</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* Preset Demo Photos */}
@@ -1385,11 +1498,33 @@ export default function GreenRewardsPage() {
                 </div>
 
                 {partnerForm.proofImage && (
-                  <div className="mt-2 flex items-center space-x-3 p-2.5 rounded-xl bg-indigo-50 border border-indigo-200">
-                    <img src={partnerForm.proofImage} alt="Selected Proof" className="w-16 h-12 rounded-lg object-cover" />
-                    <div className="text-xs">
-                      <span className="font-bold text-indigo-800 block">Visit Photograph Attached ✅</span>
-                      <span className="text-[10px] text-indigo-600">All 4 tags confirmed · Tagged with partner establishment, SAFAR Desk, City & State</span>
+                  <div className="mt-2 flex items-center justify-between p-2.5 rounded-xl bg-indigo-50 border border-indigo-300">
+                    <div className="flex items-center space-x-3">
+                      <img src={partnerForm.proofImage} alt="Selected Proof" className="w-16 h-12 rounded-lg object-cover border border-indigo-300" />
+                      <div className="text-xs">
+                        <span className="font-bold text-indigo-800 flex items-center space-x-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>Live Camera Verified Visit Photo Attached ✅</span>
+                        </span>
+                        <span className="text-[10px] text-indigo-600">All 4 tags confirmed · Tagged with partner establishment, SAFAR Desk, City & State</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => openCameraFor('PARTNER')}
+                        className="px-2.5 py-1 rounded-lg bg-white hover:bg-indigo-100 border border-indigo-300 text-indigo-800 text-[11px] font-bold transition-colors flex items-center space-x-1"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span>Retake</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPartnerForm((prev) => ({ ...prev, proofImage: '' }))}
+                        className="p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1556,39 +1691,62 @@ export default function GreenRewardsPage() {
                 </div>
               </div>
 
-              {/* Photo Upload - strictly disabled until all 4 tags complete */}
+              {/* Photo Upload with Live Camera - strictly disabled until all 4 tags complete */}
               <div className="space-y-2">
-                <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                  <label className="font-bold text-slate-700">
-                    Upload Tourist Place Photograph <span className="text-red-500">*</span>
-                  </label>
-                  {!isTouristFormComplete && (
-                    <span className="text-[10px] font-black text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full animate-pulse">
-                      🔒 Complete all 4 tags above first
-                    </span>
-                  )}
-                  {isTouristFormComplete && (
-                    <span className="text-[10px] font-black text-green-700 bg-green-100 border border-green-300 px-2 py-0.5 rounded-full">
-                      🔓 Photo upload unlocked!
-                    </span>
-                  )}
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <div className="flex items-center space-x-2">
+                    <label className="font-bold text-slate-700">
+                      Capture Tourist Place Photograph <span className="text-red-500">*</span>
+                    </label>
+                    {!isTouristFormComplete && (
+                      <span className="text-[10px] font-black text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full animate-pulse">
+                        🔒 Complete all 4 tags above first
+                      </span>
+                    )}
+                    {isTouristFormComplete && (
+                      <span className="text-[10px] font-black text-green-700 bg-green-100 border border-green-300 px-2 py-0.5 rounded-full">
+                        🔓 Live Camera unlocked!
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full flex items-center space-x-1">
+                    <Camera className="w-3 h-3 text-purple-600" />
+                    <span>Live Camera Only</span>
+                  </span>
                 </div>
 
                 <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 transition-opacity ${!isTouristFormComplete ? 'opacity-40 pointer-events-none select-none' : ''}`}>
-                  <div className={`sm:col-span-2 border-2 border-dashed rounded-2xl p-4 text-center transition-colors bg-slate-50 flex flex-col items-center justify-center space-y-2 ${
-                    isTouristFormComplete ? 'border-purple-400 hover:border-purple-600 cursor-pointer' : 'border-slate-200 cursor-not-allowed'
-                  }`}>
-                    <Upload className={`w-6 h-6 ${isTouristFormComplete ? 'text-purple-500' : 'text-slate-300'}`} />
-                    <span className="text-xs text-slate-600 font-medium">
-                      {isTouristFormComplete ? 'Click to select tourist place photo from device' : '🔒 Fill all 4 tags to unlock upload'}
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      disabled={!isTouristFormComplete}
-                      onChange={(e) => handleFileUpload(e, 'TOURIST')}
-                      className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-purple-100 file:text-purple-800 cursor-pointer disabled:cursor-not-allowed"
-                    />
+                  <div 
+                    onClick={() => isTouristFormComplete && openCameraFor('TOURIST')}
+                    className={`sm:col-span-2 border-2 border-dashed rounded-2xl p-5 text-center transition-all flex flex-col items-center justify-center space-y-2 group shadow-sm ${
+                      isTouristFormComplete 
+                        ? 'border-purple-400 hover:border-purple-600 bg-purple-50/40 hover:bg-purple-50/80 cursor-pointer' 
+                        : 'border-slate-200 bg-slate-50 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors shadow-inner ${
+                      isTouristFormComplete ? 'bg-purple-100 group-hover:bg-purple-200 text-purple-700' : 'bg-slate-200 text-slate-400'
+                    }`}>
+                      <Camera className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-black text-slate-800 block group-hover:text-purple-950">
+                        {touristPlaceForm.proofImage ? 'Click to Retake Photo with Camera' : (isTouristFormComplete ? 'Open Camera to Click Tourist Place Photo' : '🔒 Fill all 4 tags to unlock camera')}
+                      </span>
+                      <span className="text-[10px] text-slate-500 block mt-0.5">
+                        {isTouristFormComplete ? 'Real-time on-site camera verification required · Gallery uploads disabled' : 'Mandatory tags must be confirmed before clicking photo'}
+                      </span>
+                    </div>
+                    {isTouristFormComplete && (
+                      <button
+                        type="button"
+                        className="px-3.5 py-1.5 rounded-xl bg-purple-600 group-hover:bg-purple-700 text-white text-xs font-bold shadow transition-all flex items-center space-x-1.5"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                        <span>{touristPlaceForm.proofImage ? 'Retake Photo' : 'Take Photo'}</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* Preset Demo Photos */}
@@ -1619,11 +1777,33 @@ export default function GreenRewardsPage() {
                 </div>
 
                 {touristPlaceForm.proofImage && (
-                  <div className="mt-2 flex items-center space-x-3 p-2.5 rounded-xl bg-purple-50 border border-purple-200">
-                    <img src={touristPlaceForm.proofImage} alt="Selected Tourist Place" className="w-16 h-12 rounded-lg object-cover" />
-                    <div className="text-xs">
-                      <span className="font-bold text-purple-800 block">Tourist Location Photo Attached ✅</span>
-                      <span className="text-[10px] text-purple-600">All 4 tags confirmed · Will appear in SAFAR Public Tourist Gallery upon approval</span>
+                  <div className="mt-2 flex items-center justify-between p-2.5 rounded-xl bg-purple-50 border border-purple-300">
+                    <div className="flex items-center space-x-3">
+                      <img src={touristPlaceForm.proofImage} alt="Selected Tourist Place" className="w-16 h-12 rounded-lg object-cover border border-purple-300" />
+                      <div className="text-xs">
+                        <span className="font-bold text-purple-800 flex items-center space-x-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
+                          <span>Live Camera Verified Photo Attached ✅</span>
+                        </span>
+                        <span className="text-[10px] text-purple-600">All 4 tags confirmed · Will appear in SAFAR Public Tourist Gallery upon submission</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => openCameraFor('TOURIST')}
+                        className="px-2.5 py-1 rounded-lg bg-white hover:bg-purple-100 border border-purple-300 text-purple-800 text-[11px] font-bold transition-colors flex items-center space-x-1"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span>Retake</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTouristPlaceForm((prev) => ({ ...prev, proofImage: '' }))}
+                        className="p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 )}
@@ -1939,26 +2119,38 @@ export default function GreenRewardsPage() {
                     </span>
                   </h4>
                   <p className="text-xs text-slate-400">
-                    Photos uploaded in Option 3 are published to all tourists, viewers, and the SAFAR Authority Desk to inspire travelers across India.
+                    Live camera-verified photographs submitted by tourists across India, preserved and published to the SAFAR Public Explorer.
                   </p>
                 </div>
               </div>
+
+              <button
+                type="button"
+                onClick={fetchInitialPageData}
+                className="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-slate-200 font-bold flex items-center space-x-1.5 transition-colors"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Refresh Gallery</span>
+              </button>
             </div>
 
-            {/* Deduplicated & validated public gallery items — strictly excludes failed or rejected uploads */}
+            {/* Deduplicated & validated public gallery items */}
             {(() => {
               const validPublicPhotos = (() => {
                 const list = [...publicGallery];
                 history.forEach(h => {
                   if (
-                    h.activityType === 'TOURIST_PLACE' && 
+                    (h.activityType === 'TOURIST_PLACE' || h.placeName) && 
                     h.proofImage && 
-                    h.placeName && 
-                    h.placeLocation && 
                     h.status !== 'REJECTED' && 
                     !list.some(item => item.id === h.id || (item.proofHash && item.proofHash === h.proofHash))
                   ) {
-                    list.push(h);
+                    list.push({
+                      ...h,
+                      placeName: h.placeName || h.partnerName || 'Tourist Destination',
+                      placeLocation: h.placeLocation || 'India',
+                      placeCategory: h.placeCategory || (h.activityType === 'TOURIST_PLACE' ? 'Heritage Site' : 'Eco Travel')
+                    });
                   }
                 });
                 return list.filter(item => item.status !== 'REJECTED' && item.proofImage && item.placeName);
@@ -1969,7 +2161,7 @@ export default function GreenRewardsPage() {
                   <div className="p-8 rounded-2xl bg-white/5 border border-white/10 text-center space-y-2">
                     <Camera className="w-8 h-8 text-slate-500 mx-auto" />
                     <p className="text-xs text-slate-400">
-                      No verified tourist place photos in the gallery yet. Use <strong>Option 3 — Tourist Places Photo</strong> to upload your first photo!
+                      No verified tourist place photos in the gallery yet. Use <strong>Option 3 — Tourist Places Photo</strong> to click and verify your first photo!
                     </p>
                     <p className="text-[10px] text-slate-500">
                       Note: Photos must have full details and compulsory tags confirmed. Incomplete or failed uploads are never posted to the public gallery.
@@ -1986,7 +2178,7 @@ export default function GreenRewardsPage() {
                       onClick={() => setPreviewPhotoModal({
                         image: photoItem.proofImage,
                         title: photoItem.placeName,
-                        subtitle: photoItem.placeLocation,
+                        subtitle: `${photoItem.placeLocation || 'India'} · Submitted by ${photoItem.touristName || 'Verified Tourist'}`,
                         isPublic: true,
                         category: photoItem.placeCategory
                       })}
@@ -1998,7 +2190,7 @@ export default function GreenRewardsPage() {
                           alt={photoItem.placeName}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div className="absolute top-2.5 right-2.5">
+                        <div className="absolute top-2.5 right-2.5 flex items-center space-x-1">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
                             photoItem.status === 'APPROVED' ? 'bg-emerald-500 text-white'
                               : 'bg-amber-500 text-white'
@@ -2007,8 +2199,8 @@ export default function GreenRewardsPage() {
                           </span>
                         </div>
                         <div className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md text-[10px] text-white flex items-center space-x-1">
-                          <Eye className="w-3 h-3 text-purple-300" />
-                          <span>Public Gallery</span>
+                          <Camera className="w-3 h-3 text-purple-300" />
+                          <span>Live Camera Verified</span>
                         </div>
                       </div>
 
@@ -2024,15 +2216,15 @@ export default function GreenRewardsPage() {
                           <span className="truncate">{photoItem.placeLocation || 'India'}</span>
                         </p>
                         <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] text-slate-400">
-                          <span>✓ Tag: SAFAR Desk</span>
+                          <span>👤 {photoItem.touristName || 'Verified Tourist'}</span>
                           <span className="font-mono text-emerald-400 font-bold">+{photoItem.coins || 2} Coins</span>
                         </div>
                       </div>
                     </div>
                   ))}
-              </div>
-            )}
-            )}
+                </div>
+              );
+            })()}
           </div>
             
         </div>
@@ -2209,6 +2401,16 @@ export default function GreenRewardsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Live Camera Capture Modal */}
+      <LiveCameraCaptureModal
+        isOpen={cameraModalConfig.isOpen}
+        onClose={() => setCameraModalConfig((prev) => ({ ...prev, isOpen: false }))}
+        onCapture={handleCameraCaptured}
+        title={cameraModalConfig.title}
+        category={cameraModalConfig.category}
+        placeName={cameraModalConfig.placeName}
+      />
     </div>
   );
 }
