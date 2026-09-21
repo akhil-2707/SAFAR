@@ -31,6 +31,8 @@ import GuideVerifyPage from './pages/GuideVerifyPage';
 import GreenRewardsPage from './pages/GreenRewardsPage';
 import PartnerPaymentPage from './pages/PartnerPaymentPage';
 import TripPlannerPage from './pages/TripPlannerPage';
+import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
+import HotelsPage from './pages/HotelsPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -523,7 +525,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/green-rewards'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -715,6 +717,13 @@ function AppContent({
                   element={<GuideVerifyPage />}
                 />
 
+                {/* Tourism & Stays Routes (SIH PS 26204) */}
+                <Route path="/explore" element={<ExploreDestinationsPage />} />
+                <Route path="/destinations" element={<Navigate to="/explore" replace />} />
+                <Route path="/hotels" element={<HotelsPage />} />
+                <Route path="/stays" element={<Navigate to="/hotels" replace />} />
+                <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
+
                 {/* Green Rewards & Partner Payment */}
                 <Route
                   path="/green-rewards"
@@ -725,10 +734,16 @@ function AppContent({
                   element={<PartnerPaymentPage />}
                 />
 
-                {/* Trip Planner */}
+                {/* Smart Trip Planner */}
                 <Route
                   path="/trip-planner"
-                  element={<TripPlannerPage tourist={touristProfile} />}
+                  element={
+                    <TripPlannerPage 
+                      tourist={touristProfile} 
+                      geofences={geofences}
+                      onSimulateDeviation={handleSimulateDeviation}
+                    />
+                  }
                 />
 
                 <Route path="*" element={<Navigate to="/" replace />} />

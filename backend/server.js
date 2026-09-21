@@ -29,8 +29,15 @@ app.use('/uploads', express.static(uploadsRoot));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ONLINE',
-    service: 'S.A.F.A.R. - Smart Tourist Safety System Backend',
+    service: 'S.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism Backend',
     framework: 'Smart AI Framework for Assured & Responsible Tourism',
+    problemStatement: {
+      id: '26204',
+      title: 'Student Innovation-A solution/idea that can boost the current situation of the tourism industries including hotels, travel and others.',
+      theme: 'Travel & Tourism',
+      category: 'Software',
+      organization: 'AICTE'
+    },
     ministry: 'Ministry of Tourism, Govt. of India',
     timestamp: new Date().toISOString()
   });
@@ -41,6 +48,11 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/tourists', require('./routes/touristRoutes'));
 app.use('/api/digital-id', require('./routes/digitalIdRoutes'));
 app.use('/api/incidents', require('./routes/incidentRoutes'));
+
+// Direct SOS route compatibility for frontend calls (/api/sos and /api/sos/cancel)
+const { triggerSOS, cancelSOS } = require('./controllers/incidentController');
+app.post('/api/sos', triggerSOS);
+app.post('/api/sos/cancel', cancelSOS);
 app.use('/api/geofences', require('./routes/geoFenceRoutes'));
 app.use('/api/blockchain', require('./routes/blockchainRoutes'));
 app.use('/api/trips', require('./routes/tripRoutes'));

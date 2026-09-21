@@ -133,11 +133,13 @@ export default function Navbar({
             background: 'rgba(120,120,128,0.1)',
           }}>
             {[
+              { to: '/explore', label: '🧭 Explore' },
+              { to: '/trip-planner', label: '✨ Plan Trip' },
               { to: '/tourist-dashboard', label: 'Safety Map' },
-              { to: '/digital-id', label: 'Digital ID' },
-              { to: '/deadman-switch', label: 'Deadman Switch' },
-              { to: '/fares', label: 'Transport Fares' },
+              { to: '/hotels', label: '🏨 Stays' },
+              { to: '/fares', label: 'Fares' },
               { to: '/green-rewards', label: '🌿 Green Rewards', green: true },
+              { to: '/digital-id', label: 'Digital ID' },
               { to: '/emergency-help', label: 'Help & 112' },
             ].map((nl) => {
               const active = location.pathname === nl.to;
@@ -543,6 +545,36 @@ export default function Navbar({
                   </>
                 ) : (
                   <>
+                    <Link
+                      to="/explore"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/explore' ? 'bg-orange-50 text-orange-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Compass className="w-4 h-4 text-orange-500" />
+                      <span>🧭 Explore Destinations</span>
+                    </Link>
+                    <Link
+                      to="/trip-planner"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/trip-planner' ? 'bg-amber-50 text-amber-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Sparkles className="w-4 h-4 text-amber-500" />
+                      <span>✨ Smart Trip Planner</span>
+                    </Link>
+                    <Link
+                      to="/hotels"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/hotels' ? 'bg-emerald-50 text-emerald-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Hotel className="w-4 h-4 text-emerald-500" />
+                      <span>🏨 Hotels & Stays</span>
+                    </Link>
                     <Link
                       to="/tourist-dashboard"
                       onClick={() => setMobileMenuOpen(false)}

@@ -58,7 +58,7 @@ const Orb = ({ color, size, x, y, delay = 0 }) => (
   />
 );
 
-export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
+export default function LandingPage({ onScenarioTrigger, onSwitchUser, currentUser }) {
   const navigate = useNavigate();
   const [executingScenario, setExecutingScenario] = useState(null);
 
@@ -69,7 +69,11 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
         await onScenarioTrigger(scenarioId);
       }
       if (path) {
-        navigate(path);
+        if (currentUser || path === '/blockchain-ledger') {
+          navigate(path);
+        } else {
+          navigate(`/login?role=tourist&redirect=${encodeURIComponent(path)}`);
+        }
       }
     } catch (err) {
       console.error('Scenario execution failed:', err);
@@ -98,7 +102,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               { icon: '🔒', text: 'SHA-256 DIGITAL ID: TAMPER-PROOF LEDGER', color: '#f97316' },
               { icon: '🚨', text: 'POLICE CAD: 112 ERSS LINKED', color: '#ef4444' },
               { icon: '🛰️', text: 'SATELLITE CORRIDORS: LIVE TRACKING ACTIVE', color: '#3b82f6' },
-              { icon: '🇮🇳', text: 'SIH 2026 — MINISTRY OF TOURISM, GOVT OF INDIA', color: '#f97316' },
+              { icon: '🇮🇳', text: 'NATIONAL TOURISM SAFETY COMMAND — MINISTRY OF TOURISM, GOVT OF INDIA', color: '#f97316' },
             ].map((item, i) => (
               <span key={i} className="flex items-center space-x-2" style={{ color: item.color }}>
                 <span>{item.icon}</span>
@@ -162,7 +166,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               <span className="text-sm sm:text-base">🇮🇳</span>
               <span className="tracking-wider sm:tracking-widest">GOVERNMENT OF INDIA • MINISTRY OF TOURISM</span>
               <span className="text-gray-300 hidden sm:inline">•</span>
-              <span style={{ color: '#7c3aed' }}>SMART INDIA HACKATHON 2026</span>
+              <span style={{ color: '#7c3aed' }}>NATIONAL TOURISM SAFETY GRID</span>
             </motion.div>
 
             {/* Title */}
@@ -203,7 +207,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               </motion.p>
             </div>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons - 4 Core Portals */}
             <motion.div variants={fadeInUp} custom={0.5}
               className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 w-full max-w-xs sm:max-w-none px-4 sm:px-0">
               <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
@@ -270,6 +274,31 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               </motion.div>
             </motion.div>
 
+            {/* Quick Discovery Links (Tourism & Green Ecosystem) */}
+            <motion.div variants={fadeInUp} custom={0.58}
+              className="flex flex-wrap items-center justify-center gap-2 pt-1">
+              <Link to="/explore" className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100 flex items-center gap-1.5 transition-all shadow-sm">
+                <span>🧭</span>
+                <span>Explore Sacred Circuits</span>
+              </Link>
+              <Link to="/trip-planner" className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-200 hover:bg-violet-100 flex items-center gap-1.5 transition-all shadow-sm">
+                <span>✨</span>
+                <span>Smart Trip Planner</span>
+              </Link>
+              <Link to="/green-rewards" className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 flex items-center gap-1.5 transition-all shadow-sm">
+                <span>🌿</span>
+                <span>Green Rewards Wallet</span>
+              </Link>
+              <Link to="/hotels" className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 flex items-center gap-1.5 transition-all shadow-sm">
+                <span>🏨</span>
+                <span>Curated Stays</span>
+              </Link>
+              <Link to="/fares" className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 flex items-center gap-1.5 transition-all shadow-sm">
+                <span>🚗</span>
+                <span>Pre-paid Taxi Fares</span>
+              </Link>
+            </motion.div>
+
             {/* KPI Pills */}
             <motion.div variants={fadeInUp} custom={0.65}
               className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 pt-4 max-w-4xl w-full">
@@ -297,6 +326,83 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
               ))}
             </motion.div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* 🏆 S.A.F.A.R. NATIONAL SAFETY MATRIX */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center space-y-2 mb-8">
+          <span className="text-xs font-black uppercase tracking-widest text-orange-600 bg-orange-100 px-3 py-1 rounded-full border border-orange-300">
+            S.A.F.A.R. NATIONAL TOURISM ARCHITECTURE
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-black text-gray-900">
+            Unified Ecosystem for Hospitality, Transit & Citizen Safety
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 max-w-2xl mx-auto">
+            Ministry of Tourism & MeitY national security framework delivering next-generation digital protection across Indian tourist corridors.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Pillar 1: HOTELS */}
+          <div className="p-6 rounded-3xl bg-white/95 border-2 border-blue-200 shadow-xl space-y-4 hover:border-blue-500 transition-all flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl">
+                🏨
+              </div>
+              <h3 className="text-lg font-black text-gray-900">Hotels & Hospitality Hub</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Monetizing 09 AM–04 PM empty rooms via <strong>Smart Micro-Stays (2–4 hrs)</strong> at 70% lower rates + <strong>Digital Cloakroom Baggage Mesh</strong> for bag-free city tourism.
+              </p>
+              <div className="text-[11px] font-bold text-blue-700 bg-blue-50 p-2 rounded-xl border border-blue-200">
+                ✓ AI Crowd Spillover Flash Stays (50% Off)
+              </div>
+            </div>
+            <Link to="/micro-stays" className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
+              <span>Explore Micro-Stays & Lockers</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Pillar 2: TRAVEL & SAFETY */}
+          <div className="p-6 rounded-3xl bg-white/95 border-2 border-emerald-200 shadow-xl space-y-4 hover:border-emerald-500 transition-all flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xl">
+                🚗
+              </div>
+              <h3 className="text-lg font-black text-gray-900">Travel & Sugamya Mobility</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                <strong>Anti-Scam GPS Fare Locking</strong> (MV Act Sec 178) + <strong>Sugamya Mode (♿)</strong> for senior citizens & disabled tourists + <strong>Silent Duress Decoy Keypad</strong>.
+              </p>
+              <div className="text-[11px] font-bold text-emerald-700 bg-emerald-50 p-2 rounded-xl border border-emerald-200">
+                ✓ Offline BLE Ghost-Mesh (0-Signal Rescue)
+              </div>
+            </div>
+            <Link to="/tourist-dashboard" className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
+              <span>Open Live Safety Radar & Map</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Pillar 3: OTHERS (Artisans & Local Vendors) */}
+          <div className="p-6 rounded-3xl bg-white/95 border-2 border-purple-200 shadow-xl space-y-4 hover:border-purple-500 transition-all flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xl">
+                🏺
+              </div>
+              <h3 className="text-lg font-black text-gray-900">Others & GI Master Artisans</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Eliminating tout commissions. <strong>Blockchain SHA-256 Provenance Verification</strong> for genuine Pashmina, Banarasi Silk & Brass + <strong>95% Direct Artisan UPI Payout</strong>.
+              </p>
+              <div className="text-[11px] font-bold text-purple-700 bg-purple-50 p-2 rounded-xl border border-purple-200">
+                ✓ Vocal for Local Fair-Trade Escrow
+              </div>
+            </div>
+            <Link to="/artisans" className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1">
+              <span>Verify GI Crafts & Pay Direct</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -350,7 +456,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
         </motion.div>
       </section>
 
-      {/* 🎯 SIH EVALUATOR GUIDED SCENARIO SECTION (INLINE BELOW INDIAN MAP) */}
+      {/* 🎯 S.A.F.A.R. REAL-TIME SAFETY PROTOCOLS & TELEMETRY SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -372,14 +478,14 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                 style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)' }}>
                 <Sparkles className="w-4 h-4 text-orange-600 animate-spin-slow" />
                 <span className="text-[11px] font-black text-orange-600 uppercase tracking-widest">
-                  SIH 2026 EVALUATOR LAB • GUIDED TESTBED
+                  S.A.F.A.R. NATIONAL SAFETY MATRIX • PROTOCOLS & RESPONSE TELEMETRY
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-                SIH Evaluator Guided Scenarios & Live Triggers
+                Real-Time Geo-Safety Corridors & Incident Protocols
               </h2>
               <p className="text-sm text-gray-600 max-w-2xl font-medium">
-                Execute real-time edge cases with 1-click: trigger buffer warnings, geo-fence breaches, automated 112 ERSS police patrol dispatch, and cryptographic blockchain pass validation.
+                Unified intelligence framework: high-resolution buffer containment, geo-fence breach protocols, automated 112 ERSS police patrol dispatch, and cryptographic tamper-proof pass validation.
               </p>
             </div>
 
@@ -390,11 +496,11 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                   if (onSwitchUser) onSwitchUser('TOURIST');
                   navigate('/tourist-dashboard');
                 }}
-                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 style={{
                   background: 'rgba(16,185,129,0.12)',
-                  border: '1.5px solid rgba(16,185,129,0.4)',
-                  color: '#047857'
+                  border: '1.5px solid rgba(16,185,129,0.3)',
+                  color: '#059669',
                 }}
               >
                 <UserCheck className="w-4 h-4" />
@@ -406,11 +512,11 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                   if (onSwitchUser) onSwitchUser('AUTHORITY');
                   navigate('/authority-dashboard');
                 }}
-                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 style={{
                   background: 'rgba(139,92,246,0.12)',
-                  border: '1.5px solid rgba(139,92,246,0.4)',
-                  color: '#6d28d9'
+                  border: '1.5px solid rgba(139,92,246,0.3)',
+                  color: '#7c3aed',
                 }}
               >
                 <ShieldCheck className="w-4 h-4" />
@@ -422,11 +528,11 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
                   if (onSwitchUser) onSwitchUser('GUIDE');
                   navigate('/guide-dashboard');
                 }}
-                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+                className="px-4 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-sm hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 style={{
                   background: 'rgba(245,158,11,0.12)',
-                  border: '1.5px solid rgba(245,158,11,0.4)',
-                  color: '#b45309'
+                  border: '1.5px solid rgba(245,158,11,0.3)',
+                  color: '#d97706',
                 }}
               >
                 <Award className="w-4 h-4 text-amber-600" />
@@ -727,7 +833,7 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser }) {
           © 2026 S.A.F.A.R. | Smart AI Framework for Assured & Responsible Tourism
         </p>
         <p className="text-xs text-gray-400">
-          Developed for Smart India Hackathon 2026 | Ministry of Tourism, Govt. of India
+          National Tourism Safety Architecture | Ministry of Tourism & MeitY, Govt. of India
         </p>
         {/* Tricolor footer bar */}
         <div className="h-1 max-w-xs mx-auto rounded-full"
