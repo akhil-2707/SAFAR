@@ -92,15 +92,6 @@ const CITY_TARIFFS = {
   }
 };
 
-  const getInitialCityKey = (t) => {
-    const dest = (t?.destination || t?.currentLocation?.address || '').toUpperCase();
-    if (dest.includes('AGRA') || dest.includes('TAJ')) return 'AGRA';
-    if (dest.includes('JAMMU') || dest.includes('KATRA') || dest.includes('VAISHNO')) return 'JAMMU';
-    if (dest.includes('DELHI')) return 'DELHI';
-    if (dest.includes('GUWAHATI') || dest.includes('ASSAM') || dest.includes('KAMRUP')) return 'GUWAHATI';
-    return 'AYODHYA';
-  };
-
 export default function FaresPage({ tourist }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') === 'local' ? 'LOCAL' : 'COMPARE';
@@ -120,18 +111,12 @@ export default function FaresPage({ tourist }) {
     }
   }, [searchParams]);
 
-  const [selectedCityKey, setSelectedCityKey] = useState(getInitialCityKey(tourist));
+  const [selectedCityKey, setSelectedCityKey] = useState('AYODHYA');
   const [vehicleType, setVehicleType] = useState('ERICKSHAW'); // ERICKSHAW, AUTO, BIKE, CAB
   const [distanceKm, setDistanceKm] = useState(6.5);
   const [isNight, setIsNight] = useState(false);
   const [luggageCount, setLuggageCount] = useState(1);
   const [showOverchargeTips, setShowOverchargeTips] = useState(false);
-
-  useEffect(() => {
-    if (tourist) {
-      setSelectedCityKey(getInitialCityKey(tourist));
-    }
-  }, [tourist?.touristId, tourist?.destination]);
 
   const city = CITY_TARIFFS[selectedCityKey] || CITY_TARIFFS.AYODHYA;
 
@@ -224,7 +209,9 @@ export default function FaresPage({ tourist }) {
         >
           <Zap className={`w-3.5 h-3.5 ${activeTab === 'COMPARE' ? 'text-orange-500' : 'text-slate-400'}`} />
           <span>⚡ Ride-Hailing Comparison</span>
-
+          <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-amber-100 text-amber-900 font-extrabold hidden sm:inline">
+            Prototype
+          </span>
         </button>
 
         <button
@@ -245,7 +232,7 @@ export default function FaresPage({ tourist }) {
         <RideCompareView tourist={tourist} />
       )}
 
-      {/* TAB 2: LOCAL TRANSPORT FARE BENCHMARK & METER RATE CARD */}
+      {/* TAB 2: LOCAL TRANSPORT FARE BENCHMARK & METER RATE CARD (EXISTING) */}
       {activeTab === 'LOCAL' && (
         <>
           {/* Main Fare Calculator Glassmorphic Card */}
@@ -342,7 +329,7 @@ export default function FaresPage({ tourist }) {
               <Moon className={`w-4 h-4 ${isNight ? 'text-indigo-600' : 'text-gray-400'}`} />
               <div>
                 <span className="text-xs font-bold block text-gray-800">Night Tariff (11 PM - 5 AM)</span>
-                <span className="text-[10px] text-gray-500">+{city.nightSurchargePercent}% Govt Approved Premium</span>
+                <span className="text-[10px] text-gray-500">+{city.nightSurchargePercent}% Benchmark Night Tariff</span>
               </div>
             </div>
             <input
@@ -450,10 +437,9 @@ export default function FaresPage({ tourist }) {
           </div>
           <a
             href="tel:112"
-            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center space-x-1.5 transition-all"
+            className="inline-flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
           >
-            <PhoneCall className="w-3.5 h-3.5" />
-            <span>Call 112 Control Room</span>
+            <span>Dial 112 / Tourist Police Helpdesk</span>
           </a>
         </div>
       </div>

@@ -48,7 +48,7 @@ export default function VendorMarketplacePage() {
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-xs font-black uppercase tracking-widest text-cyan-800">
-                Blockchain-Verified Operator Registry
+                Prototype Verified Operator Registry
               </span>
               <span className="bg-cyan-50 text-cyan-800 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-cyan-200 shadow-sm">
                 SHA-256 LEDGER AUTHENTICATED
@@ -58,7 +58,7 @@ export default function VendorMarketplacePage() {
           </div>
         </div>
         <p className="text-xs text-gray-600 max-w-3xl leading-relaxed">
-          Verify authentic local tour guides, taxis, and homestays registered on the government-backed blockchain. Scanning vendor QR hashes eliminates fake operators and ensures complaint history tracking.
+          Verify authentic local tour guides, verified taxis, and curated homestays registered on the S.A.F.A.R. prototype trust ledger. Scanning vendor QR hashes validates operator credentials and ensures verified review tracking.
         </p>
       </div>
 
@@ -96,7 +96,7 @@ export default function VendorMarketplacePage() {
 
               <div className="bg-gray-50 p-3 rounded-2xl border border-gray-200 space-y-1.5 text-xs shadow-sm">
                 <div className="flex justify-between text-gray-500">
-                  <span>Govt License:</span>
+                  <span>Certified License:</span>
                   <span className="font-mono text-gray-900 font-bold">{vendor.licenseNo}</span>
                 </div>
                 <div className="flex justify-between text-gray-500">

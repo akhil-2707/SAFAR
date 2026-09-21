@@ -1,7 +1,7 @@
 {
-  "name": "safetour-ne-backend",
+  "name": "safar-backend",
   "version": "1.0.0",
-  "description": "Backend API for SafeTour NE - Smart Tourist Safety System",
+  "description": "Backend API for S.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism (SIH 2026 PS ID: 26204)",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

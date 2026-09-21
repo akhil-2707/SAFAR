@@ -2,8 +2,8 @@
  * Rapido Provider Adapter
  * 
  * Note: Rapido does not offer a self-serve public developer API for ride pricing.
- * In compliance with national consumer transparency standards, this adapter operates in
- * CALIBRATED_ESTIMATE mode using calibrated regional tariff models, and supplies
+ * In compliance with SIH truthfulness standards, this adapter operates in
+ * PROTOTYPE_ESTIMATE mode using calibrated regional tariff models, and supplies
  * official web intent links for booking handoff.
  */
 

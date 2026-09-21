@@ -40,7 +40,7 @@ export default function DemoControlPanel({ onTriggerScenario, onSwitchUser }) {
             <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping shrink-0" />
             <Sparkles className="w-4 h-4 text-orange-500 shrink-0" />
             <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-gray-900 truncate">
-              Safety Simulation Panel
+              SIH Evaluator Demo Panel
             </span>
           </div>
           <button className="text-gray-400 hover:text-gray-800 p-1 rounded-lg hover:bg-gray-100 transition-colors shrink-0">

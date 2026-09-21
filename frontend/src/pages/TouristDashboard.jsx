@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import MapView from '../components/MapView';
 import MiniMap from '../components/MiniMap';
@@ -15,14 +14,14 @@ import LocalFareEstimator from '../components/LocalFareEstimator';
 import TouristGuideCard from '../components/TouristGuideCard';
 import TouristGuidePromptModal from '../components/TouristGuidePromptModal';
 import RedZonePreEntryBanner from '../components/RedZonePreEntryBanner';
-import SilentDuressModal from '../components/SilentDuressModal';
-import DemoPitchSwitcher from '../components/DemoPitchSwitcher';
 import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
   PhoneCall, Zap, WifiOff, Sparkles, ShieldAlert, Activity, Wifi, Shield,
-  Phone, AlertCircle, Clock, HeartHandshake, Percent, Award, ArrowRight
+  Phone, AlertCircle, Clock, HeartHandshake, ArrowRight,
+  Calendar, Building2, Luggage, CheckCircle2, BedDouble
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
@@ -124,6 +123,52 @@ function getDestinationCoords(tourist) {
   };
 }
 
+function getTouristCircuitInfo(tourist) {
+  const dest = (tourist?.destination || '').toLowerCase();
+  if (dest.includes('ayodhya') || tourist?.touristId === 'TID-1035') {
+    return {
+      circuit: 'Ayodhya Ram Janmabhoomi Heritage Circuit',
+      state: 'Uttar Pradesh',
+      duration: '3 Days / 2 Nights',
+      recommendedStay: 'Sita Rasoi Pilgrim Niwas',
+      stayRate: '₹1,400/night',
+      avgDailyBudget: '₹2,100',
+      transport: 'E-Rickshaw & Pilgrimage Shuttles'
+    };
+  }
+  if (dest.includes('jammu') || dest.includes('katra') || tourist?.touristId === 'TID-1036') {
+    return {
+      circuit: 'Vaishno Devi Bhawan Pilgrim Corridor',
+      state: 'Jammu & Kashmir',
+      duration: '3 Days / 2 Nights',
+      recommendedStay: 'Mata Vaishno Devi Shrine Board Yatri Niwas',
+      stayRate: '₹1,100/night',
+      avgDailyBudget: '₹2,400',
+      transport: 'Electric Auto & Ban Ganga Battery Carts'
+    };
+  }
+  if (dest.includes('agra') || tourist?.touristId === 'TID-1039') {
+    return {
+      circuit: 'Taj Mahal & Mughal Heritage Corridor',
+      state: 'Uttar Pradesh',
+      duration: '2 Days / 1 Night',
+      recommendedStay: 'Fatehpur Sikri Heritage Haveli',
+      stayRate: '₹2,200/night',
+      avgDailyBudget: '₹3,200',
+      transport: 'CNG Auto & ASI Heritage Shuttles'
+    };
+  }
+  return {
+    circuit: tourist?.destination || 'Northeast Eco-Heritage Corridor',
+    state: 'Assam & Meghalaya',
+    duration: '4 Days / 3 Nights',
+    recommendedStay: 'Brahmaputra Riverside Eco Stay',
+    stayRate: '₹1,800/night',
+    avgDailyBudget: '₹2,800',
+    transport: 'Curated Taxis & Local Ferries'
+  };
+}
+
 export default function TouristDashboard({
   tourist,
   allTourists = [],
@@ -136,22 +181,11 @@ export default function TouristDashboard({
   onSimulateZone,
   onSimulateDeviation,
   onTriggerSos,
-  onCancelSos,
-  sugamyaMode = false,
-  onToggleSugamya = null
+  onCancelSos
 }) {
   const { t } = useLanguage();
-  const [currentTourist, setCurrentTourist] = useState(tourist || (allTourists && allTourists.length > 0 ? allTourists[0] : null));
+  const [currentTourist, setCurrentTourist] = useState(tourist);
   const [loading, setLoading] = useState(false);
-
-  // Feature 2 & 4 & 5 Local state toggles
-  const [localSugamya, setLocalSugamya] = useState(false);
-  const [spilloverActive, setSpilloverActive] = useState(false);
-  const [showDuressModal, setShowDuressModal] = useState(false);
-  const [showSahayakModal, setShowSahayakModal] = useState(false);
-  const [guideRefreshKey, setGuideRefreshKey] = useState(0);
-
-  const isSugamyaActive = sugamyaMode || localSugamya;
 
   // Distinguish between predefined Demo tourists and newly registered / real tourists
   const isDemoTourist = Boolean(
@@ -191,6 +225,7 @@ export default function TouristDashboard({
 
     return () => clearTimeout(timer);
   }, [currentTourist?.touristId]);
+
   const wanderIntervalRef = React.useRef(null);
   const wanderStepRef = React.useRef(0);
 
@@ -198,9 +233,8 @@ export default function TouristDashboard({
 
   // If real registered user, auto-prompt and activate live GPS tracking
   useEffect(() => {
-    const resolvedTourist = tourist || (allTourists && allTourists.length > 0 ? allTourists[0] : null);
-    setCurrentTourist(resolvedTourist);
-    if (resolvedTourist && (!resolvedTourist.isDemo || resolvedTourist.isRealUser) && !isDemoTourist) {
+    setCurrentTourist(tourist);
+    if (tourist && (!tourist.isDemo || tourist.isRealUser) && !isDemoTourist) {
       setUseLiveGpsMode(true);
       startTracking();
     } else if (isDemoTourist && !useLiveGpsMode) {
@@ -211,7 +245,7 @@ export default function TouristDashboard({
       clearInterval(wanderIntervalRef.current);
       setIsAutoWandering(false);
     }
-  }, [tourist?.touristId, isRealUser, isDemoTourist, allTourists]);
+  }, [tourist?.touristId, isRealUser, isDemoTourist]);
 
   // Live generative-AI explanation layer. Deterministic risk engine remains the source of truth; AI explains signals.
   useEffect(() => {
@@ -426,6 +460,7 @@ export default function TouristDashboard({
   } : null);
 
   const destinationData = getDestinationCoords(currentTourist);
+  const circuitInfo = getTouristCircuitInfo(currentTourist);
 
   return (
     <motion.div
@@ -461,7 +496,7 @@ export default function TouristDashboard({
           <div className="space-y-1 sm:space-y-1.5 flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <span className="font-bold text-lg sm:text-2xl tracking-tight truncate max-w-[200px] sm:max-w-none" style={{ color: '#1C1C1E', letterSpacing: '-0.025em' }}>
-                {currentTourist?.fullName || 'Tourist Safety Dashboard'}
+                {currentTourist?.fullName ? `${currentTourist.fullName}'s Journey` : 'My Travel & Safety Hub'}
               </span>
               {currentTourist?.touristId && (
                 <span
@@ -486,40 +521,42 @@ export default function TouristDashboard({
               </motion.span>
             </div>
 
-            {/* Authenticated Tourist Circuit & Verification Badge */}
+            {/* Demo Location Switcher */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Verified e-KYC
-              </span>
-              <span className="text-[11px] font-medium text-slate-500">
-                Circuit: <strong className="text-slate-800">{currentTourist?.destination?.split(' ')[0] || currentTourist?.city || 'Safe National Corridor'}</strong>
-              </span>
+              <span className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'rgba(60,60,67,0.5)' }}>Location:</span>
+              <select
+                value={currentTourist?.touristId || 'TID-1035'}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === 'TID-REAL') {
+                    if (isAutoWandering) { clearInterval(wanderIntervalRef.current); setIsAutoWandering(false); }
+                    setUseLiveGpsMode(true); startTracking();
+                  } else if (useLiveGpsMode) { setUseLiveGpsMode(false); stopTracking(); }
+                  if (onSelectTourist) onSelectTourist(val);
+                }}
+                className="text-[11px] sm:text-xs font-medium px-2 py-1 rounded-xl cursor-pointer focus:outline-none max-w-full"
+                style={{
+                  background: 'rgba(120,120,128,0.1)',
+                  border: '0.5px solid rgba(60,60,67,0.12)',
+                  color: '#1C1C1E',
+                }}
+              >
+                <option value="TID-1035">🛕 Ayodhya — Ram Janmabhoomi</option>
+                <option value="TID-1036">🏔️ Jammu — Vaishno Devi</option>
+                <option value="TID-1039">🕌 Taj Mahal — Agra</option>
+                <option value="TID-REAL">📍 Real-Time — Live GPS</option>
+              </select>
             </div>
 
             <p className="text-[11px] sm:text-xs flex items-center space-x-1" style={{ color: 'rgba(60,60,67,0.55)' }}>
               <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" style={{ color: '#FF9F0A' }} />
-              <span className="truncate max-w-[250px] sm:max-w-none">{currentTourist?.currentLocation?.address || 'Safe Tourism Hub'}</span>
+              <span className="truncate max-w-[250px] sm:max-w-none">{circuitInfo.circuit} · {currentTourist?.currentLocation?.address || circuitInfo.state}</span>
             </p>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 relative z-10 w-full md:w-auto justify-start md:justify-end">
-          {/* Discrete Demo Pitch Switcher for Jury Presentation */}
-          <DemoPitchSwitcher
-            currentTouristId={currentTourist?.touristId}
-            allTourists={allTourists}
-            onSelectTourist={(tid) => {
-              if (onSelectTourist) onSelectTourist(tid);
-            }}
-            onActivateLiveGps={() => {
-              if (isAutoWandering) { clearInterval(wanderIntervalRef.current); setIsAutoWandering(false); }
-              setUseLiveGpsMode(true);
-              startTracking();
-            }}
-          />
-
           <motion.button
             whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }} transition={SPRING}
             onClick={handleToggleAutoWander}
@@ -638,416 +675,365 @@ export default function TouristDashboard({
         </motion.div>
       )}
 
-      {/* Main Grid: Left Column (2 cols) & Right Column (1 col) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        
-        {/* Left Column (2 Cols): SOS + Live Map + Telemetry MiniMap + Evaluator Simulator */}
-        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-          
-          {/* Prominent Emergency SOS Trigger Button */}
-          <motion.div variants={itemVariants}>
-            <SOSButtonModal
-              tourist={currentTourist}
-              activeSosIncident={activeSosIncident}
-              onTriggerSos={onTriggerSos}
-              onCancelSos={onCancelSos}
-              nearbyServices={emergencyServices}
-            />
-          </motion.div>
+      {/* ── SECTION 1: My Current Journey & Tourism Hub (DISCOVER • PLAN • CONNECT) ── */}
+      <motion.div variants={itemVariants} className="space-y-4">
+        {/* Active Circuit Hero Overview Card */}
+        <div
+          className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden text-white"
+          style={{
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+          }}
+        >
+          {/* Subtle gradient highlights */}
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full pointer-events-none opacity-20"
+               style={{ background: 'radial-gradient(circle, #f97316 0%, transparent 70%)', filter: 'blur(30px)' }} />
+          <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full pointer-events-none opacity-20"
+               style={{ background: 'radial-gradient(circle, #38bdf8 0%, transparent 70%)', filter: 'blur(30px)' }} />
 
-          {/* Interactive Leaflet Map */}
-          <motion.div
-            variants={itemVariants}
-            className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 space-y-3 apple-card"
-          >
-            <div
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 pb-2.5 sm:pb-3"
-              style={{ borderBottom: '0.5px solid rgba(60,60,67,0.08)' }}
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+            <div className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 tracking-wider">
+                  ACTIVE ITINERARY
+                </span>
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  {circuitInfo.state}
+                </span>
+                <span className="text-[10px] font-medium text-slate-400">
+                  {circuitInfo.duration}
+                </span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                <Luggage className="w-5 h-5 text-orange-400 shrink-0" />
+                <span>{circuitInfo.circuit}</span>
+              </h1>
+              <p className="text-xs text-slate-300 max-w-xl">
+                AI itinerary planned with trusted local transit, certified heritage guides, and curated pilgrim stays.
+              </p>
+            </div>
+
+            {/* Quick action buttons for Discover -> Plan -> Stays */}
+            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              <Link
+                to="/trip-planner"
+                className="flex-1 md:flex-none px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 transition-all shadow-md flex items-center justify-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>AI Trip Planner</span>
+              </Link>
+              <Link
+                to="/hotels"
+                className="flex-1 md:flex-none px-3.5 py-2 rounded-xl text-xs font-bold text-slate-200 bg-white/10 hover:bg-white/20 border border-white/10 transition-all flex items-center justify-center gap-1.5"
+              >
+                <Building2 className="w-3.5 h-3.5 text-sky-400" />
+                <span>Stays & Niwas</span>
+              </Link>
+              <Link
+                to="/explore"
+                className="flex-1 md:flex-none px-3 py-2 rounded-xl text-xs font-bold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 transition-all flex items-center justify-center gap-1.5"
+              >
+                <Compass className="w-3.5 h-3.5" />
+                <span>Explore Circuits</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Metrics Bar */}
+          <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 text-xs">
+            <div className="bg-white/5 rounded-xl p-2.5 border border-white/5">
+              <span className="text-[10px] text-slate-400 block uppercase font-bold">Est. Daily Budget</span>
+              <span className="text-sm font-black text-amber-300 font-mono">{circuitInfo.avgDailyBudget}</span>
+            </div>
+            <div className="bg-white/5 rounded-xl p-2.5 border border-white/5">
+              <span className="text-[10px] text-slate-400 block uppercase font-bold">Recommended Stay</span>
+              <span className="text-xs font-bold text-white truncate block">{circuitInfo.recommendedStay}</span>
+              <span className="text-[10px] text-emerald-400 font-mono">{circuitInfo.stayRate}</span>
+            </div>
+            <div className="bg-white/5 rounded-xl p-2.5 border border-white/5">
+              <span className="text-[10px] text-slate-400 block uppercase font-bold">Local Transit</span>
+              <span className="text-xs font-medium text-slate-200 truncate block">{circuitInfo.transport}</span>
+            </div>
+            <div className="bg-white/5 rounded-xl p-2.5 border border-white/5">
+              <span className="text-[10px] text-slate-400 block uppercase font-bold">Safety Envelope</span>
+              <span className="text-xs font-bold text-emerald-300 flex items-center gap-1 mt-0.5">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Active Geofence Protection</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tourism Modules Grid: Transit & Guides */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Multi-Provider Ride Comparison Quick Entry */}
+          <div className="rounded-2xl p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-md border border-slate-700/80 flex flex-col justify-between space-y-3">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                  TRANSIT AGGREGATOR
+                </span>
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                  PROTOTYPE
+                </span>
+              </div>
+              <h3 className="text-sm font-black tracking-tight flex items-center space-x-2 text-white">
+                <Zap className="w-4 h-4 text-orange-400 shrink-0" />
+                <span>Compare Uber, Ola & Rapido Fares</span>
+              </h3>
+              <p className="text-[11px] text-slate-300 font-medium">
+                Calibrated estimated fares for your circuit with official app deep-link handoff.
+              </p>
+            </div>
+            <Link
+              to="/fares?tab=compare"
+              className="px-4 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md flex items-center justify-center space-x-2 transition-all"
             >
-              <div className="flex items-center space-x-2.5 sm:space-x-3">
-                <div
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(10,132,255,0.1)', border: '0.5px solid rgba(10,132,255,0.2)' }}
-                >
-                  <Navigation className="w-4 h-4" style={{ color: '#0A84FF' }} />
-                </div>
-                <div>
-                  <h2 className="text-sm sm:text-base font-semibold" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>Live Safety Map</h2>
-                  <p className="text-[11px] sm:text-xs" style={{ color: 'rgba(60,60,67,0.5)' }}>Safe Corridors · Danger Zones · Live Tracking</p>
-                </div>
-              </div>
+              <span>Compare Rides Now</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* Certified Local Tourist Guide (Authority Assigned & Rated) */}
+          <TouristGuideCard tourist={currentTourist} refreshTrigger={guideRefreshTrigger} />
+        </div>
+
+        {/* Local Transport Anti-Scam Fare Estimator */}
+        <LocalFareEstimator currentTourist={currentTourist} />
+      </motion.div>
+
+      {/* ── SECTION 2: Travel Safety & Trust Layer (STAY SAFE) ── */}
+      <motion.div variants={itemVariants} className="pt-6 border-t border-slate-200/80 space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-9 h-9 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                <span>Travel Safety & Trust Layer</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase tracking-wider">
+                  {isDangerZoneActive ? 'Hazard Alert Active' : 'Background Sentinel Active'}
+                </span>
+              </h2>
+              <p className="text-xs text-gray-500">Continuous geofence monitoring, automated inactivity checks & direct emergency dispatch.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link to="/sos" className="px-3 py-1.5 rounded-xl text-xs font-bold text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>Emergency Hub</span>
+            </Link>
+            <Link to="/deadman-switch" className="px-3 py-1.5 rounded-xl text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5" />
+              <span>Deadman Sentinel</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Safety Grid: 2 cols Left, 1 col Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Left Column (2 Cols): SOS + Live Map + Deadman Switch + Telemetry MiniMap + Evaluator Simulator + Ghost-Mesh */}
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            {/* Prominent Emergency SOS Trigger Button */}
+            <div>
+              <SOSButtonModal
+                tourist={currentTourist}
+                activeSosIncident={activeSosIncident}
+                onTriggerSos={onTriggerSos}
+                onCancelSos={onCancelSos}
+                nearbyServices={emergencyServices}
+              />
+            </div>
+
+            {/* Interactive Leaflet Map */}
+            <div className="rounded-2xl sm:rounded-3xl p-3 sm:p-4 space-y-3 apple-card">
               <div
-                className="flex items-center space-x-2 text-[11px] sm:text-xs px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl font-mono"
-                style={{ background: 'rgba(120,120,128,0.08)', border: '0.5px solid rgba(60,60,67,0.08)' }}
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 pb-2.5 sm:pb-3"
+                style={{ borderBottom: '0.5px solid rgba(60,60,67,0.08)' }}
               >
-                <span style={{ color: 'rgba(60,60,67,0.6)' }}>Speed: <strong style={{ color: '#34C759' }}>{currentSpeed} km/h</strong></span>
-                <span style={{ color: 'rgba(60,60,67,0.2)' }}>·</span>
-                <strong style={{ color: currentSpeed > 0 ? '#FF9F0A' : 'rgba(60,60,67,0.5)' }}>{currentSpeed > 0 ? 'Moving 🚶' : 'Stationed 📍'}</strong>
-              </div>
-            </div>
-
-            {/* 🌟 INNOVATION ACTION BAR: Sugamya, Spillover, Duress, Micro-Stays, Artisans */}
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap pb-1">
-              {/* Feature 4: Sugamya Toggle */}
-              <button
-                onClick={() => onToggleSugamya ? onToggleSugamya() : setLocalSugamya(!localSugamya)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all shadow-sm ${
-                  isSugamyaActive
-                    ? 'bg-emerald-600 text-white shadow-emerald-500/30 scale-[1.02]'
-                    : 'bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100'
-                }`}
-                title="Toggle Divyangjan & Senior Citizen Wheelchair Accessible Corridors"
-              >
-                <span>♿</span>
-                <span>{isSugamyaActive ? 'Sugamya ON (Zero-Stairs)' : '♿ Sugamya Mode'}</span>
-              </button>
-
-              {/* Feature 2: Hotspot Spillover Simulator */}
-              <button
-                onClick={() => setSpilloverActive(!spilloverActive)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all shadow-sm ${
-                  spilloverActive
-                    ? 'bg-amber-600 text-white animate-pulse shadow-amber-500/30 scale-[1.02]'
-                    : 'bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100'
-                }`}
-                title="Simulate destination overtourism & auto-reroute to satellite homestays"
-              >
-                <Percent className="w-3.5 h-3.5" />
-                <span>{spilloverActive ? '⚡ Hotspot Choked (>85%)' : 'Simulate Hotspot Rush'}</span>
-              </button>
-
-              {/* Feature 5: Silent Duress Mode Keypad */}
-              <button
-                onClick={() => setShowDuressModal(true)}
-                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-red-50 text-red-700 border border-red-300 hover:bg-red-100 transition-all shadow-sm"
-                title="Cinema-level Reverse-PIN Coercion Decoy Test"
-              >
-                <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
-                <span>🚨 Silent Duress Mode</span>
-              </button>
-
-              {/* Feature 1 Quick Link: Micro-Stays */}
-              <Link
-                to="/micro-stays"
-                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-all shadow-sm"
-              >
-                <span>🏨</span>
-                <span>Day Stays & Lockers</span>
-              </Link>
-
-              {/* Feature 3 Quick Link: GI Artisans */}
-              <Link
-                to="/artisans"
-                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 transition-all shadow-sm"
-              >
-                <span>🏺</span>
-                <span>GI Artisans Hub</span>
-              </Link>
-
-              {/* Certified Local Guide Quick Trigger */}
-              <button
-                onClick={() => setShowGuidePromptModal(true)}
-                className="px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 transition-all shadow-sm"
-                title="Request an Authority-verified certified local tourist guide"
-              >
-                <Award className="w-3.5 h-3.5 text-amber-600" />
-                <span>🪪 Request Local Guide</span>
-              </button>
-            </div>
-
-            {/* Sugamya Mode Active Banner with 1-Click Sahayak Cart */}
-            {isSugamyaActive && (
-              <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-emerald-900 shadow-sm">
-                <div className="flex items-center space-x-2">
-                  <span className="text-base">♿</span>
+                <div className="flex items-center space-x-2.5 sm:space-x-3">
+                  <div
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(10,132,255,0.1)', border: '0.5px solid rgba(10,132,255,0.2)' }}
+                  >
+                    <Navigation className="w-4 h-4" style={{ color: '#0A84FF' }} />
+                  </div>
                   <div>
-                    <span className="font-extrabold block">Sugamya Accessibility Corridor Active</span>
-                    <span className="text-[11px] text-emerald-800">
-                      Rerouted through Zero-Stair Ramp Tracks. High-steep stairs bypassed for wheelchair & senior citizens.
-                    </span>
+                    <h2 className="text-sm sm:text-base font-semibold" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>Live Safety Map</h2>
+                    <p className="text-[11px] sm:text-xs" style={{ color: 'rgba(60,60,67,0.5)' }}>Safe Corridors · Danger Zones · Live Tracking</p>
                   </div>
                 </div>
-                <button
-                  onClick={() => setShowSahayakModal(true)}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-700 text-white font-bold text-xs shrink-0 hover:bg-emerald-800 shadow-sm flex items-center space-x-1"
+                <div
+                  className="flex items-center space-x-2 text-[11px] sm:text-xs px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl font-mono"
+                  style={{ background: 'rgba(120,120,128,0.08)', border: '0.5px solid rgba(60,60,67,0.08)' }}
                 >
-                  <span>⚡ Book Battery Cart / Sahayak</span>
-                </button>
-              </div>
-            )}
-
-            {/* Spillover Choke Alert Banner */}
-            {spilloverActive && (
-              <div className="p-3 bg-amber-50 border-2 border-amber-400 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-amber-900 shadow-md">
-                <div className="flex items-center space-x-2">
-                  <span className="text-base animate-bounce">⚠️</span>
-                  <div>
-                    <span className="font-extrabold block">Hotspot Saturation Alert: Carrying Capacity &gt;85%</span>
-                    <span className="text-[11px] text-amber-800">
-                      Central temple/monument queue is 3.5 hrs. Green Corridor activated: Stay at <strong>Saryu Riverfront Rural Retreat</strong> at 56% OFF + VIP Morning Entry Slot!
-                    </span>
-                  </div>
+                  <span style={{ color: 'rgba(60,60,67,0.6)' }}>Speed: <strong style={{ color: '#34C759' }}>{currentSpeed} km/h</strong></span>
+                  <span style={{ color: 'rgba(60,60,67,0.2)' }}>·</span>
+                  <strong style={{ color: currentSpeed > 0 ? '#FF9F0A' : 'rgba(60,60,67,0.5)' }}>{currentSpeed > 0 ? 'Moving 🚶' : 'Stationed 📍'}</strong>
                 </div>
-                <Link
-                  to="/micro-stays"
-                  className="px-3 py-1.5 rounded-xl bg-amber-600 text-white font-bold text-xs shrink-0 hover:bg-amber-700 shadow-sm flex items-center space-x-1"
-                >
-                  <Award className="w-3.5 h-3.5" />
-                  <span>Claim 56% Flash Stay</span>
-                </Link>
               </div>
-            )}
 
-            <MapView
-              destination={destinationData}
-              tourists={allTourists && allTourists.length > 0 ? allTourists : (currentTourist ? [currentTourist] : [])}
-              geofences={geofences}
-              selectedTourist={currentTourist}
-              emergencyServices={emergencyServices}
-              height="h-[340px] xs:h-[380px] sm:h-[460px] md:h-[500px]"
-              showLiveUserLocation={isRealUser || useLiveGpsMode}
-              sugamyaMode={isSugamyaActive}
-              spilloverActive={spilloverActive}
-              onAcceptSpillover={() => alert('✓ Satellite Flash Stay Claimed! Saryu Riverfront Retreat reserved with Next-Day VIP Sunrise pass.')}
-            />
-          </motion.div>
-
-          {/* Silent Duress Modal (Feature 5) */}
-          <SilentDuressModal
-            isOpen={showDuressModal}
-            onClose={() => setShowDuressModal(false)}
-            tourist={currentTourist}
-          />
-
-          {/* Sahayak Battery Cart Booking Confirmation Modal */}
-          {showSahayakModal && (
-            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 border-2 border-emerald-400">
-                <div className="flex items-center space-x-3 text-emerald-800 font-black text-lg">
-                  <span className="text-2xl">♿</span>
-                  <span>Sugamya Sahayak & Cart Dispatched!</span>
-                </div>
-                <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs font-mono space-y-2 text-gray-800">
-                  <div>Pickup Station: <strong>Ayodhya Cantt Station Gate #1 Accessible Ramp</strong></div>
-                  <div>Assigned Sahayak: <strong>Ramesh Kumar (Volunteer ID: #SAH-412)</strong></div>
-                  <div>Equipment: <strong>Battery-Operated Low-Floor Cart</strong></div>
-                  <div>ETA: <strong className="text-emerald-700">4 Minutes</strong></div>
-                  <div className="text-emerald-800 font-bold">Fare: FREE Govt Supported Divyang Service</div>
-                </div>
-                <button
-                  onClick={() => setShowSahayakModal(false)}
-                  className="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md"
-                >
-                  Done & Close Dispatch
-                </button>
-              </div>
+              <MapView
+                destination={destinationData}
+                tourists={allTourists && allTourists.length > 0 ? allTourists : (currentTourist ? [currentTourist] : [])}
+                geofences={geofences}
+                selectedTourist={currentTourist}
+                emergencyServices={emergencyServices}
+                height="h-[340px] xs:h-[380px] sm:h-[460px] md:h-[500px]"
+                showLiveUserLocation={isRealUser || useLiveGpsMode}
+              />
             </div>
-          )}
 
-          {/* ⏳ Automated Deadman's Switch (2h Timer, 15m Check-in, Auto-Arm on Red Zones) */}
-          <motion.div variants={itemVariants}>
+            {/* Automated Deadman's Switch */}
             <DeadmanSwitch
               tourist={currentTourist}
               isDangerZone={isDangerZoneActive}
               isLowNetwork={false}
               onTriggerSos={onTriggerSos}
             />
-          </motion.div>
 
-          {/* 🪪 Certified Local Tourist Guide (Authority Assigned & Rated) */}
-          <motion.div variants={itemVariants}>
-            <TouristGuideCard key={guideRefreshKey} tourist={currentTourist} refreshTrigger={guideRefreshTrigger} />
-          </motion.div>
-
-          {/* ⚡ Multi-Provider Ride Comparison Quick Entry (Uber, Ola, Rapido) */}
-          <motion.div variants={itemVariants}>
-            <div className="rounded-3xl p-4 sm:p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border border-slate-700/80">
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
-                    TRANSIT AGGREGATOR
-                  </span>
-                </div>
-                <h3 className="text-sm sm:text-base font-black tracking-tight flex items-center space-x-2">
-                  <Zap className="w-4 h-4 text-orange-400 shrink-0" />
-                  <span>Compare Uber, Ola & Rapido Fares</span>
-                </h3>
-                <p className="text-[11px] sm:text-xs text-slate-300 font-medium max-w-xl">
-                  Compare calibrated ride-hailing estimates for your route with official deep-link handoff.
-                </p>
+            {/* Live Telemetry Inspector */}
+            <div className="apple-card p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold flex items-center space-x-2" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
+                  <Radio className="w-4 h-4 animate-pulse" style={{ color: '#34C759' }} />
+                  <span>Live Telemetry</span>
+                </span>
+                <span className="text-[10px] font-mono" style={{ color: 'rgba(60,60,67,0.45)' }}>
+                  {currentTourist?.currentLocation?.lastUpdated ? new Date(currentTourist.currentLocation.lastUpdated).toLocaleTimeString() : 'Just now'}
+                </span>
               </div>
 
-              <Link
-                to="/fares?tab=compare"
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md flex items-center justify-center space-x-2 shrink-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Compare Rides Now</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </motion.div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                <MiniMap
+                  center={currentTourist?.currentLocation || { lat: 26.1445, lng: 91.7362 }}
+                  geofences={geofences}
+                  title="GPS Location"
+                  height="140px"
+                />
 
-          {/* 🛺 Local Transport Budget & Anti-Scam Auto/Cab Fare Guide */}
-          <motion.div variants={itemVariants}>
-            <LocalFareEstimator currentTourist={currentTourist} />
-          </motion.div>
-
-          {/* Live Telemetry Inspector */}
-          <motion.div
-            variants={itemVariants}
-            className="apple-card p-4 space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold flex items-center space-x-2" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
-                <Radio className="w-4 h-4 animate-pulse" style={{ color: '#34C759' }} />
-                <span>Live Telemetry</span>
-              </span>
-              <span className="text-[10px] font-mono" style={{ color: 'rgba(60,60,67,0.45)' }}>
-                {currentTourist?.currentLocation?.lastUpdated ? new Date(currentTourist.currentLocation.lastUpdated).toLocaleTimeString() : 'Just now'}
-              </span>
+                <div className="space-y-1.5 text-xs p-3 rounded-2xl" style={{ background: 'rgba(120,120,128,0.06)', border: '0.5px solid rgba(60,60,67,0.08)' }}>
+                  {[
+                    { label: 'Sensor Mode', value: isLiveGpsActive ? 'LIVE GPS 🟢' : 'DEMO 🟡', color: isLiveGpsActive ? '#34C759' : '#FF9F0A' },
+                    { label: 'Speed', value: `${currentTourist?.currentLocation?.speedKmH || 0} km/h`, color: '#1C1C1E' },
+                    { label: 'Movement', value: (currentTourist?.currentLocation?.speedKmH || 0) > 0 ? 'Moving 🚶' : 'Stationed 📍', color: '#1C1C1E' },
+                    { label: 'GPS Accuracy', value: `± ${currentTourist?.currentLocation?.accuracyMeters || (isLiveGpsActive ? 8 : 15)}m`, color: '#1C1C1E' },
+                  ].map(({ label, value, color }) => (
+                    <div key={label} className="flex items-center justify-between py-0.5">
+                      <span style={{ color: 'rgba(60,60,67,0.55)' }}>{label}</span>
+                      <span className="font-semibold font-mono" style={{ color }}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-              <MiniMap
-                center={currentTourist?.currentLocation || { lat: 26.1445, lng: 91.7362 }}
-                geofences={geofences}
-                title="GPS Location"
-                height="140px"
-              />
-
-              <div className="space-y-1.5 text-xs p-3 rounded-2xl" style={{ background: 'rgba(120,120,128,0.06)', border: '0.5px solid rgba(60,60,67,0.08)' }}>
+            {/* SIH Evaluator Zone Simulator */}
+            <div className="apple-card p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold flex items-center gap-2" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
+                  <Sparkles className="w-4 h-4" style={{ color: '#FF9F0A' }} />
+                  <span>Zone Simulator</span>
+                </span>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: 'rgba(255,159,10,0.1)', color: '#CC7A00', border: '0.5px solid rgba(255,159,10,0.2)' }}>
+                  SIH Evaluator
+                </span>
+              </div>
+              <p className="text-xs" style={{ color: 'rgba(60,60,67,0.5)' }}>Test geofence proximity alerts and zone breaches:</p>
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 {[
-                  { label: 'Sensor Mode', value: isLiveGpsActive ? 'LIVE GPS 🟢' : 'DEMO 🟡', color: isLiveGpsActive ? '#34C759' : '#FF9F0A' },
-                  { label: 'Speed', value: `${currentTourist?.currentLocation?.speedKmH || 0} km/h`, color: '#1C1C1E' },
-                  { label: 'Movement', value: (currentTourist?.currentLocation?.speedKmH || 0) > 0 ? 'Moving 🚶' : 'Stationed 📍', color: '#1C1C1E' },
-                  { label: 'GPS Accuracy', value: `± ${currentTourist?.currentLocation?.accuracyMeters || (isLiveGpsActive ? 8 : 15)}m`, color: '#1C1C1E' },
-                ].map(({ label, value, color }) => (
-                  <div key={label} className="flex items-center justify-between py-0.5">
-                    <span style={{ color: 'rgba(60,60,67,0.55)' }}>{label}</span>
-                    <span className="font-semibold font-mono" style={{ color }}>{value}</span>
+                  { label: '🟢 Safe', type: 'SAFE',          color: '#34C759', bg: 'rgba(52,199,89,0.08)'    },
+                  { label: '🟡 300m', type: 'APPROACH_300M', color: '#FFCC00', bg: 'rgba(255,204,0,0.08)'    },
+                  { label: '🟠 150m', type: 'APPROACH_150M', color: '#FF9F0A', bg: 'rgba(255,159,10,0.08)'   },
+                  { label: '🔴 Breach', type: 'RESTRICTED',  color: '#FF3B30', bg: 'rgba(255,59,48,0.08)'    },
+                  { label: '⚠️ Route', type: 'DEVIATION',    color: '#5E5CE6', bg: 'rgba(94,92,230,0.08)', span: true },
+                ].map(({ label, type, color, bg, span }) => (
+                  <motion.button
+                    key={type}
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.92 }}
+                    transition={SPRING}
+                    disabled={loading}
+                    onClick={() => handleSimulate(type)}
+                    className={`py-2 px-2 rounded-xl text-xs font-semibold transition-all text-center ${span ? 'col-span-2 sm:col-span-1' : ''}`}
+                    style={{ background: bg, color, border: `0.5px solid ${color}40` }}
+                  >
+                    {label}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ghost-Mesh Card */}
+            <div className="apple-card p-4 space-y-3 relative overflow-hidden">
+              <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full pointer-events-none" style={{ background: 'rgba(255,59,48,0.08)', filter: 'blur(20px)' }} />
+              <div className="relative z-10 flex items-center justify-between">
+                <span className="text-sm font-semibold flex items-center gap-2" style={{ color: '#FF3B30', letterSpacing: '-0.01em' }}>
+                  <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2.5, repeat: Infinity }}>
+                    <Radio className="w-4 h-4" style={{ color: '#FF3B30' }} />
+                  </motion.div>
+                  <span>0-Signal Ghost-Mesh</span>
+                </span>
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: 'rgba(255,59,48,0.08)', color: '#FF3B30', border: '0.5px solid rgba(255,59,48,0.2)' }}>P2P BLE 5.3</span>
+              </div>
+              <p className="text-xs relative z-10" style={{ color: 'rgba(60,60,67,0.55)' }}>
+                In 0-signal valleys, relay encrypted SOS packets peer-to-peer until reaching a forest ranger uplink.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                transition={SPRING}
+                onClick={() => setShowMeshModal(true)}
+                className="relative z-10 w-full py-3 text-white font-semibold text-sm rounded-2xl flex items-center justify-center gap-2"
+                style={{ background: 'linear-gradient(135deg, #FF3B30, #FF375F)', boxShadow: '0 4px 16px rgba(255,59,48,0.35)' }}
+              >
+                <Zap className="w-4 h-4" />
+                <span>Launch Ghost-Mesh Simulator</span>
+              </motion.button>
+            </div>
+          </div>
+
+          {/* Right Column (1 Col): Digital ID + IoT Wearable + Emergency Services */}
+          <div className="space-y-6">
+            {/* Holographic Digital Tourist ID */}
+            <div>
+              <DigitalIdCard digitalId={digitalId} tourist={currentTourist} />
+            </div>
+
+            {/* IoT / Wearable Smart Safety Band Card */}
+            <div>
+              <WearableBandCard />
+            </div>
+
+            {/* Emergency Services Directory */}
+            <div className="apple-card p-4 space-y-3">
+              <span className="text-sm font-semibold flex items-center gap-2" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
+                <PhoneCall className="w-4 h-4" style={{ color: '#34C759' }} />
+                <span>Nearby Emergency Services</span>
+              </span>
+              <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                {emergencyServices.map((es) => (
+                  <div
+                    key={es.id}
+                    className="p-2.5 rounded-2xl flex items-center justify-between text-xs"
+                    style={{ background: 'rgba(120,120,128,0.06)', border: '0.5px solid rgba(60,60,67,0.08)' }}
+                  >
+                    <div>
+                      <span className="font-semibold block" style={{ color: '#1C1C1E' }}>{es.name}</span>
+                      <span className="text-[11px] font-mono" style={{ color: '#34C759' }}>📞 {es.phone}</span>
+                    </div>
+                    <span className="font-mono font-semibold px-2 py-0.5 rounded-lg shrink-0" style={{ background: 'rgba(10,132,255,0.08)', color: '#0A84FF', fontSize: 10 }}>
+                      {es.distanceKm} km
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
-          </motion.div>
-
-
-
-          {/* Field Protocol Zone Simulator */}
-          <motion.div
-            variants={itemVariants}
-            className="apple-card p-4 space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold flex items-center gap-2" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
-                <Sparkles className="w-4 h-4" style={{ color: '#FF9F0A' }} />
-                <span>Field Zone Simulator</span>
-              </span>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: 'rgba(255,159,10,0.1)', color: '#CC7A00', border: '0.5px solid rgba(255,159,10,0.2)' }}>
-                Field Test Mode
-              </span>
-            </div>
-            <p className="text-xs" style={{ color: 'rgba(60,60,67,0.5)' }}>Test geofence proximity alerts and zone breaches:</p>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-              {[
-                { label: '🟢 Safe', type: 'SAFE',          color: '#34C759', bg: 'rgba(52,199,89,0.08)'    },
-                { label: '🟡 300m', type: 'APPROACH_300M', color: '#FFCC00', bg: 'rgba(255,204,0,0.08)'    },
-                { label: '🟠 150m', type: 'APPROACH_150M', color: '#FF9F0A', bg: 'rgba(255,159,10,0.08)'   },
-                { label: '🔴 Breach', type: 'RESTRICTED',  color: '#FF3B30', bg: 'rgba(255,59,48,0.08)'    },
-                { label: '⚠️ Route', type: 'DEVIATION',    color: '#5E5CE6', bg: 'rgba(94,92,230,0.08)', span: true },
-              ].map(({ label, type, color, bg, span }) => (
-                <motion.button
-                  key={type}
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.92 }}
-                  transition={SPRING}
-                  disabled={loading}
-                  onClick={() => handleSimulate(type)}
-                  className={`py-2 px-2 rounded-xl text-xs font-semibold transition-all text-center ${span ? 'col-span-2 sm:col-span-1' : ''}`}
-                  style={{ background: bg, color, border: `0.5px solid ${color}40` }}
-                >
-                  {label}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-          {/* Ghost-Mesh Card */}
-          <motion.div
-            variants={itemVariants}
-            className="apple-card p-4 space-y-3 relative overflow-hidden"
-          >
-            <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full pointer-events-none" style={{ background: 'rgba(255,59,48,0.08)', filter: 'blur(20px)' }} />
-            <div className="relative z-10 flex items-center justify-between">
-              <span className="text-sm font-semibold flex items-center gap-2" style={{ color: '#FF3B30', letterSpacing: '-0.01em' }}>
-                <motion.div animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2.5, repeat: Infinity }}>
-                  <Radio className="w-4 h-4" style={{ color: '#FF3B30' }} />
-                </motion.div>
-                <span>0-Signal Ghost-Mesh</span>
-              </span>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg" style={{ background: 'rgba(255,59,48,0.08)', color: '#FF3B30', border: '0.5px solid rgba(255,59,48,0.2)' }}>P2P BLE 5.3</span>
-            </div>
-            <p className="text-xs relative z-10" style={{ color: 'rgba(60,60,67,0.55)' }}>
-              In 0-signal valleys, relay encrypted SOS packets peer-to-peer until reaching a forest ranger uplink.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.03, y: -2 }}
-              whileTap={{ scale: 0.96 }}
-              transition={SPRING}
-              onClick={() => setShowMeshModal(true)}
-              className="relative z-10 w-full py-3 text-white font-semibold text-sm rounded-2xl flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #FF3B30, #FF375F)', boxShadow: '0 4px 16px rgba(255,59,48,0.35)' }}
-            >
-              <Zap className="w-4 h-4" />
-              <span>Launch Ghost-Mesh Simulator</span>
-            </motion.button>
-          </motion.div>
-
+          </div>
         </div>
-
-        {/* Right Column (1 Col): Digital ID + Explainable AI Panel + 112 Gateway + IoT Wearable + Emergency Services */}
-        <div className="space-y-6">
-          
-          {/* Holographic Digital Tourist ID */}
-          <motion.div variants={itemVariants}>
-            <DigitalIdCard digitalId={digitalId} tourist={currentTourist} />
-          </motion.div>
-
-          {/* IoT / Wearable Smart Safety Band Card */}
-          <motion.div variants={itemVariants}>
-            <WearableBandCard />
-          </motion.div>
-
-          {/* Emergency Services Directory */}
-          <motion.div
-            variants={itemVariants}
-            className="apple-card p-4 space-y-3"
-          >
-            <span className="text-sm font-semibold flex items-center gap-2" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
-              <PhoneCall className="w-4 h-4" style={{ color: '#34C759' }} />
-              <span>Nearby Emergency Services</span>
-            </span>
-            <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
-              {emergencyServices.map((es) => (
-                <div
-                  key={es.id}
-                  className="p-2.5 rounded-2xl flex items-center justify-between text-xs"
-                  style={{ background: 'rgba(120,120,128,0.06)', border: '0.5px solid rgba(60,60,67,0.08)' }}
-                >
-                  <div>
-                    <span className="font-semibold block" style={{ color: '#1C1C1E' }}>{es.name}</span>
-                    <span className="text-[11px] font-mono" style={{ color: '#34C759' }}>📞 {es.phone}</span>
-                  </div>
-                  <span className="font-mono font-semibold px-2 py-0.5 rounded-lg shrink-0" style={{ background: 'rgba(10,132,255,0.08)', color: '#0A84FF', fontSize: 10 }}>
-                    {es.distanceKm} km
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-        </div>
-
-      </div>
+      </motion.div>
 
       {/* 112 India ERSS Live Gateway Modal */}
       <Emergency112Modal
@@ -1076,10 +1062,7 @@ export default function TouristDashboard({
         isOpen={showGuidePromptModal}
         onClose={() => setShowGuidePromptModal(false)}
         tourist={currentTourist}
-        onRequestSuccess={() => {
-          setGuideRefreshKey((k) => k + 1);
-          setGuideRefreshTrigger((prev) => prev + 1);
-        }}
+        onRequestSuccess={() => setGuideRefreshTrigger((prev) => prev + 1)}
       />
     </motion.div>
   );

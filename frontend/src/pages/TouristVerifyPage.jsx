@@ -271,7 +271,7 @@ export default function TouristVerifyPage() {
         {/* Blockchain Ledger Proof Footer */}
         <div className="p-4 bg-slate-100 border-t border-slate-200 text-center text-[10px] text-gray-500 flex items-center justify-center space-x-2">
           <Globe className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-          <span>Cryptographically validated against S.A.F.A.R. Zero-Gas Blockchain Ledger • Ministry of Tourism</span>
+          <span>Cryptographically validated against S.A.F.A.R. Prototype Blockchain Ledger • SIH 2026</span>
         </div>
       </motion.div>
     </div>

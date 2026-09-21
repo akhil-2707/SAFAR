@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MapView from '../components/MapView';
 import MiniMap from '../components/MiniMap';
@@ -9,8 +9,7 @@ import SafarLogo from '../components/SafarLogo';
 import { 
   ShieldCheck, AlertTriangle, Users, AlertOctagon, CheckCircle2, 
   Radio, Plus, Trash2, Power, ExternalLink, Settings, BarChart3,
-  ShieldAlert, Zap, Activity, Radar, Phone, Award, X, Building2, User,
-  Clock, Ban
+  ShieldAlert, Zap, Activity, Radar, Phone, Award, Building2, Luggage, MapPin, Compass
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -39,117 +38,20 @@ export default function AuthorityDashboard({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [actionSuccessMessage, setActionSuccessMessage] = useState(null);
 
-  const [currentUser, setCurrentUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('safar_user'));
-    } catch {
-      return null;
-    }
-  });
-  const [officers, setOfficers] = useState([]);
-  const [showOfficersModal, setShowOfficersModal] = useState(false);
-  const [officerProcessingId, setOfficerProcessingId] = useState(null);
-
-  const isDG = Boolean(currentUser?.isMasterAuthority || currentUser?.email?.toLowerCase() === 'akhil@gmail.com');
-  const pendingOfficers = officers.filter((o) => o.status === 'PENDING_APPROVAL');
-  const pendingOfficersCount = pendingOfficers.length;
-
-  const fetchOfficers = async () => {
-    try {
-      const token = localStorage.getItem('safar_token');
-      const res = await fetch('/api/auth/officers', {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-      });
-      const data = await res.json();
-      if (data.success) setOfficers(data.officers || []);
-    } catch (err) {
-      console.error('Error fetching authority officers:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchOfficers();
-  }, []);
-
-  const handleApproveOfficer = async (officer) => {
-    setOfficerProcessingId(officer.id);
-    try {
-      const token = localStorage.getItem('safar_token');
-      const res = await fetch(`/api/auth/officers/${officer.id}/approve`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setActionSuccessMessage(`✓ Supreme clearance granted to Officer ${officer.name}!`);
-        setTimeout(() => setActionSuccessMessage(null), 5000);
-        await fetchOfficers();
-      } else {
-        alert(data.error || 'Failed to approve officer clearance');
-      }
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setOfficerProcessingId(null);
-    }
-  };
-
-  const handleRejectOfficer = async (officer) => {
-    const reason = prompt(`Enter rejection reason for Officer ${officer.name}:`, 'Official credentials or service badge unverified');
-    if (!reason) return;
-
-    setOfficerProcessingId(officer.id);
-    try {
-      const token = localStorage.getItem('safar_token');
-      const res = await fetch(`/api/auth/officers/${officer.id}/reject`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ reason })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setActionSuccessMessage(`Officer ${officer.name} clearance rejected.`);
-        setTimeout(() => setActionSuccessMessage(null), 5000);
-        await fetchOfficers();
-      } else {
-        alert(data.error || 'Failed to reject officer');
-      }
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setOfficerProcessingId(null);
-    }
-  };
-
   const totalTourists = tourists.length;
-  const touristsAtRisk = tourists.filter((t) => 
-    t.riskScore > 35 || 
-    t.riskLevel === 'HIGH' || 
-    t.riskLevel === 'CRITICAL' || 
-    t.riskLevel === 'MEDIUM' || 
-    t.status === 'CAUTION' || 
-    t.status === 'DANGER' || 
-    Boolean(t.riskAnalysis?.proximityWarning)
-  ).length;
+  const touristsAtRisk = tourists.filter((t) => t.riskScore > 50 || t.riskLevel === 'HIGH' || t.riskLevel === 'CRITICAL').length;
   const safeTourists = totalTourists - touristsAtRisk;
   const activeIncidents = incidents.filter((i) => i.status !== 'RESOLVED');
   const resolvedIncidents = incidents.filter((i) => i.status === 'RESOLVED').length;
-  const criticalSosCount = incidents.filter((i) => i.severity === 'CRITICAL' || i.type === 'SOS Emergency' || i.type?.includes('DURESS')).length;
-  const duressIncidents = incidents.filter((i) => i.type?.includes('DURESS') && i.status !== 'RESOLVED');
+  const criticalSosCount = incidents.filter((i) => i.severity === 'CRITICAL' || i.type === 'SOS Emergency').length;
   const geofenceViolations = incidents.filter((i) => i.type === 'Geo-fence Violation').length;
 
   const filteredTourists = tourists.filter((t) => {
     if (filterRisk === 'ALL') return true;
     if (filterRisk === 'CRITICAL') return t.riskLevel === 'CRITICAL' || t.isSosActive;
-    if (filterRisk === 'HIGH') return t.riskLevel === 'HIGH' || t.status === 'CAUTION' || Boolean(t.riskAnalysis?.proximityWarning);
+    if (filterRisk === 'HIGH') return t.riskLevel === 'HIGH';
     if (filterRisk === 'MEDIUM') return t.riskLevel === 'MEDIUM';
-    if (filterRisk === 'LOW' || filterRisk === 'SAFE') return (t.riskLevel === 'LOW' || t.status === 'SAFE') && t.status !== 'CAUTION';
+    if (filterRisk === 'LOW' || filterRisk === 'SAFE') return t.riskLevel === 'LOW' || t.status === 'SAFE';
     return true;
   });
 
@@ -251,21 +153,6 @@ export default function AuthorityDashboard({
             <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 line-clamp-2">
               National Tourist Safety Grid • Threat Radii, Real-Time Tracking & SOS
             </p>
-            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-              {isDG ? (
-                <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-300/80 flex items-center gap-1.5 shadow-xs">
-                  <span>🎖️</span>
-                  <span>{currentUser?.name || 'Director General Akhil Gupta'}</span>
-                  <span className="text-[10px] text-amber-700 font-semibold">• Supreme Authority Command (Officer Clearance & Oversight)</span>
-                </span>
-              ) : (
-                <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-lg bg-purple-50 text-purple-900 border border-purple-300/80 flex items-center gap-1.5 shadow-xs">
-                  <span>👮</span>
-                  <span>{currentUser?.name || 'Assam Tourist Police HQ'}</span>
-                  <span className="text-[10px] text-purple-700 font-semibold">• Field Operations & Guide Allocation Incharge</span>
-                </span>
-              )}
-            </div>
           </div>
         </div>
 
@@ -311,7 +198,7 @@ export default function AuthorityDashboard({
 
           <button
             onClick={() => setActiveView(activeView === 'GUIDES' ? 'OVERVIEW' : 'GUIDES')}
-            className="col-span-2 sm:col-span-1 px-4 py-2 rounded-xl sm:rounded-2xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all cursor-pointer"
+            className="col-span-2 sm:col-span-1 px-4 py-2 rounded-xl sm:rounded-2xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all"
             style={{
               background: activeView === 'GUIDES' ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(255,255,255,0.95)',
               color: activeView === 'GUIDES' ? '#ffffff' : '#b45309',
@@ -322,49 +209,8 @@ export default function AuthorityDashboard({
             <Award className="w-4 h-4" />
             <span>Local Guides Desk</span>
           </button>
-
-          <button
-            onClick={() => setShowOfficersModal(true)}
-            className="col-span-2 sm:col-span-1 px-3.5 py-2 rounded-xl sm:rounded-2xl font-black text-xs flex items-center justify-center space-x-1.5 shadow-sm transition-all bg-purple-50 text-purple-900 border border-purple-300 hover:bg-purple-100 cursor-pointer relative"
-          >
-            <Users className="w-3.5 h-3.5 text-purple-700" />
-            <span>Officers ({officers.length})</span>
-            {pendingOfficersCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-black animate-pulse flex items-center gap-0.5">
-                <Clock className="w-2.5 h-2.5" />
-                <span>{pendingOfficersCount} PENDING</span>
-              </span>
-            )}
-          </button>
         </div>
       </motion.div>
-
-      {/* 🚨 CRITICAL DURESS ALERT BANNER */}
-      {duressIncidents && duressIncidents.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 bg-gradient-to-r from-red-600 via-rose-600 to-red-800 text-white rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-2 border-red-300"
-        >
-          <div className="flex items-center space-x-3">
-            <Radio className="w-6 h-6 text-white animate-ping shrink-0" />
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-red-200 block">
-                🚨 CRITICAL CAD INTERCEPT: SILENT DURESS / REVERSE-PIN 4321 ACTIVATED
-              </span>
-              <p className="text-xs font-bold mt-0.5 text-white leading-relaxed">
-                Tourist <strong>{duressIncidents[0].touristName}</strong> triggered Reverse Duress PIN. Mobile phone is disguised in Decoy Gallery Mode. Tactical PCR Intercept unit dispatched to {duressIncidents[0].location?.address || 'coordinates'}.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => onUpdateIncidentStatus && onUpdateIncidentStatus(duressIncidents[0].id, 'IN_PROGRESS', 'Tactical Intervention Unit', 'PCR dispatched')}
-            className="px-4 py-2 bg-white hover:bg-gray-100 text-red-700 font-black text-xs rounded-xl shadow-lg shrink-0 cursor-pointer"
-          >
-            Acknowledge & Dispatch PCR
-          </button>
-        </motion.div>
-      )}
 
       {/* View Mode Switcher Header Pills */}
       <div className="flex items-center space-x-2 bg-slate-200/70 p-1.5 rounded-2xl w-fit backdrop-blur-md">
@@ -391,6 +237,18 @@ export default function AuthorityDashboard({
           <Award className="w-3.5 h-3.5" />
           <span>Local Guides Command & Verifications</span>
         </button>
+
+        <button
+          onClick={() => setActiveView('CIRCUITS')}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${
+            activeView === 'CIRCUITS'
+              ? 'bg-sky-600 text-white shadow-md'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span>Tourism Circuits & Curated Stays</span>
+        </button>
       </div>
 
       {/* Success Toast */}
@@ -413,10 +271,163 @@ export default function AuthorityDashboard({
         )}
       </AnimatePresence>
 
-      {/* Main Content Area: Overview or Guides Desk */}
+      {/* Main Content Area: Overview, Guides Desk, or Tourism Circuits */}
       {activeView === 'GUIDES' ? (
         <motion.div variants={itemVariants}>
           <AuthorityGuideDesk onRefreshData={onRefreshData} />
+        </motion.div>
+      ) : activeView === 'CIRCUITS' ? (
+        <motion.div variants={itemVariants} className="space-y-6">
+          {/* Header Card */}
+          <div className="bg-white/95 border border-sky-200 rounded-3xl p-6 shadow-md">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300">
+                  SIH 2026 • PS ID: 26204 • TOURISM OVERSIGHT
+                </span>
+                <h3 className="text-xl font-black text-gray-900 mt-1 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-sky-600" />
+                  <span>National Tourism Circuits & Curated Stays Registry</span>
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Authority oversight of tourist footfall, verified homestay benchmarks, and certified guides across active Indian tourism corridors.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/hotels"
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 transition-all flex items-center gap-1.5 shadow-sm"
+                >
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>Tourist Stays Portal</span>
+                </Link>
+                <Link
+                  to="/explore"
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all flex items-center gap-1.5"
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>Explore Circuits</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Circuit Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              {
+                id: 'ayodhya',
+                name: 'Ayodhya Ram Janmabhoomi Heritage',
+                state: 'Uttar Pradesh',
+                tourists: '38 Active',
+                guideCount: '12 Certified',
+                curatedStay: 'Sita Rasoi Pilgrim Niwas',
+                stayType: 'Pilgrim Niwas',
+                rate: '₹1,400/night',
+                trustBadge: 'Blockchain Audited'
+              },
+              {
+                id: 'katra',
+                name: 'Katra Vaishno Devi Shrine Corridor',
+                state: 'Jammu & Kashmir',
+                tourists: '32 Active',
+                guideCount: '9 Certified',
+                curatedStay: 'Mata Vaishno Devi Shrine Board Niwas',
+                stayType: 'Shrine Trust Niwas',
+                rate: '₹1,100/night',
+                trustBadge: 'Board Verified'
+              },
+              {
+                id: 'agra',
+                name: 'Taj Mahal & Mughal Promenade',
+                state: 'Uttar Pradesh',
+                tourists: '26 Active',
+                guideCount: '14 Certified',
+                curatedStay: 'Fatehpur Sikri Heritage Haveli',
+                stayType: 'Heritage Haveli',
+                rate: '₹2,200/night',
+                trustBadge: 'Curated Demo'
+              },
+              {
+                id: 'varanasi',
+                name: 'Varanasi Ghats Cultural Corridor',
+                state: 'Uttar Pradesh',
+                tourists: '21 Active',
+                guideCount: '8 Certified',
+                curatedStay: 'Assi Ghat Heritage Homestay',
+                stayType: 'Ghatside Homestay',
+                rate: '₹1,600/night',
+                trustBadge: 'Curated Demo'
+              },
+              {
+                id: 'meghalaya',
+                name: 'Meghalaya Living Roots Circuit',
+                state: 'Meghalaya',
+                tourists: '18 Active',
+                guideCount: '6 Certified',
+                curatedStay: 'Nongriat Community Eco-Lodge',
+                stayType: 'Village Community',
+                rate: '₹1,200/night',
+                trustBadge: 'Eco-Certified'
+              },
+              {
+                id: 'jaipur',
+                name: 'Jaipur Royal Heritage Circuit',
+                state: 'Rajasthan',
+                tourists: '24 Active',
+                guideCount: '11 Certified',
+                curatedStay: 'Amer Fort Traditional Haveli',
+                stayType: 'Heritage Stay',
+                rate: '₹2,400/night',
+                trustBadge: 'Curated Demo'
+              }
+            ].map((circuit) => (
+              <div
+                key={circuit.id}
+                className="p-5 rounded-2xl bg-white border border-gray-200/90 shadow-sm hover:shadow-md transition-all space-y-3"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
+                      {circuit.state}
+                    </span>
+                    <h4 className="text-sm font-bold text-gray-900 mt-1.5">{circuit.name}</h4>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                    {circuit.tourists}
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1 text-xs">
+                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
+                    <span>Curated Stay / Niwas:</span>
+                    <span className="font-semibold text-gray-800">{circuit.curatedStay}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
+                    <span>Estimated Benchmark:</span>
+                    <span className="font-mono font-bold text-sky-700">{circuit.rate}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-gray-500 text-[11px]">
+                    <span>Verification Trust:</span>
+                    <span className="font-semibold text-emerald-700">{circuit.trustBadge}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-gray-500 font-medium">
+                    Guides: <strong className="text-amber-700">{circuit.guideCount}</strong>
+                  </span>
+                  <Link
+                    to="/hotels"
+                    className="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1"
+                  >
+                    <span>View Stays</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
       ) : (
         <>
@@ -778,30 +789,23 @@ export default function AuthorityDashboard({
                     <span className="font-bold text-slate-900">{t.fullName}</span>
                     <span
                       className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${
-                        t.riskLevel === 'CRITICAL' || t.status === 'DANGER'
+                        t.riskLevel === 'CRITICAL'
                           ? 'bg-red-100 text-red-800 border border-red-200'
-                          : t.riskLevel === 'HIGH' || t.status === 'CAUTION' || Boolean(t.riskAnalysis?.proximityWarning)
+                          : t.riskLevel === 'HIGH'
                           ? 'bg-orange-100 text-orange-800 border border-orange-200'
                           : t.riskLevel === 'MEDIUM'
                           ? 'bg-amber-100 text-amber-800 border border-amber-200'
                           : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                       }`}
                     >
-                      {t.status === 'CAUTION' ? '⚠️ CAUTION BUFFER' : t.riskLevel} ({t.riskScore || 50}/100)
+                      {t.riskLevel} ({t.riskScore}/100)
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-slate-500">
                     <span className="font-mono font-bold text-slate-700">{t.touristId}</span>
-                    <span>Status: <strong className={t.status === 'CAUTION' ? 'text-orange-600 font-bold' : 'text-slate-800'}>{t.status}</strong></span>
+                    <span>Status: <strong className="text-slate-800">{t.status}</strong></span>
                   </div>
-
-                  {t.riskAnalysis?.proximityWarning && (
-                    <div className="p-1.5 rounded-lg bg-orange-50 border border-orange-200 text-[10px] text-orange-900 font-bold flex items-center gap-1 leading-tight">
-                      <AlertTriangle className="w-3 h-3 text-orange-600 shrink-0" />
-                      <span>{t.riskAnalysis.proximityWarning.message || 'Approaching hazard buffer boundary (300m breach alert)'}</span>
-                    </div>
-                  )}
 
                   <p className="text-[10px] text-slate-600 truncate">
                     📍 {t.currentLocation?.address || 'Guwahati Safe Region'}
@@ -844,191 +848,6 @@ export default function AuthorityDashboard({
         onClose={() => setShowCreateModal(false)}
         onCreated={handleZoneCreated}
       />
-
-      {/* Department Officers Management Modal */}
-      <AnimatePresence>
-        {showOfficersModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-2xl border border-purple-200 text-slate-800 space-y-4 max-h-[85vh] flex flex-col"
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-slate-900">
-                      S.A.F.A.R. Enrolled Command Desk Personnel
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      Supreme Command: <strong>Director General Akhil Gupta</strong> ({officers.length} active personnel)
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowOfficersModal(false)}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-                {/* Supreme DG Action Notice if pending clearance exists */}
-                {pendingOfficersCount > 0 && (
-                  <div className="p-3 bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-orange-500/10 border border-amber-300/80 rounded-2xl flex items-center justify-between gap-3 text-xs">
-                    <div className="flex items-center gap-2 text-amber-900 font-bold">
-                      <Clock className="w-4 h-4 text-amber-600 shrink-0 animate-pulse" />
-                      <span>{pendingOfficersCount} officer clearance application(s) pending supreme authorization</span>
-                    </div>
-                    {isDG && (
-                      <span className="text-[10px] bg-amber-600 text-white font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs shrink-0">
-                        DG Clearance Required
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                {/* Sorted Officers List: Supreme DG first, then Pending, then Approved/Rejected */}
-                {[...officers]
-                  .sort((a, b) => {
-                    if (a.isMasterAuthority) return -1;
-                    if (b.isMasterAuthority) return 1;
-                    if (a.status === 'PENDING_APPROVAL' && b.status !== 'PENDING_APPROVAL') return -1;
-                    if (b.status === 'PENDING_APPROVAL' && a.status !== 'PENDING_APPROVAL') return 1;
-                    return 0;
-                  })
-                  .map((officer) => {
-                    const isOfficerPending = officer.status === 'PENDING_APPROVAL';
-                    const isOfficerRejected = officer.status === 'REJECTED';
-                    const isOfficerApproved = officer.status === 'APPROVED' || !officer.status;
-
-                    return (
-                      <div
-                        key={officer.id}
-                        className={`p-4 rounded-2xl border transition-all ${
-                          officer.isMasterAuthority
-                            ? 'bg-gradient-to-r from-amber-50/90 to-yellow-50/80 border-amber-300 shadow-sm'
-                            : isOfficerPending
-                            ? 'bg-amber-50/50 border-amber-300 shadow-sm'
-                            : isOfficerRejected
-                            ? 'bg-rose-50/40 border-rose-200 opacity-80'
-                            : 'bg-slate-50/80 border-slate-200/80'
-                        }`}
-                      >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="space-y-1">
-                            <div className="flex items-center flex-wrap gap-2">
-                              <span className="text-xs font-bold text-slate-900">{officer.name}</span>
-                              {officer.isMasterAuthority ? (
-                                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-xs">
-                                  👑 Supreme Director General
-                                </span>
-                              ) : (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">
-                                  {officer.serviceBadgeId}
-                                </span>
-                              )}
-                              {isOfficerPending && (
-                                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300 animate-pulse">
-                                  Clearance Pending
-                                </span>
-                              )}
-                              {isOfficerRejected && (
-                                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 border border-rose-300">
-                                  Rejected
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-[11px] text-slate-600 font-medium">{officer.department} • {officer.jurisdiction}</p>
-                            <p className="text-[10px] text-slate-400 font-mono">{officer.email} {officer.phone ? `• ${officer.phone}` : ''}</p>
-                            
-                            {officer.approvedBy && !officer.isMasterAuthority && isOfficerApproved && (
-                              <p className="text-[10px] text-emerald-700 font-medium flex items-center gap-1 mt-0.5">
-                                <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                                <span>Cleared by Supreme Authority: {officer.approvedBy}</span>
-                              </p>
-                            )}
-
-                            {isOfficerRejected && officer.rejectionReason && (
-                              <p className="text-[10px] text-rose-700 font-medium flex items-center gap-1 mt-0.5">
-                                <Ban className="w-3 h-3 text-rose-600" />
-                                <span>Rejection Reason: {officer.rejectionReason}</span>
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Action area / Status Badge */}
-                          <div className="shrink-0 flex sm:flex-col items-end justify-between sm:justify-center gap-2">
-                            {officer.isMasterAuthority ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-800 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded-full shadow-xs">
-                                <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-                                <span>Supreme Command</span>
-                              </span>
-                            ) : isOfficerPending ? (
-                              <div className="flex flex-col items-end gap-1.5 w-full sm:w-auto">
-                                {isDG ? (
-                                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                                    <button
-                                      onClick={() => handleApproveOfficer(officer)}
-                                      disabled={officerProcessingId === officer.id}
-                                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] flex items-center gap-1 cursor-pointer transition shadow-sm disabled:opacity-50"
-                                    >
-                                      <CheckCircle2 className="w-3.5 h-3.5" />
-                                      <span>{officerProcessingId === officer.id ? 'Granting...' : 'Approve Clearance'}</span>
-                                    </button>
-                                    <button
-                                      onClick={() => handleRejectOfficer(officer)}
-                                      disabled={officerProcessingId === officer.id}
-                                      className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-[11px] flex items-center gap-1 cursor-pointer transition disabled:opacity-50"
-                                    >
-                                      <Ban className="w-3.5 h-3.5" />
-                                      <span>Deny</span>
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded-full">
-                                    <Clock className="w-3 h-3 text-amber-600" />
-                                    <span>Awaiting DG Akhil Approval</span>
-                                  </span>
-                                )}
-                              </div>
-                            ) : isOfficerRejected ? (
-                              <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
-                                  <Ban className="w-3 h-3 text-rose-600" />
-                                  <span>Clearance Denied</span>
-                                </span>
-                                {isDG && (
-                                  <button
-                                    onClick={() => handleApproveOfficer(officer)}
-                                    disabled={officerProcessingId === officer.id}
-                                    className="text-[10px] font-bold text-purple-700 hover:underline cursor-pointer"
-                                  >
-                                    Re-Authorize
-                                  </button>
-                                )}
-                              </div>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full shadow-xs">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                                <span>Cleared & Active</span>
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
