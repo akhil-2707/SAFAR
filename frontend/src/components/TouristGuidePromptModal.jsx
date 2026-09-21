@@ -115,10 +115,11 @@ export default function TouristGuidePromptModal({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -30, scale: 0.96 }}
           transition={SPRING}
-          className="relative w-full max-w-lg bg-white/98 rounded-3xl p-5 sm:p-6 shadow-2xl border-2 border-amber-300/80 overflow-hidden text-gray-900 my-2 sm:my-4"
+          className="relative w-full max-w-lg bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border-2 border-amber-300/80 overflow-hidden text-gray-900 my-2 sm:my-4"
           style={{
+            backgroundColor: '#ffffff',
             fontFamily: "'Space Grotesk', 'Inter', sans-serif",
-            boxShadow: '0 20px 60px rgba(245, 158, 11, 0.25), 0 8px 24px rgba(0, 0, 0, 0.12)'
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.12)'
           }}
         >
           {/* Top Indian Tricolor Strip */}
