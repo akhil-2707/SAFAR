@@ -21,7 +21,7 @@ import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
   PhoneCall, Zap, WifiOff, Sparkles, ShieldAlert, Activity, Wifi, Shield,
-  Phone, AlertCircle, Clock, HeartHandshake, Percent, Award
+  Phone, AlertCircle, Clock, HeartHandshake, Percent, Award, ArrowRight
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -168,9 +168,29 @@ export default function TouristDashboard({
   const [showMeshModal, setShowMeshModal] = useState(false);
   const [show112Modal, setShow112Modal] = useState(false);
   const [showGuidePromptModal, setShowGuidePromptModal] = useState(false);
+  const [guideRefreshTrigger, setGuideRefreshTrigger] = useState(0);
   const [aiAdvice, setAiAdvice] = useState(null);
   const [aiAdviceLoading, setAiAdviceLoading] = useState(false);
 
+  // Set of prompted tourist IDs to prevent repeating within same active inspection
+  const promptedTouristsRef = React.useRef(new Set());
+
+  // Auto-prompt tourist for certified local guide when viewing destination
+  // Fires for Ananya Mishra (Ayodhya), Vikas Chandel (Jammu), Aarav Sharma (Taj Mahal), and all registered tourists
+  useEffect(() => {
+    const tid = currentTourist?.touristId;
+    if (!tid) return;
+
+    // Check if this specific tourist has already been prompted in this session
+    if (promptedTouristsRef.current.has(tid)) return;
+
+    const timer = setTimeout(() => {
+      setShowGuidePromptModal(true);
+      promptedTouristsRef.current.add(tid);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [currentTourist?.touristId]);
   const wanderIntervalRef = React.useRef(null);
   const wanderStepRef = React.useRef(0);
 
@@ -836,7 +856,35 @@ export default function TouristDashboard({
 
           {/* 🪪 Certified Local Tourist Guide (Authority Assigned & Rated) */}
           <motion.div variants={itemVariants}>
-            <TouristGuideCard key={guideRefreshKey} tourist={currentTourist} />
+            <TouristGuideCard key={guideRefreshKey} tourist={currentTourist} refreshTrigger={guideRefreshTrigger} />
+          </motion.div>
+
+          {/* ⚡ Multi-Provider Ride Comparison Quick Entry (Uber, Ola, Rapido) */}
+          <motion.div variants={itemVariants}>
+            <div className="rounded-3xl p-4 sm:p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border border-slate-700/80">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                    TRANSIT AGGREGATOR
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black tracking-tight flex items-center space-x-2">
+                  <Zap className="w-4 h-4 text-orange-400 shrink-0" />
+                  <span>Compare Uber, Ola & Rapido Fares</span>
+                </h3>
+                <p className="text-[11px] sm:text-xs text-slate-300 font-medium max-w-xl">
+                  Compare calibrated ride-hailing estimates for your route with official deep-link handoff.
+                </p>
+              </div>
+
+              <Link
+                to="/fares?tab=compare"
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md flex items-center justify-center space-x-2 shrink-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Compare Rides Now</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </motion.div>
 
           {/* 🛺 Local Transport Budget & Anti-Scam Auto/Cab Fare Guide */}
@@ -1028,7 +1076,10 @@ export default function TouristDashboard({
         isOpen={showGuidePromptModal}
         onClose={() => setShowGuidePromptModal(false)}
         tourist={currentTourist}
-        onRequestSuccess={() => setGuideRefreshKey((k) => k + 1)}
+        onRequestSuccess={() => {
+          setGuideRefreshKey((k) => k + 1);
+          setGuideRefreshTrigger((prev) => prev + 1);
+        }}
       />
     </motion.div>
   );

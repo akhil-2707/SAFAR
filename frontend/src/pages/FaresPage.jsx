@@ -188,7 +188,7 @@ export default function FaresPage({ tourist }) {
           </p>
         </div>
 
-        {/* City Picker Dropdown (Only in local benchmark tab) */}
+        {/* City Picker Dropdown (Visible only in Local Fare mode) */}
         {activeTab === 'LOCAL' && (
           <div className="p-1.5 rounded-2xl apple-card flex items-center gap-2">
             <MapPin className="w-4 h-4 text-orange-500 pl-1" />
@@ -224,6 +224,7 @@ export default function FaresPage({ tourist }) {
         >
           <Zap className={`w-3.5 h-3.5 ${activeTab === 'COMPARE' ? 'text-orange-500' : 'text-slate-400'}`} />
           <span>⚡ Ride-Hailing Comparison</span>
+
         </button>
 
         <button
