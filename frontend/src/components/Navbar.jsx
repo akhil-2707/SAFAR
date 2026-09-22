@@ -135,14 +135,10 @@ export default function Navbar({
             {[
               { to: '/explore', label: '🧭 Explore' },
               { to: '/trip-planner', label: '✨ Plan Trip' },
-              { to: '/tourist-dashboard', label: 'Safety Map' },
               { to: '/hotels', label: '🏨 Stays' },
-              { to: '/micro-stays', label: 'Satellite Stays' },
+              { to: '/micro-stays', label: '🏘️ Satellite Stays' },
               { to: '/artisans', label: '🏺 Artisans' },
-              { to: '/fares', label: 'Fares' },
               { to: '/green-rewards', label: '🌿 Green Rewards', green: true },
-              { to: '/digital-id', label: 'Digital ID' },
-              { to: '/emergency-help', label: 'Help & 112' },
             ].map((nl) => {
               const active = location.pathname === nl.to;
               return (
