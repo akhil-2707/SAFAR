@@ -5,9 +5,10 @@ import {
   Hotel, Home, MapPin, Star, ShieldCheck, Sparkles, Filter, 
   Search, CheckCircle2, QrCode, ExternalLink, Info, ArrowRight,
   Wifi, Coffee, Car, Lock, Shield, PhoneCall, Building2, Clock,
-  Luggage, Zap, Percent, PlusCircle, Award
+  Luggage, Zap, Percent, PlusCircle, Award, Key, Smartphone, LogOut
 } from 'lucide-react';
 import HotelOnboardModal from '../components/HotelOnboardModal';
+import HotelFastCheckinModal from '../components/HotelFastCheckinModal';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
@@ -71,6 +72,9 @@ export default function HotelsPage({ tourist }) {
   const [spilloverDeals, setSpilloverDeals] = useState([]);
   const [loadingMicro, setLoadingMicro] = useState(true);
   const [showHotelOnboardModal, setShowHotelOnboardModal] = useState(false);
+  const [showFastCheckinModal, setShowFastCheckinModal] = useState(false);
+  const [selectedCheckinHotel, setSelectedCheckinHotel] = useState(null);
+  const [activeStay, setActiveStay] = useState(null);
 
   // Booking states
   const [selectedHotel, setSelectedHotel] = useState(null);
@@ -83,8 +87,24 @@ export default function HotelsPage({ tourist }) {
   useEffect(() => {
     if (tourist) {
       setSelectedCity(getCityFromTourist(tourist));
+      fetchActiveStay();
     }
   }, [tourist?.touristId, tourist?.destination]);
+
+  const fetchActiveStay = async () => {
+    try {
+      const tid = tourist?.touristId || 'TID-1035';
+      const res = await fetch(`/api/hotels/active-checkin/${tid}`);
+      const data = await res.json();
+      if (data.success && data.hasActiveStay) {
+        setActiveStay(data.stay);
+      } else {
+        setActiveStay(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Fetch Curated Stays (Blockchain Vendors)
   useEffect(() => {
@@ -212,8 +232,83 @@ export default function HotelsPage({ tourist }) {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-8 select-none pb-28">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 select-none pb-28">
       
+      {/* ⚡ 1-Tap Digital ID Hotel Fast Check-in Hero Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border border-emerald-400/30"
+      >
+        <div className="relative z-10 flex items-start sm:items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 text-2xl shadow-inner">
+            ⚡
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full border border-white/25">
+                DPDP Act 2023 Compliant
+              </span>
+              <span className="text-[10px] font-bold bg-white/25 text-emerald-50 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
+                <Sparkles className="w-2.5 h-2.5 text-emerald-200" /> Zero Paper / 3-Sec Protocol
+              </span>
+            </div>
+            <h2 className="text-base sm:text-lg font-black tracking-tight mt-1 text-white">
+              1-Tap Digital ID Hotel Fast Check-in Terminal
+            </h2>
+            <p className="text-xs sm:text-sm text-emerald-50/90 font-medium max-w-2xl mt-0.5">
+              Skip 15-minute front-desk queues & risky paper Aadhaar photocopies. Show your S.A.F.A.R. QR for instant cryptographic check-in, smart door PIN & automatic police e-register compliance.
+            </p>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex items-center gap-2.5 shrink-0">
+          <button
+            onClick={() => {
+              setSelectedCheckinHotel(null);
+              setShowFastCheckinModal(true);
+            }}
+            className="px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-white text-emerald-800 hover:bg-emerald-50 transition-all shadow-lg flex items-center space-x-2 cursor-pointer active:scale-95"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <span>Open Fast Check-In Desk</span>
+          </button>
+        </div>
+      </motion.div>
+
+      {/* 🟢 Active Hotel Stay Notice Banner */}
+      {activeStay && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 border-2 border-emerald-500/40 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm">
+              <Key className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  Active Guest In-House
+                </span>
+                <strong className="text-sm font-black text-slate-900">{activeStay.hotelName}</strong>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Allotted: <strong className="text-slate-900 font-mono">{activeStay.roomNumber}</strong> • Door PIN: <strong className="text-emerald-700 font-mono">{activeStay.digitalKeyPin}</strong> • Register ID: {activeStay.registerId}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setSelectedCheckinHotel(hotels.find(h => h.id === activeStay.hotelId) || null);
+              setShowFastCheckinModal(true);
+            }}
+            className="px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-xs shadow-sm flex items-center space-x-1.5 self-start sm:self-auto cursor-pointer"
+          >
+            <span>View Digital Room Key</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* 🏨 Unified Hospitality & Stays Header Banner */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -244,7 +339,7 @@ export default function HotelsPage({ tourist }) {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 self-start md:self-auto shrink-0">
             <button
               onClick={() => setShowHotelOnboardModal(true)}
-              className="px-3.5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md flex items-center justify-center space-x-1.5 transition-all active:scale-95"
+              className="px-3.5 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4 text-white" />
               <span>➕ Onboard Stay (Live DB)</span>
@@ -271,8 +366,19 @@ export default function HotelsPage({ tourist }) {
           </div>
         </div>
 
-        {/* 4 Unified Mode Tabs */}
+        {/* 5 Unified Mode Tabs */}
         <div className="flex items-center gap-2 pt-5 mt-4 border-t border-slate-100 flex-wrap">
+          <button
+            onClick={() => {
+              setSelectedCheckinHotel(null);
+              setShowFastCheckinModal(true);
+            }}
+            className="px-4 py-2.5 rounded-2xl text-xs font-extrabold flex items-center space-x-2 transition-all bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 hover:from-amber-700 hover:to-orange-600 text-white shadow-md shadow-orange-500/20 active:scale-95 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>⚡ 1-Tap Fast Check-In Desk</span>
+          </button>
+
           {[
             { id: 'CURATED_STAYS', label: '🏨 Curated Stays & Homestays', desc: 'Full night stays with blockchain badge' },
             { id: 'MICRO_STAYS', label: '⚡ 2–6 Hr Hourly Micro-Stays', desc: 'Daytime rest, shower & recharge' },
@@ -284,10 +390,10 @@ export default function HotelsPage({ tourist }) {
               <button
                 key={t.id}
                 onClick={() => handleTabChange(t.id)}
-                className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center space-x-2 transition-all ${
+                className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center space-x-2 transition-all cursor-pointer ${
                   active
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25 scale-[1.02]'
-                    : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/70'
+                    ? 'bg-slate-900 text-white shadow-md ring-2 ring-emerald-500/30'
+                    : 'bg-white hover:bg-emerald-50/20 text-slate-700 border border-slate-200/80 hover:border-emerald-300'
                 }`}
               >
                 <span>{t.label}</span>
@@ -466,13 +572,22 @@ export default function HotelsPage({ tourist }) {
                   </div>
 
                   {/* Card Footer Action */}
-                  <div className="p-4 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2">
-                    <Link
-                      to={`/trip-planner?dest=${encodeURIComponent(stay.city)}`}
-                      className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-sm transition-all flex items-center justify-center space-x-1.5"
+                  <div className="p-4 bg-slate-50/80 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedCheckinHotel(stay);
+                        setShowFastCheckinModal(true);
+                      }}
+                      className="w-full sm:w-auto flex-1 py-2.5 px-3 rounded-xl text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition-all flex items-center justify-center space-x-1.5 cursor-pointer active:scale-98"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Add to Trip Plan</span>
+                      <span>⚡ 1-Tap Fast Check-In</span>
+                    </button>
+                    <Link
+                      to={`/trip-planner?dest=${encodeURIComponent(stay.city)}`}
+                      className="w-full sm:w-auto py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition-all flex items-center justify-center space-x-1.5"
+                    >
+                      <span>Plan Trip</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                     <a
@@ -496,16 +611,18 @@ export default function HotelsPage({ tourist }) {
       {activeTab === 'MICRO_STAYS' && (
         <div className="space-y-6">
           {/* Duration Selector Bar */}
-          <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-emerald-600" />
+          <div className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold">
+                <Clock className="w-4 h-4 text-emerald-600" />
+              </div>
               <div>
-                <span className="text-xs font-bold text-gray-900 block">Choose Day-Stay Duration</span>
-                <span className="text-[10px] text-gray-500">Pay only for the hours you need between 08:00 AM – 08:00 PM</span>
+                <span className="text-xs font-black text-slate-900 block">Choose Day-Stay Duration</span>
+                <span className="text-[11px] text-slate-500 font-medium">Pay only for the hours you need between 08:00 AM – 08:00 PM</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 bg-gray-100/80 p-1 rounded-xl">
+            <div className="flex items-center gap-1.5 p-1 bg-slate-50 border border-slate-200/80 rounded-2xl">
               {[
                 { key: '2h', label: '⚡ 2 Hours (Quick Refresh)' },
                 { key: '4h', label: '🛌 4 Hours (Comfort Nap)' },
@@ -514,10 +631,10 @@ export default function HotelsPage({ tourist }) {
                 <button
                   key={d.key}
                   onClick={() => setDuration(d.key)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     duration === d.key
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-white'
                   }`}
                 >
                   {d.label}
@@ -535,7 +652,7 @@ export default function HotelsPage({ tourist }) {
               return (
                 <div
                   key={hotel.id}
-                  className="bg-white rounded-3xl border border-gray-200/80 shadow-md hover:shadow-xl hover:border-emerald-400 transition-all flex flex-col justify-between overflow-hidden group"
+                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all flex flex-col justify-between overflow-hidden group"
                 >
                   <div>
                     {/* Hotel Image with Badges */}
@@ -546,7 +663,7 @@ export default function HotelsPage({ tourist }) {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                        <span className="px-2.5 py-1 rounded-full bg-emerald-600/90 text-white text-[10px] font-black uppercase backdrop-blur-md">
+                        <span className="px-2.5 py-1 rounded-full bg-slate-900/90 text-white text-[10px] font-black uppercase backdrop-blur-md">
                           ⚡ {duration.toUpperCase()} DAY-USE
                         </span>
                         {hotel.wheelchairFriendly && (
@@ -555,19 +672,19 @@ export default function HotelsPage({ tourist }) {
                           </span>
                         )}
                       </div>
-                      <div className="absolute bottom-3 right-3 bg-white/95 px-2.5 py-1 rounded-xl shadow-md text-xs font-black text-gray-900 flex items-center gap-1">
-                        ⭐ {hotel.rating} <span className="text-[10px] text-gray-500 font-normal">({hotel.reviewsCount})</span>
+                      <div className="absolute bottom-3 right-3 bg-white/95 px-2.5 py-1 rounded-xl shadow-md text-xs font-black text-slate-900 flex items-center gap-1">
+                        ⭐ {hotel.rating} <span className="text-[10px] text-slate-500 font-normal">({hotel.reviewsCount})</span>
                       </div>
                     </div>
 
                     {/* Content */}
                     <div className="p-5 space-y-3">
                       <div>
-                        <h3 className="text-base font-black text-gray-900 group-hover:text-emerald-600 transition-colors">
+                        <h3 className="text-base font-black text-slate-900 group-hover:text-emerald-600 transition-colors">
                           {hotel.name}
                         </h3>
-                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                          <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                        <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
                           <span>{hotel.location}</span>
                         </p>
                       </div>
@@ -575,27 +692,27 @@ export default function HotelsPage({ tourist }) {
                       {/* Amenities Pills */}
                       <div className="flex flex-wrap gap-1.5">
                         {(hotel.amenities || []).map((am, i) => (
-                          <span key={i} className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-gray-100 text-gray-600">
+                          <span key={i} className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600">
                             {am}
                           </span>
                         ))}
                       </div>
 
                       {/* Pricing Comparison Box */}
-                      <div className="p-3 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 flex items-center justify-between">
+                      <div className="p-3.5 rounded-2xl bg-emerald-50/60 border border-emerald-200/60 flex items-center justify-between">
                         <div>
-                          <span className="text-[10px] font-bold text-gray-500 block uppercase">
+                          <span className="text-[10px] font-bold text-slate-500 block uppercase">
                             {duration} Micro-Stay Rate
                           </span>
-                          <span className="text-xl font-black text-emerald-700 font-mono">
-                            ₹{currentRate} <span className="text-xs font-normal text-gray-500">INR</span>
+                          <span className="text-xl font-black text-emerald-800 font-mono">
+                            ₹{currentRate} <span className="text-xs font-normal text-slate-500 font-sans">INR</span>
                           </span>
                         </div>
                         <div className="text-right">
-                          <span className="text-[10px] font-bold text-gray-400 block line-through">
+                          <span className="text-[10px] font-bold text-slate-400 block line-through">
                             ₹{fullDayRate} 24h
                           </span>
-                          <span className="text-xs font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
+                          <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">
                             Save ₹{savings}
                           </span>
                         </div>
@@ -603,13 +720,24 @@ export default function HotelsPage({ tourist }) {
                     </div>
                   </div>
 
-                  <div className="p-5 pt-0">
+                  <div className="p-5 pt-0 space-y-2">
+                    <button
+                      onClick={() => {
+                        setSelectedCheckinHotel(hotel);
+                        setShowFastCheckinModal(true);
+                      }}
+                      className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 hover:from-amber-700 hover:to-orange-600 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 active:scale-98 cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>⚡ 1-Tap Fast Check-In (3s Zero Paper)</span>
+                    </button>
+
                     <button
                       onClick={() => handleBookMicroStay(hotel)}
-                      className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5"
+                      className="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                     >
-                      <span>Book Instant {duration} Day Stay</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>Book Scheduled {duration} Day Stay</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -624,12 +752,16 @@ export default function HotelsPage({ tourist }) {
       {/* ========================================================================= */}
       {activeTab === 'SPILLOVER' && (
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-white border border-amber-200/80 space-y-2">
-            <div className="flex items-center space-x-2 text-amber-800">
-              <Percent className="w-6 h-6 text-amber-600" />
-              <h2 className="text-lg font-black">AI Footfall Spillover & Satellite Homestay Flash Stays</h2>
+          <div className="p-6 sm:p-8 rounded-3xl bg-white/95 border border-slate-200/80 shadow-md backdrop-blur-xl relative overflow-hidden space-y-2">
+            <div
+              className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', filter: 'blur(30px)' }}
+            />
+            <div className="relative z-10 flex items-center space-x-2 text-amber-800">
+              <Percent className="w-5 h-5 text-amber-600" />
+              <h2 className="text-base sm:text-lg font-black text-slate-900">AI Footfall Spillover & Satellite Homestay Flash Stays</h2>
             </div>
-            <p className="text-xs text-gray-600 max-w-3xl leading-relaxed">
+            <p className="relative z-10 text-xs sm:text-sm text-slate-600 font-medium max-w-3xl leading-relaxed">
               When tourist hotspots (Mall Road, Taj East Gate, Ram Mandir Corridor) approach carrying capacity (&gt;85%), this engine reroutes tourists to verified satellite eco-stays at 50% flat discount with VIP guaranteed next-day morning entry slots.
             </p>
           </div>
@@ -638,35 +770,35 @@ export default function HotelsPage({ tourist }) {
             {spilloverDeals.map((deal) => (
               <div
                 key={deal.id}
-                className="bg-white rounded-3xl border-2 border-amber-300 p-6 shadow-lg hover:shadow-xl transition-all space-y-4 flex flex-col justify-between"
+                className="bg-white rounded-3xl border border-slate-200/90 hover:border-amber-300 p-6 shadow-sm hover:shadow-xl transition-all space-y-4 flex flex-col justify-between group"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-full bg-red-100 text-red-800 text-[10px] font-black uppercase">
+                    <span className="px-2.5 py-1 rounded-full bg-red-50 text-red-700 border border-red-200 text-[10px] font-black uppercase">
                       Choked Hotspot: {deal.hotspotTarget}
                     </span>
-                    <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 text-[10px] font-black uppercase">
+                    <span className="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black uppercase">
                       {deal.discountPercent}% OFF
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-base font-black text-gray-900">{deal.satelliteName}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">📍 {deal.distanceKm} km off-beat green corridor</p>
+                    <h3 className="text-base font-black text-slate-900">{deal.satelliteName}</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">📍 {deal.distanceKm} km off-beat green corridor</p>
                   </div>
 
-                  <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs space-y-1">
+                  <div className="p-3 bg-amber-50/70 rounded-2xl border border-amber-200/70 text-xs space-y-1">
                     <span className="font-extrabold text-amber-900 block">✨ Guaranteed VIP Advantage:</span>
-                    <span className="text-gray-700 text-[11px] block">{deal.vipPerk}</span>
+                    <span className="text-slate-700 text-[11px] block">{deal.vipPerk}</span>
                   </div>
 
                   <div className="flex items-baseline justify-between pt-1">
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block">Spillover Flash Price</span>
-                      <span className="text-2xl font-black text-gray-900 font-mono">₹{deal.spilloverFlashPrice}</span>
-                      <span className="text-xs text-gray-400 line-through ml-2 font-mono">₹{deal.regularPrice}</span>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">Spillover Flash Price</span>
+                      <span className="text-2xl font-black text-slate-900 font-mono">₹{deal.spilloverFlashPrice}</span>
+                      <span className="text-xs text-slate-400 line-through ml-2 font-mono">₹{deal.regularPrice}</span>
                     </div>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-lg">
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg">
                       0% Commission
                     </span>
                   </div>
@@ -674,7 +806,7 @@ export default function HotelsPage({ tourist }) {
 
                 <button
                   onClick={() => alert(`✓ Flash Stay Reserved at ${deal.satelliteName}! Next-Day VIP slot confirmed.`)}
-                  className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5"
+                  className="w-full py-2.5 bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 hover:from-amber-700 hover:to-orange-600 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer active:scale-98"
                 >
                   <Award className="w-4 h-4" />
                   <span>Claim Flash Deal & VIP Pass</span>
@@ -690,12 +822,16 @@ export default function HotelsPage({ tourist }) {
       {/* ========================================================================= */}
       {activeTab === 'CLOAKROOM' && (
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-white border border-emerald-200/80 space-y-2">
-            <div className="flex items-center space-x-2 text-emerald-800">
-              <Luggage className="w-6 h-6 text-emerald-600" />
-              <h2 className="text-lg font-black">Bag-Free City Tourism Mesh</h2>
+          <div className="p-6 sm:p-8 rounded-3xl bg-white/95 border border-slate-200/80 shadow-md backdrop-blur-xl relative overflow-hidden space-y-2">
+            <div
+              className="absolute top-0 right-0 w-80 h-80 rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)', filter: 'blur(30px)' }}
+            />
+            <div className="relative z-10 flex items-center space-x-2 text-emerald-800">
+              <Luggage className="w-5 h-5 text-emerald-600" />
+              <h2 className="text-base sm:text-lg font-black text-slate-900">Bag-Free City Tourism Mesh</h2>
             </div>
-            <p className="text-xs text-gray-600 max-w-3xl leading-relaxed">
+            <p className="relative z-10 text-xs sm:text-sm text-slate-600 font-medium max-w-3xl leading-relaxed">
               Leave your heavy luggage at smart verified cloakroom pods near railway stations, airports, or major temple gates. Enjoy temple darshan or heritage walks completely bag-free, backed by SHA-256 digital security tokens.
             </p>
           </div>
@@ -704,31 +840,31 @@ export default function HotelsPage({ tourist }) {
             {cloakrooms.map((c) => (
               <div
                 key={c.id}
-                className="bg-white rounded-3xl border border-gray-200/80 p-6 shadow-md hover:shadow-xl transition-all space-y-5 flex flex-col justify-between"
+                className="bg-white rounded-3xl border border-slate-200/90 hover:border-emerald-300 p-6 shadow-sm hover:shadow-xl transition-all space-y-5 flex flex-col justify-between group"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="p-2.5 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="p-2.5 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">
                       <Luggage className="w-6 h-6" />
                     </span>
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase">
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-black uppercase">
                       {c.capacityAvailable} Lockers Free
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-base font-black text-gray-900">{c.name}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{c.location}</p>
+                    <h3 className="text-base font-black text-slate-900">{c.name}</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">{c.location}</p>
                   </div>
 
-                  <div className="bg-gray-50 p-3 rounded-2xl border border-gray-200 space-y-1.5 text-xs font-medium text-gray-600">
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1.5 text-xs font-medium text-slate-600">
                     <div className="flex justify-between">
                       <span>Rate:</span>
-                      <span className="font-bold text-gray-900">₹{c.ratePerHour}/hr per bag</span>
+                      <span className="font-bold text-slate-900">₹{c.ratePerHour}/hr per bag</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Operating Hours:</span>
-                      <span className="text-gray-900">{c.operatingHours}</span>
+                      <span className="text-slate-900">{c.operatingHours}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Security Standard:</span>
@@ -739,23 +875,23 @@ export default function HotelsPage({ tourist }) {
 
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-gray-600">Bags:</span>
+                    <span className="font-bold text-slate-600">Bags:</span>
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => setBagCount(Math.max(1, bagCount - 1))}
-                        className="w-6 h-6 rounded-lg bg-gray-200 font-bold hover:bg-gray-300"
+                        className="w-6 h-6 rounded-lg bg-slate-200 font-bold hover:bg-slate-300 cursor-pointer"
                       >-</button>
-                      <span className="font-bold font-mono">{bagCount}</span>
+                      <span className="font-bold font-mono text-slate-900">{bagCount}</span>
                       <button
                         onClick={() => setBagCount(bagCount + 1)}
-                        className="w-6 h-6 rounded-lg bg-gray-200 font-bold hover:bg-gray-300"
+                        className="w-6 h-6 rounded-lg bg-slate-200 font-bold hover:bg-slate-300 cursor-pointer"
                       >+</button>
                     </div>
                   </div>
 
                   <button
                     onClick={() => handleBookCloakroom(c)}
-                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5"
+                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer active:scale-98"
                   >
                     <QrCode className="w-4 h-4" />
                     <span>Generate Digital QR Locker Pass</span>
@@ -773,27 +909,27 @@ export default function HotelsPage({ tourist }) {
 
       {/* Confirmation Modal for Micro-Stay */}
       {bookingSuccess && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 border border-emerald-300"
+            className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 border border-slate-200"
           >
             <div className="flex items-center space-x-3 text-emerald-700 font-black text-lg">
               <CheckCircle2 className="w-7 h-7 text-emerald-600" />
               <span>Day-Stay Confirmed!</span>
             </div>
-            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 text-xs space-y-2 font-mono">
-              <div className="text-emerald-800 font-bold text-sm">{bookingSuccess.hotelName}</div>
+            <div className="p-4 bg-emerald-50/80 rounded-2xl border border-emerald-200 text-xs space-y-2 font-mono">
+              <div className="text-emerald-900 font-bold text-sm">{bookingSuccess.hotelName}</div>
               <div>Booking ID: <strong>{bookingSuccess.bookingId}</strong></div>
               <div>Duration: <strong>{bookingSuccess.duration} Day Use</strong> ({bookingSuccess.slot})</div>
               <div>Amount Paid: <strong>₹{bookingSuccess.totalCost} INR</strong></div>
               <div className="text-emerald-700 font-bold">You Saved: ₹{bookingSuccess.savedComparedToFullDay} compared to 24h tariff!</div>
-              <div className="text-gray-400 text-[10px] truncate">Hash: {bookingSuccess.passHash}</div>
+              <div className="text-slate-400 text-[10px] truncate">Hash: {bookingSuccess.passHash}</div>
             </div>
             <button
               onClick={() => setBookingSuccess(null)}
-              className="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md"
+              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md cursor-pointer transition-colors"
             >
               Done & Save Digital Pass
             </button>
@@ -803,30 +939,30 @@ export default function HotelsPage({ tourist }) {
 
       {/* Confirmation Modal for Cloakroom */}
       {cloakroomSuccess && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 border border-emerald-300"
+            className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 border border-slate-200"
           >
             <div className="flex items-center space-x-3 text-emerald-700 font-black text-lg">
               <CheckCircle2 className="w-7 h-7 text-emerald-600" />
               <span>Luggage Locked Safely!</span>
             </div>
-            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs space-y-2 font-mono text-gray-800">
+            <div className="p-4 bg-emerald-50/80 rounded-2xl border border-emerald-200 text-xs space-y-2 font-mono text-slate-800">
               <div className="text-emerald-900 font-bold text-sm">{cloakroomSuccess.cloakroomName}</div>
               <div>Digital Claim Token: <strong className="text-blue-700 text-base">{cloakroomSuccess.claimToken}</strong></div>
-              <div>Pickup Security OTP: <strong className="text-red-600 text-base">{cloakroomSuccess.otp}</strong></div>
+              <div>Pickup Security OTP: <strong className="text-rose-600 text-base">{cloakroomSuccess.otp}</strong></div>
               <div>Bags: <strong>{cloakroomSuccess.bagCount} Bag(s)</strong></div>
               <div>Estimated Pickup Time: <strong>{cloakroomSuccess.expectedPickup}</strong></div>
               <div className="text-emerald-800 font-bold">Total Cost: ₹{cloakroomSuccess.totalCost} INR</div>
             </div>
-            <p className="text-[11px] text-gray-500 italic">
+            <p className="text-[11px] text-slate-500 italic">
               💡 Show this Digital Claim Token & OTP at the locker kiosk during pickup. Enjoy your city tour bag-free!
             </p>
             <button
               onClick={() => setCloakroomSuccess(null)}
-              className="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md"
+              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md cursor-pointer transition-colors"
             >
               Got It / Close Token
             </button>
@@ -837,11 +973,11 @@ export default function HotelsPage({ tourist }) {
       {/* Blockchain Verification Audit Modal */}
       <AnimatePresence>
         {verifiedModalVendor && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              exit={{ scale: 0.95, opacity: 0 }}
               className="bg-white rounded-3xl p-6 max-w-md w-full border border-slate-200 shadow-2xl space-y-4"
             >
               <div className="flex items-center justify-between border-b pb-3">
@@ -905,6 +1041,17 @@ export default function HotelsPage({ tourist }) {
         }}
       />
 
+      {/* 1-Tap Hotel Fast Check-in Modal */}
+      <HotelFastCheckinModal
+        isOpen={showFastCheckinModal}
+        onClose={() => setShowFastCheckinModal(false)}
+        tourist={tourist}
+        preselectedHotel={selectedCheckinHotel}
+        allHotels={hotels.length > 0 ? hotels : stays}
+        onCheckinSuccess={(rec) => {
+          setActiveStay(rec);
+        }}
+      />
     </div>
   );
 }

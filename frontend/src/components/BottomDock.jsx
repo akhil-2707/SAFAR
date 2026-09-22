@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Map, CreditCard, Siren, Banknote, Phone } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const SPRING = { type: 'spring', stiffness: 380, damping: 28 };
 
@@ -13,17 +14,29 @@ const TOURIST_TABS = [
   { id: 'help',  to: '/emergency-help',    icon: Phone,      label: 'Help',   color: '#34C759' },
 ];
 
-const TOURIST_ROUTES = [
+export const TOURIST_ROUTES = [
   '/tourist-dashboard',
+  '/map',
   '/digital-id',
   '/sos',
   '/fares',
   '/deadman-switch',
   '/emergency-help',
+  '/explore',
+  '/destinations',
+  '/virtual-queue',
+  '/vq',
+  '/trip-planner',
+  '/plan',
+  '/hotels',
+  '/stays',
+  '/micro-stays',
+  '/artisans',
+  '/swachh-food',
+  '/food',
   '/green-rewards',
   '/partner-pay',
-  '/trip-planner',
-  '/hotels'
+  '/e-vehicles'
 ];
 
 export default function BottomDock({ currentUser, onTriggerSos }) {
@@ -62,7 +75,14 @@ export default function BottomDock({ currentUser, onTriggerSos }) {
 }
 
 function RegularTab({ tab, active }) {
+  const { t } = useLanguage();
   const IconComp = tab.icon;
+  const label = tab.id === 'map' ? t('dockMap', 'Map')
+    : tab.id === 'id' ? t('dockId', 'ID')
+    : tab.id === 'fares' ? t('dockFares', 'Fares')
+    : tab.id === 'help' ? t('dockHelp', 'Help')
+    : tab.label;
+
   return (
     <Link
       to={tab.to}
@@ -102,13 +122,14 @@ function RegularTab({ tab, active }) {
         className="relative z-10 text-[9px] sm:text-[10px] font-semibold tracking-tight transition-colors duration-200 truncate max-w-full"
         style={{ color: active ? tab.color : 'rgba(60,60,67,0.5)' }}
       >
-        {tab.label}
+        {label}
       </span>
     </Link>
   );
 }
 
 function SosTab({ tab, active, onTriggerSos, currentUser }) {
+  const { t } = useLanguage();
   const IconComp = tab.icon;
   return (
     <div className="flex-1 min-w-0 flex flex-col items-center justify-end pb-0.5">
@@ -139,7 +160,7 @@ function SosTab({ tab, active, onTriggerSos, currentUser }) {
         </motion.div>
       </Link>
       <span className="text-[9px] sm:text-[10px] font-bold mt-0.5 sm:mt-1 tracking-tight" style={{ color: '#FF3B30' }}>
-        SOS
+        {t('dockSos', 'SOS')}
       </span>
     </div>
   );

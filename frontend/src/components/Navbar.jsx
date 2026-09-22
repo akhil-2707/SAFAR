@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, LogOut, LogIn, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
   Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award, Leaf,
-  Hotel, Zap
+  Navigation, Hotel, Utensils, Ticket, Zap
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -56,12 +56,17 @@ export default function Navbar({
         background: 'linear-gradient(90deg, #FF9F0A 0%, #FF9F0A 33%, #ffffff 33%, #ffffff 66%, #34C759 66%, #34C759 100%)',
       }} />
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-5 h-14 flex items-center justify-between gap-2">
+      <div className="w-full max-w-[1440px] mx-auto px-2.5 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-1.5 sm:gap-2.5 lg:gap-3">
 
         {/* Brand */}
-        <Link to="/" className="flex-shrink-0 group">
+        <Link to="/" className="shrink-0 group">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
-            <SafarLogo size="sm" showSubtitle={true} />
+            <div className="hidden 2xl:block">
+              <SafarLogo size="sm" showSubtitle={true} />
+            </div>
+            <div className="2xl:hidden">
+              <SafarLogo size="sm" showSubtitle={false} />
+            </div>
           </motion.div>
         </Link>
 
@@ -130,31 +135,49 @@ export default function Navbar({
             })}
           </nav>
         ) : (
-          <nav className="hidden lg:flex items-center gap-1 p-1 rounded-2xl" style={{
-            background: 'rgba(120,120,128,0.1)',
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-2xl border border-slate-200/80 shadow-xs shrink min-w-0" style={{
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(16px)',
           }}>
             {[
-              { to: '/explore', label: '🧭 Explore' },
-              { to: '/trip-planner', label: '✨ Plan Trip' },
-              { to: '/hotels', label: '🏨 Stays' },
-              { to: '/artisans', label: '🏺 Artisans' },
-              { to: '/green-rewards', label: '🌿 Green Rewards', green: true },
+              { to: '/explore', label: t('navExplore', 'Explore'), shortLabel: t('navExplore', 'Explore'), icon: Compass, color: '#EA580C' },
+              { to: '/virtual-queue', label: t('navVirtualQueue', 'Virtual Queue'), shortLabel: t('navQueue', 'Queue'), icon: Ticket, color: '#D97706' },
+              { to: '/trip-planner', label: t('navPlanTrip', 'Plan Trip'), shortLabel: t('navPlan', 'Plan'), icon: Sparkles, color: '#2563EB' },
+              { to: '/hotels', label: t('navStays', 'Stays'), shortLabel: t('navStays', 'Stays'), icon: Hotel, color: '#059669' },
+              { to: '/artisans', label: t('navArtisans', 'Artisans'), shortLabel: t('navArtisans', 'Artisans'), icon: Award, color: '#7C3AED' },
+              { to: '/swachh-food', label: t('navSwachhFood', 'Swachh Food'), shortLabel: t('navFood', 'Food'), icon: Utensils, color: '#EA580C' },
+              { to: '/green-rewards', label: t('navGreenRewards', 'Green Rewards'), shortLabel: t('navRewards', 'Rewards'), icon: Leaf, color: '#16A34A', green: true },
             ].map((nl) => {
-              const active = location.pathname === nl.to || (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname));
+              const active = location.pathname === nl.to || 
+                (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname)) ||
+                (nl.to === '/virtual-queue' && ['/virtual-queue', '/vq'].includes(location.pathname));
+              const IconC = nl.icon;
               return (
-                <Link key={nl.to} to={nl.to}>
+                <Link key={nl.to} to={nl.to} className="shrink-0">
                   <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
                     transition={SPRING}
-                    className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
+                    className="px-2 xl:px-2.5 2xl:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 xl:gap-1.5 whitespace-nowrap select-none"
                     style={{
-                      background: active ? (nl.green ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.85)') : 'transparent',
-                      color: active ? (nl.green ? '#047857' : '#0A84FF') : 'rgba(60,60,67,0.7)',
-                      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                      background: active 
+                        ? (nl.green ? 'rgba(22, 163, 74, 0.12)' : 'rgba(255, 255, 255, 0.95)') 
+                        : 'transparent',
+                      color: active 
+                        ? (nl.green ? '#15803D' : '#0F172A') 
+                        : 'rgba(71, 85, 105, 0.85)',
+                      boxShadow: active ? '0 2px 6px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)' : 'none',
                     }}
                   >
-                    <span>{nl.label}</span>
+                    <IconC className="w-3.5 h-3.5 shrink-0" style={{ color: active ? nl.color : undefined }} />
+                    {nl.shortLabel ? (
+                      <>
+                        <span className="hidden 2xl:inline tracking-tight">{nl.label}</span>
+                        <span className="2xl:hidden tracking-tight">{nl.shortLabel}</span>
+                      </>
+                    ) : (
+                      <span className="tracking-tight">{nl.label}</span>
+                    )}
                   </motion.div>
                 </Link>
               );
@@ -163,7 +186,7 @@ export default function Navbar({
         )}
 
         {/* Right Section */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <LanguageSelector variant="navbar" />
 
           {/* Notification Bell */}
@@ -297,36 +320,37 @@ export default function Navbar({
           {/* User Avatar */}
           {currentUser ? (
             <div
-              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-2xl"
+              className="flex items-center gap-1.5 sm:gap-2 pl-1.5 sm:pl-2 pr-1.5 sm:pr-2 py-1 rounded-2xl shrink-0 border border-slate-200/80 shadow-xs"
               style={{
-                background: 'rgba(120,120,128,0.1)',
-                border: '0.5px solid rgba(60,60,67,0.1)',
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(12px)',
               }}
             >
               <motion.div
-                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0"
+                whileHover={{ scale: 1.05 }}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0 select-none"
                 style={{
                   background: 'linear-gradient(135deg, #0A84FF, #5E5CE6)',
-                  boxShadow: '0 2px 8px rgba(10,132,255,0.3)',
+                  boxShadow: '0 2px 6px rgba(10,132,255,0.3)',
                 }}
               >
                 {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
               </motion.div>
-              <div className="hidden sm:block">
-                <p className="text-xs font-semibold leading-tight max-w-[90px] md:max-w-[120px] truncate" style={{ color: '#1C1C1E', letterSpacing: '-0.01em' }}>
+              <div className="hidden sm:block text-left min-w-0 pr-0.5 max-w-[90px] md:max-w-[115px] xl:max-w-[140px]">
+                <p className="text-xs font-bold leading-tight truncate text-slate-800" style={{ letterSpacing: '-0.01em' }}>
                   {currentUser.name}
                 </p>
-                <p className="text-[10px] font-medium" style={{ color: '#0A84FF' }}>
-                  {currentUser.role}{currentUser.touristId ? ` · ${currentUser.touristId}` : ''}
+                <p className="text-[10px] font-semibold text-blue-600 truncate leading-tight mt-0.5">
+                  {t(`role_${currentUser.role}`, currentUser.role)}{currentUser.touristId ? ` · ${currentUser.touristId}` : ''}
                 </p>
               </div>
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
                 onClick={onLogout}
-                className="p-1 rounded-lg transition-colors"
-                style={{ color: 'rgba(60,60,67,0.45)' }}
-                title="Sign out"
+                className="w-7 h-7 rounded-xl transition-all text-slate-500 hover:text-red-600 shrink-0 flex items-center justify-center bg-slate-100/80 hover:bg-red-50 border border-slate-200/60 shadow-xs cursor-pointer"
+                title={t('navLogout', 'Sign out')}
+                aria-label={t('navLogout', 'Sign out')}
               >
                 <LogOut className="w-3.5 h-3.5" />
               </motion.button>
@@ -354,7 +378,7 @@ export default function Navbar({
                     boxShadow: '0 2px 10px rgba(10,132,255,0.35)',
                   }}
                 >
-                  Register
+                  {t('navRegister', 'Register')}
                 </Link>
               </motion.div>
             </div>
@@ -365,7 +389,7 @@ export default function Navbar({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.92 }}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl text-slate-700 transition-colors"
+            className={`${currentUser?.role === 'AUTHORITY' || currentUser?.role === 'GUIDE' ? 'md:hidden' : 'lg:hidden'} w-8 h-8 flex items-center justify-center rounded-xl text-slate-700 transition-colors shrink-0`}
             style={{
               background: mobileMenuOpen ? 'rgba(10,132,255,0.12)' : 'rgba(120,120,128,0.1)',
               color: mobileMenuOpen ? '#0A84FF' : '#1C1C1E',
@@ -385,7 +409,7 @@ export default function Navbar({
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden overflow-hidden border-t"
+            className={`${currentUser?.role === 'AUTHORITY' || currentUser?.role === 'GUIDE' ? 'md:hidden' : 'lg:hidden'} overflow-hidden border-t`}
             style={{
               background: 'rgba(255, 255, 255, 0.96)',
               backdropFilter: 'blur(30px) saturate(190%)',
@@ -544,6 +568,16 @@ export default function Navbar({
                       <span>🧭 Explore Destinations</span>
                     </Link>
                     <Link
+                      to="/virtual-queue"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        ['/virtual-queue', '/vq'].includes(location.pathname) ? 'bg-amber-50 text-amber-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Ticket className="w-4 h-4 text-amber-500" />
+                      <span>🎟️ Virtual Queue & Vouchers</span>
+                    </Link>
+                    <Link
                       to="/trip-planner"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
@@ -562,6 +596,26 @@ export default function Navbar({
                     >
                       <Hotel className="w-4 h-4 text-emerald-500" />
                       <span>🏨 Hotels & Stays</span>
+                    </Link>
+                    <Link
+                      to="/artisans"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/artisans' ? 'bg-purple-50 text-purple-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Award className="w-4 h-4 text-purple-500" />
+                      <span>🎨 Local Artisans & Crafts</span>
+                    </Link>
+                    <Link
+                      to="/swachh-food"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/swachh-food' ? 'bg-orange-50 text-orange-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Utensils className="w-4 h-4 text-orange-500" />
+                      <span>🍽 Swachh Food Intelligence</span>
                     </Link>
                     <Link
                       to="/tourist-dashboard"
@@ -642,6 +696,16 @@ export default function Navbar({
                     >
                       <CreditCard className="w-4 h-4 text-emerald-600" />
                       <span>Partner Discount Payment</span>
+                    </Link>
+                    <Link
+                      to="/e-vehicles"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/e-vehicles' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Zap className="w-4 h-4 text-emerald-600" />
+                      <span>🛺 E-Vehicles & E-Rickshaws</span>
                     </Link>
                   </>
                 )}

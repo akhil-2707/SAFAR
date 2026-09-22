@@ -686,32 +686,32 @@ export default function RideCompareView({ tourist }) {
 
       {/* Route Distance & Duration Summary Bar */}
       {summary && (
-        <div className="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-slate-900 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+        <div className="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-white/95 border border-slate-200/80 text-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md backdrop-blur-xl">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <div>
-              <span className="text-[10px] text-slate-400 font-bold uppercase block tracking-wider">
+              <span className="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">
                 {summary.distanceLabel}
               </span>
-              <span className="text-xl sm:text-2xl font-black font-mono text-white">
+              <span className="text-xl sm:text-2xl font-black font-mono text-slate-900">
                 ~{summary.approxDistanceKm} km
               </span>
             </div>
 
-            <div className="border-l border-slate-700 pl-4 sm:pl-6">
-              <span className="text-[10px] text-slate-400 font-bold uppercase block tracking-wider">
+            <div className="border-l border-slate-200 pl-4 sm:pl-6">
+              <span className="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">
                 {summary.durationLabel}
               </span>
-              <span className="text-xl sm:text-2xl font-black font-mono text-amber-400">
+              <span className="text-xl sm:text-2xl font-black font-mono text-amber-600">
                 ~{summary.approxDurationMins} mins
               </span>
             </div>
 
             {summary.cheapestFare && (
-              <div className="border-l border-slate-700 pl-4 sm:pl-6 hidden md:block">
-                <span className="text-[10px] text-slate-400 font-bold uppercase block tracking-wider">
+              <div className="border-l border-slate-200 pl-4 sm:pl-6 hidden md:block">
+                <span className="text-[10px] text-slate-500 font-extrabold uppercase block tracking-wider">
                   Lowest Prototype Quote
                 </span>
-                <span className="text-xl sm:text-2xl font-black font-mono text-emerald-400">
+                <span className="text-xl sm:text-2xl font-black font-mono text-emerald-600">
                   ₹{summary.cheapestFare}
                 </span>
               </div>
@@ -719,7 +719,7 @@ export default function RideCompareView({ tourist }) {
           </div>
 
           <div className="text-left sm:text-right shrink-0">
-            <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">
+            <span className="text-[10px] uppercase font-extrabold px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
               {summary.operatingMode}
             </span>
           </div>

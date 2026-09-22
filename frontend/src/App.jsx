@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Navbar from './components/Navbar';
-import BottomDock from './components/BottomDock';
+import BottomDock, { TOURIST_ROUTES } from './components/BottomDock';
 
 import LandingPage from './pages/LandingPage';
 import TouristDashboard from './pages/TouristDashboard';
@@ -18,6 +18,7 @@ import BlockchainLedgerPage from './pages/BlockchainLedgerPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import PrivacyCompliancePage from './pages/PrivacyCompliancePage';
 import VendorMarketplacePage from './pages/VendorMarketplacePage';
+import SwachhFoodPage from './pages/SwachhFoodPage';
 
 // Dedicated New Pages for Every Button
 import DigitalIdPage from './pages/DigitalIdPage';
@@ -36,6 +37,7 @@ import HotelsPage from './pages/HotelsPage';
 import MicroStaysPage from './pages/MicroStaysPage';
 import ArtisansPage from './pages/ArtisansPage';
 import EVehiclesPage from './pages/EVehiclesPage';
+import VirtualQueuePage from './pages/VirtualQueuePage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -551,6 +553,7 @@ function AppContent({
       <OfflineGhostMeshModal
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
+        tourist={touristProfile}
       />
 
       {/* Bottom Dock — iPhone-style tab navigation for tourists */}
@@ -561,7 +564,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/green-rewards'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && TOURIST_ROUTES.includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -587,7 +590,6 @@ function AppContent({
                   path="/login"
                   element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
                 />
-
                 {/* 1. Dedicated Live Safety Map & Tracking Dashboard */}
                 <Route
                   path="/tourist-dashboard"
@@ -862,6 +864,28 @@ function AppContent({
                     </RequireAuth>
                   }
                 />
+
+                {/* Swachh Food Tourism Intelligence */}
+                <Route
+                  path="/swachh-food"
+                  element={
+                    <RequireAuth currentUser={currentUser}>
+                      <SwachhFoodPage tourist={touristProfile} />
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/food" element={<Navigate to="/swachh-food" replace />} />
+
+                {/* S.A.F.A.R. VQ-Commerce Engine (Virtual Queue & Micro-Economy Vouchers) */}
+                <Route
+                  path="/virtual-queue"
+                  element={
+                    <RequireAuth currentUser={currentUser}>
+                      <VirtualQueuePage tourist={touristProfile} />
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/vq" element={<Navigate to="/virtual-queue" replace />} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

@@ -145,13 +145,8 @@ export default function DigitalIdPage({ tourist, allTourists = [], onSelectTouri
             boxShadow: '0 20px 50px rgba(0,0,0,0.1), 0 4px 16px rgba(10,132,255,0.08), inset 0 1px 0 rgba(255,255,255,1)',
           }}
         >
-          {/* Indian Tricolor Header Ribbon */}
-          <div
-            className="h-2 w-full"
-            style={{
-              background: 'linear-gradient(90deg, #FF9F0A 0%, #FF9F0A 33%, #ffffff 33%, #ffffff 66%, #34C759 66%, #34C759 100%)',
-            }}
-          />
+          {/* Green Header Ribbon */}
+          <div className="h-2 w-full bg-emerald-600" />
 
           <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
             {/* Top Bar inside Card */}

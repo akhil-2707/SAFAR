@@ -55,30 +55,30 @@ export default function FareGuardBanner({ localBenchmark, displayedOptions = [],
   }
 
   return (
-    <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 text-white border border-emerald-500/30 shadow-lg space-y-3.5">
+    <div className="p-4 sm:p-5 rounded-3xl bg-white/95 border border-emerald-200/80 shadow-md backdrop-blur-xl text-slate-900 space-y-3.5">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0 shadow-xs">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-black uppercase tracking-wider text-emerald-800">
                 SAFAR Fare Guard — Municipal Transit Benchmark Overlay
               </span>
-              <span className="text-[10px] font-extrabold px-2 py-0.2 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                 {localBenchmark.regionName}
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-medium">
+            <p className="text-[11px] text-slate-500 font-medium">
               Source: {localBenchmark.authoritySource} ({localBenchmark.effectiveYear})
             </p>
           </div>
         </div>
 
-        <span className="text-[10px] font-mono text-slate-400">
+        <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-xl border border-slate-200/80">
           Route Distance: ~{localBenchmark.distanceKm} km
         </span>
       </div>
@@ -88,24 +88,24 @@ export default function FareGuardBanner({ localBenchmark, displayedOptions = [],
         
         {/* Auto-Rickshaw Benchmark Box */}
         {autoBenchmark && (
-          <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-1.5">
-            <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
-              <span className="uppercase tracking-wider">🛺 Auto-Rickshaw</span>
-              <span className="text-slate-300">{autoBenchmark.rateDescription}</span>
+          <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/90 space-y-2">
+            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+              <span className="uppercase tracking-wider font-extrabold text-slate-700">🛺 Auto-Rickshaw</span>
+              <span className="text-slate-600 font-semibold">{autoBenchmark.rateDescription}</span>
             </div>
             
             <div className="flex justify-between items-baseline pt-0.5">
               <div>
-                <span className="text-[9px] uppercase text-slate-400 block">Local Benchmark:</span>
-                <span className="text-base font-black font-mono text-emerald-400">
+                <span className="text-[9px] uppercase font-bold text-slate-400 block">Local Benchmark:</span>
+                <span className="text-base font-black font-mono text-emerald-600">
                   ₹{autoBenchmark.min} – ₹{autoBenchmark.max}
                 </span>
               </div>
 
               {autoOption && (
                 <div className="text-right">
-                  <span className="text-[9px] uppercase text-slate-400 block">App Prototype:</span>
-                  <span className="text-base font-black font-mono text-white">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">App Prototype:</span>
+                  <span className="text-base font-black font-mono text-slate-900">
                     ₹{autoOption.minFare} – ₹{autoOption.maxFare}
                   </span>
                 </div>
@@ -113,12 +113,12 @@ export default function FareGuardBanner({ localBenchmark, displayedOptions = [],
             </div>
 
             {autoVariance && (
-              <div className="pt-1 border-t border-slate-700/60 flex items-center justify-between text-[10px]">
-                <span className="text-slate-400">Comparison Status:</span>
-                <span className={`font-extrabold px-1.5 py-0.2 rounded ${
-                  autoStatus === 'WITHIN' ? 'bg-emerald-500/20 text-emerald-300'
-                  : autoStatus === 'BELOW' ? 'bg-blue-500/20 text-blue-300'
-                  : 'bg-amber-500/20 text-amber-300'
+              <div className="pt-1.5 border-t border-slate-200/70 flex items-center justify-between text-[10px]">
+                <span className="text-slate-500 font-medium">Comparison Status:</span>
+                <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] ${
+                  autoStatus === 'WITHIN' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : autoStatus === 'BELOW' ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                  : 'bg-amber-50 text-amber-800 border border-amber-200'
                 }`}>
                   {autoVariance}
                 </span>
@@ -129,24 +129,24 @@ export default function FareGuardBanner({ localBenchmark, displayedOptions = [],
 
         {/* Taxi / Cab Benchmark Box */}
         {cabBenchmark && (
-          <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-1.5">
-            <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
-              <span className="uppercase tracking-wider">🚕 Standard Taxi / Cab</span>
-              <span className="text-slate-300">{cabBenchmark.rateDescription}</span>
+          <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/90 space-y-2">
+            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
+              <span className="uppercase tracking-wider font-extrabold text-slate-700">🚕 Standard Taxi / Cab</span>
+              <span className="text-slate-600 font-semibold">{cabBenchmark.rateDescription}</span>
             </div>
 
             <div className="flex justify-between items-baseline pt-0.5">
               <div>
-                <span className="text-[9px] uppercase text-slate-400 block">Local Benchmark:</span>
-                <span className="text-base font-black font-mono text-emerald-400">
+                <span className="text-[9px] uppercase font-bold text-slate-400 block">Local Benchmark:</span>
+                <span className="text-base font-black font-mono text-emerald-600">
                   ₹{cabBenchmark.min} – ₹{cabBenchmark.max}
                 </span>
               </div>
 
               {cabOption && (
                 <div className="text-right">
-                  <span className="text-[9px] uppercase text-slate-400 block">App Prototype:</span>
-                  <span className="text-base font-black font-mono text-white">
+                  <span className="text-[9px] uppercase font-bold text-slate-400 block">App Prototype:</span>
+                  <span className="text-base font-black font-mono text-slate-900">
                     ₹{cabOption.minFare} – ₹{cabOption.maxFare}
                   </span>
                 </div>
@@ -154,9 +154,9 @@ export default function FareGuardBanner({ localBenchmark, displayedOptions = [],
             </div>
 
             {cabOption && (
-              <div className="pt-1 border-t border-slate-700/60 flex items-center justify-between text-[10px]">
-                <span className="text-slate-400">Comparison Status:</span>
-                <span className="font-extrabold px-1.5 py-0.2 rounded bg-slate-700 text-slate-300">
+              <div className="pt-1.5 border-t border-slate-200/70 flex items-center justify-between text-[10px]">
+                <span className="text-slate-500 font-medium">Comparison Status:</span>
+                <span className="font-bold px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-700 border border-slate-200">
                   {cabOption.minFare > cabBenchmark.max ? 'Above local benchmark' : 'Within benchmark'}
                 </span>
               </div>
@@ -165,14 +165,14 @@ export default function FareGuardBanner({ localBenchmark, displayedOptions = [],
         )}
 
         {/* Informational Guidance Box */}
-        <div className="p-3 rounded-2xl bg-slate-800/50 border border-slate-700/70 flex flex-col justify-between space-y-1.5 text-slate-300 text-[11px] leading-relaxed">
-          <div className="flex items-start space-x-1.5">
-            <Info className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-            <p>
+        <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200/90 flex flex-col justify-between space-y-2 text-slate-600 text-[11px] leading-relaxed">
+          <div className="flex items-start space-x-2">
+            <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <p className="font-medium text-slate-600">
               Provider prototype estimates include platform convenience fees. Municipal benchmarks reflect standard meter tariffs published by local transport authorities.
             </p>
           </div>
-          <span className="text-[9px] text-slate-400 block">
+          <span className="text-[10px] text-slate-500 font-semibold block pt-1 border-t border-slate-200/60">
             Tip: Use this benchmark when evaluating unmetered offline street quotes.
           </span>
         </div>

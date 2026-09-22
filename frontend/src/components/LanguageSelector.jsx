@@ -50,19 +50,18 @@ export default function LanguageSelector({ variant = 'navbar', className = '' })
   }
 
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
+    <div className={`relative shrink-0 ${className}`} ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-2.5 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-gray-200 hover:border-emerald-500/50 text-gray-800 transition-all shadow-sm group"
+        className="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl bg-white/90 hover:bg-white border border-slate-200/90 hover:border-emerald-500/60 text-slate-700 hover:text-emerald-700 transition-all shadow-xs group shrink-0"
         title={t('selectLanguage', 'Select Language')}
+        aria-label="Select Language"
       >
         <Globe className="w-4 h-4 text-emerald-600 group-hover:rotate-12 transition-transform shrink-0" />
-        <span className="text-sm">{activeLangMeta.flag}</span>
-        <span className="text-xs font-bold font-mono tracking-wider hidden sm:inline text-gray-700">
+        <span className="absolute -bottom-0.5 -right-0.5 text-[8px] font-black font-mono px-1 rounded-sm bg-emerald-600 text-white leading-tight shadow-xs">
           {activeLangMeta.code.toUpperCase()}
         </span>
-        <ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (

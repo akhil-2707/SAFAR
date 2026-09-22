@@ -72,6 +72,9 @@ app.use('/api/fares', require('./routes/fareRoutes'));
 app.use('/api/rewards', require('./routes/rewardRoutes'));
 app.use('/api/green-rewards', require('./routes/rewardRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/food', require('./routes/foodRoutes'));
+app.use('/api/vq', require('./routes/vqRoutes'));
+app.use('/api/virtual-queue', require('./routes/vqRoutes'));
 
 // Serve Frontend in Production / Cloud Deployments
 const frontendDist = path.join(__dirname, '../frontend/dist');

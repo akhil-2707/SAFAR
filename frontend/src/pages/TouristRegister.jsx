@@ -234,15 +234,15 @@ export default function TouristRegister({ onRegisterSuccess }) {
           boxShadow: '0 25px 70px rgba(0, 0, 0, 0.08)'
         }}
       >
-        {/* Tricolor Ribbon Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-500 via-white to-emerald-600" />
+        {/* Green Ribbon Bar */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-emerald-600" />
 
         {/* Dynamic Header based on Role */}
         <div className="text-center space-y-2 border-b border-gray-100 pb-5 pt-2">
           <div className={`w-14 h-14 rounded-2xl p-0.5 shadow-md flex items-center justify-center mx-auto ${
             regRole === 'AUTHORITY'
               ? 'bg-gradient-to-tr from-purple-700 via-indigo-600 to-purple-800'
-              : 'bg-gradient-to-tr from-orange-500 via-amber-400 to-emerald-500'
+              : 'bg-emerald-600 text-white'
           }`}>
             <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center text-emerald-600">
               <ShieldCheck className={`w-8 h-8 ${regRole === 'AUTHORITY' ? 'text-purple-700' : 'text-emerald-600'}`} />
@@ -538,7 +538,7 @@ export default function TouristRegister({ onRegisterSuccess }) {
         ) : (
           <div>
             {/* Language Selector Banner */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-orange-50/80 via-white to-emerald-50/80 p-3.5 rounded-2xl border border-orange-200 shadow-xs mb-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 shadow-xs mb-6">
               <div className="flex items-center space-x-2.5">
                 <Globe className="w-5 h-5 text-emerald-600 shrink-0" />
                 <div>
