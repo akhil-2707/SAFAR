@@ -521,7 +521,7 @@ export default function HotelFastCheckinModal({
                 transition={SPRING}
                 onClick={handleStartFastCheckin}
                 disabled={loading}
-                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-600 text-white font-black text-sm shadow-lg shadow-orange-500/25 flex items-center justify-center space-x-2 cursor-pointer"
+                className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center space-x-2 cursor-pointer transition-all"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Verify & 1-Tap Check-In (3 Seconds)</span>

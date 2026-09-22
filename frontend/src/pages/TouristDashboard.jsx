@@ -650,7 +650,7 @@ export default function TouristDashboard({
       <motion.div
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-600 via-orange-500 to-rose-600 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border border-amber-300/30"
+        className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border border-emerald-400/30"
       >
         <div className="relative z-10 flex items-start sm:items-center space-x-3.5">
           <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 text-2xl shadow-inner">
@@ -658,17 +658,17 @@ export default function TouristDashboard({
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full border border-white/25">
+              <span className="text-xs font-black uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full border border-white/25">
                 Crowd-Dispersal Protocol
               </span>
-              <span className="text-[10px] font-bold bg-amber-300 text-amber-950 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Sparkles className="w-2.5 h-2.5" /> 3.5h Safe Free-Time Window
+              <span className="text-[10px] font-bold bg-white/25 text-emerald-50 px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-white/20">
+                <Sparkles className="w-2.5 h-2.5 text-emerald-200" /> 3.5h Safe Free-Time Window
               </span>
             </div>
-            <h3 className="text-base sm:text-lg font-black tracking-tight mt-1">
+            <h3 className="text-base sm:text-lg font-black tracking-tight mt-1 text-white">
               Virtual Queue & Micro-Economy Time-Voucher Engine
             </h3>
-            <p className="text-xs sm:text-sm text-white/90 font-medium max-w-2xl mt-0.5">
+            <p className="text-xs sm:text-sm text-emerald-50/90 font-medium max-w-2xl mt-0.5">
               Skip 4–6 hour barricade jams at Ram Mandir, Kashi, Vaishno Devi & Taj Mahal. Enjoy verified micro-stays, satvik food & GI artisans while your turnstile slot is secured.
             </p>
           </div>
@@ -677,10 +677,10 @@ export default function TouristDashboard({
         <div className="relative z-10 flex items-center gap-2.5 shrink-0">
           <Link
             to="/virtual-queue"
-            className="px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-white text-orange-600 hover:bg-orange-50 transition-all shadow-lg flex items-center space-x-2 cursor-pointer active:scale-95"
+            className="px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-white text-emerald-800 hover:bg-emerald-50 transition-all shadow-lg flex items-center space-x-2 cursor-pointer active:scale-95"
           >
             <span>Claim Express Pass</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-emerald-600" />
           </Link>
         </div>
       </motion.div>

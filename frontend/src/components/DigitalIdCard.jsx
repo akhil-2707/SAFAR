@@ -15,8 +15,8 @@ export default function DigitalIdCard({ digitalId, tourist }) {
 
   return (
     <div className="relative rounded-2xl overflow-hidden bg-white/95 border border-emerald-200/80 p-6 shadow-xl space-y-6 backdrop-blur-xl">
-      {/* Indian Tricolor Header Strip */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-500 via-white to-emerald-600" />
+      {/* Green Header Strip */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-emerald-600" />
       
       {/* Background Subtle Ambient Glow */}
       <div className="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -107,7 +107,7 @@ export default function DigitalIdCard({ digitalId, tourist }) {
 
           <Link
             to="/hotels"
-            className="py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5 shadow-sm"
+            className="py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5 shadow-sm"
           >
             <span>🏨 1-Tap Hotel Check-In</span>
           </Link>

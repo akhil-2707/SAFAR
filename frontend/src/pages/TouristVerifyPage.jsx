@@ -171,14 +171,14 @@ export default function TouristVerifyPage() {
 
           {/* 🏨 Hotel Reception Fast Check-In Callout */}
           {isVerified && (
-            <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-emerald-500/10 border-2 border-orange-400/40 text-left space-y-2.5">
+            <div className="mt-4 p-4 rounded-2xl bg-emerald-50/70 border-2 border-emerald-300/60 text-left space-y-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold shadow-xs">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-xs">
                     <Building2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-black uppercase text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
                       Hotel Front Desk Terminal
                     </span>
                     <h4 className="text-xs sm:text-sm font-black text-slate-900">
@@ -198,7 +198,7 @@ export default function TouristVerifyPage() {
 
               <button
                 onClick={() => setShowFastCheckin(true)}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md flex items-center justify-center space-x-2 transition-transform active:scale-98 cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md flex items-center justify-center space-x-2 transition-transform active:scale-98 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Execute 1-Tap Check-In For This Guest</span>

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Navbar from './components/Navbar';
-import BottomDock from './components/BottomDock';
+import BottomDock, { TOURIST_ROUTES } from './components/BottomDock';
 
 import LandingPage from './pages/LandingPage';
 import TouristDashboard from './pages/TouristDashboard';
@@ -552,6 +552,7 @@ function AppContent({
       <OfflineGhostMeshModal
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
+        tourist={touristProfile}
       />
 
       {/* Bottom Dock — iPhone-style tab navigation for tourists */}
@@ -562,7 +563,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/green-rewards', '/plan', '/swachh-food', '/virtual-queue', '/vq'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && TOURIST_ROUTES.includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
