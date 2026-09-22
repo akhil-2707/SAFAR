@@ -141,16 +141,6 @@ export default function LoginPage({ onLoginSuccess }) {
       location: 'Assam / State Tourism Police & CAD HQ',
       tag: '🛡️ Active Officer',
       desc: 'Field Command Desk for dispatching patrols, guide allocation & zone surveillance.'
-    },
-    {
-      id: 'akhil_dg',
-      label: '🎖️ DG Akhil Gupta (Supreme)',
-      email: 'akhil@gmail.com',
-      password: '12345678',
-      role: 'AUTHORITY',
-      location: 'Central Supreme Tourism Command Bureau',
-      tag: '⭐ Supreme Command',
-      desc: 'Supreme DG with clearance approval for all officers, pan-India vigilance radar, & direct command.'
     }
   ];
 
