@@ -4,9 +4,24 @@ const { blockchainInstance } = require('../services/blockchainService');
 
 function getInitialData() {
   const defaultPasswordHash = bcrypt.hashSync('admin123', 10);
+  const dgPasswordHash = bcrypt.hashSync('12345678', 10);
 
   // Authority & Admin Accounts
   const users = [
+    {
+      id: 'usr_auth_dg_01',
+      name: 'Director General Akhil Gupta',
+      email: 'akhil@gmail.com',
+      password: dgPasswordHash,
+      role: 'AUTHORITY',
+      isMasterAuthority: true,
+      status: 'APPROVED',
+      department: 'S.A.F.A.R. Supreme Central Command Desk',
+      designation: 'Director General & Supreme Authority',
+      serviceBadgeId: 'DG-SAFAR-001',
+      jurisdiction: 'National Tourism Safety Grid (Pan-India)',
+      phone: '+91 98100 12345'
+    },
     {
       id: 'usr_auth_01',
       name: 'Dr. Ananya Sharma',

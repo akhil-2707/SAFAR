@@ -865,12 +865,12 @@ export default function AuthorityDashboard({
       {/* Department Officers Management Modal */}
       <AnimatePresence>
         {showOfficersModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-6 sm:pt-8 bg-black/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              initial={{ opacity: 0, scale: 0.95, y: -15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-2xl border border-purple-200 text-slate-800 space-y-4 max-h-[85vh] flex flex-col"
+              exit={{ opacity: 0, scale: 0.95, y: -15 }}
+              className="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-2xl border border-purple-200 text-slate-800 space-y-4 max-h-[85vh] sm:max-h-[90vh] flex flex-col"
             >
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2.5">
