@@ -14,6 +14,8 @@
  * Uses realistic deterministic local models with zero dependency on paid third-party APIs.
  */
 
+const { searchFoodOutlets } = require('./foodService');
+
 const DESTINATION_INTELLIGENCE = {
   AYODHYA: {
     id: 'ayodhya',
@@ -260,10 +262,23 @@ function generatePersonalizedPlan({
   const foodAndActivitiesPerPersonDaily = tierKey === 'budget' ? 500 : tierKey === 'luxury' ? 1800 : 950;
   const totalFoodAndActivityCost = numDays * numTravellers * foodAndActivitiesPerPersonDaily;
 
+  // Granular Food Budget Breakdown matching foodAndActivitiesPerPersonDaily
+  const dailyPerPersonFoodBudget = foodAndActivitiesPerPersonDaily;
+  const foodBudgetBreakdown = {
+    dailyPerPersonFoodBudget,
+    breakfast: Math.round(dailyPerPersonFoodBudget * 0.20),
+    lunch: Math.round(dailyPerPersonFoodBudget * 0.35),
+    dinner: Math.round(dailyPerPersonFoodBudget * 0.35),
+    localExperience: Math.round(dailyPerPersonFoodBudget * 0.10),
+    dailyTotal: dailyPerPersonFoodBudget,
+    disclaimer: 'Estimated prototype benchmark values for food & culinary experiences'
+  };
+
   const totalEstimatedBudget = totalStayCost + totalTransportCost + totalFoodAndActivityCost;
 
-  // Build Day-by-Day schedule from curated attractions
+  // Build Day-by-Day schedule from curated attractions & Swachh Food recommendations
   const allAttractions = destData.attractions;
+  const destFoodOutlets = searchFoodOutlets({ destination: normKey });
   const itinerary = [];
 
   for (let d = 1; d <= numDays; d++) {
@@ -280,6 +295,9 @@ function generatePersonalizedPlan({
     const estimatedDayStay = stayCostPerNight * roomsNeeded;
     const estimatedDayFood = numTravellers * foodAndActivitiesPerPersonDaily;
 
+    const lunchOutlet = destFoodOutlets[(d - 1) % (destFoodOutlets.length || 1)] || null;
+    const dinnerOutlet = destFoodOutlets[d % (destFoodOutlets.length || 1)] || null;
+
     itinerary.push({
       day: d,
       title: `Day ${d}: ${dayAttractions[0]?.name || 'Local Discovery'} & Sacred Circuits`,
@@ -287,6 +305,36 @@ function generatePersonalizedPlan({
       morning: dayAttractions[0] || { name: 'Morning Exploration', durationHours: 2, category: 'Leisure' },
       afternoon: dayAttractions[1] || { name: 'Afternoon Heritage Walk', durationHours: 2, category: 'Sightseeing' },
       evening: dayAttractions[2] || { name: 'Sunset View & Local Cuisine Experience', durationHours: 2, category: 'Cultural' },
+      foodRecommendations: {
+        lunch: lunchOutlet ? {
+          id: lunchOutlet.id,
+          name: lunchOutlet.name,
+          cuisine: lunchOutlet.cuisine,
+          averagePrice: lunchOutlet.averagePrice,
+          priceRange: lunchOutlet.priceRange,
+          swachhScore: lunchOutlet.swachhScore,
+          routeRelevance: lunchOutlet.routeRelevance,
+          distanceFromReference: lunchOutlet.distanceFromReference,
+          localSpecialty: lunchOutlet.localSpecialty,
+          signatureDish: lunchOutlet.signatureDish,
+          mealType: 'Lunch Stop',
+          added: false
+        } : null,
+        dinner: dinnerOutlet ? {
+          id: dinnerOutlet.id,
+          name: dinnerOutlet.name,
+          cuisine: dinnerOutlet.cuisine,
+          averagePrice: dinnerOutlet.averagePrice,
+          priceRange: dinnerOutlet.priceRange,
+          swachhScore: dinnerOutlet.swachhScore,
+          routeRelevance: dinnerOutlet.routeRelevance,
+          distanceFromReference: dinnerOutlet.distanceFromReference,
+          localSpecialty: dinnerOutlet.localSpecialty,
+          signatureDish: dinnerOutlet.signatureDish,
+          mealType: 'Dinner Experience',
+          added: false
+        } : null
+      },
       estimatedDayBudget: {
         transport: estimatedDayTransport,
         stay: d < numDays ? estimatedDayStay : 0,
@@ -316,10 +364,12 @@ function generatePersonalizedPlan({
       itemizedBudget: {
         stayCost: totalStayCost,
         transportCost: totalTransportCost,
-        foodAndActivitiesCost: totalFoodAndActivityCost
+        foodAndActivitiesCost: totalFoodAndActivityCost,
+        foodBudgetBreakdown
       },
       budgetDisclaimer: 'Estimated budget based on calibrated benchmark seasonal tariffs. Real costs vary with booking date and season.'
     },
+    foodBudgetBreakdown,
     itinerary,
     recommendedStays: destData.stays,
     contextualTips: {

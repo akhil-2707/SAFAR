@@ -29,6 +29,8 @@ function getFallbackInitialState() {
     rewardConfig: initialData.rewardConfig || [],
     greenRewards: initialData.greenRewards || [],
     greenCoinTransactions: initialData.greenCoinTransactions || [],
+    foodOutlets: initialData.foodOutlets || [],
+    foodFeedback: initialData.foodFeedback || [],
     notifications: [
       {
         id: 'notif_01',
@@ -88,11 +90,11 @@ async function connectMongoDB() {
     console.log('=======================================================');
 
     // Sync from MongoDB into state
-    const db = mongoose.connection.db;
     const collectionsToSync = [
       'users', 'tourists', 'digitalids', 'geofences', 'incidents', 
       'emergencyservices', 'trips', 'guides', 'guiderequests', 'guidecomplaints',
-      'partners', 'rewardconfig', 'greenrewards', 'greencointransactions'
+      'partners', 'rewardconfig', 'greenrewards', 'greencointransactions',
+      'foodoutlets', 'foodfeedback'
     ];
 
     for (const colName of collectionsToSync) {
@@ -106,11 +108,13 @@ async function connectMongoDB() {
           });
           const targetKey = colName === 'digitalids' ? 'digitalIds' 
             : colName === 'emergencyservices' ? 'emergencyServices' 
-            : colName === 'guiderequests' ? 'guideRequests'
+            : colName === 'guiderequests' ? 'guideRequests' 
             : colName === 'guidecomplaints' ? 'guideComplaints'
             : colName === 'rewardconfig' ? 'rewardConfig'
             : colName === 'greenrewards' ? 'greenRewards'
             : colName === 'greencointransactions' ? 'greenCoinTransactions'
+            : colName === 'foodoutlets' ? 'foodOutlets'
+            : colName === 'foodfeedback' ? 'foodFeedback'
             : colName;
           state[targetKey] = cleanDocs;
           console.log(`✓ Loaded ${cleanDocs.length} ${targetKey} from MongoDB Atlas`);
@@ -127,7 +131,10 @@ async function connectMongoDB() {
 const dbStore = {
   get: (collectionName) => {
     const currentState = initState();
-    return currentState[collectionName] || [];
+    if (!currentState[collectionName]) {
+      currentState[collectionName] = [];
+    }
+    return currentState[collectionName];
   },
 
   find: (collectionName, filterFn = null) => {

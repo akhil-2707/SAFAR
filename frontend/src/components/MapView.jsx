@@ -130,6 +130,27 @@ const createDestinationIcon = (color = '#EF4444') => {
   });
 };
 
+// 🍽️ Swachh Food Hygiene Pin Icon
+const createFoodMarkerIcon = (color = '#10B981', score = 90) => {
+  const svgHtml = `
+    <div style="position: relative; width: 34px; height: 42px; display: flex; align-items: center; justify-content: center;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="34" height="42" style="filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.4));">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+      <div style="position: absolute; top: 6px; width: 18px; height: 18px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; color: ${color}; box-shadow: 0 1px 3px rgba(0,0,0,0.25);">
+        🍽
+      </div>
+    </div>
+  `;
+  return L.divIcon({
+    className: 'food-marker',
+    html: svgHtml,
+    iconSize: [34, 42],
+    iconAnchor: [17, 40],
+    popupAnchor: [0, -38]
+  });
+};
+
 // Standard Geographic Haversine Distance in Kilometers
 function calculateHaversineDistanceKm(lat1, lon1, lat2, lon2) {
   if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return null;
@@ -221,7 +242,10 @@ export default function MapView({
   emergencyServices = [],
   height = "500px",
   onRealTimeLocationFound = null,
-  showLiveUserLocation = true
+  showLiveUserLocation = true,
+  showFoodMarkers = false,
+  foodPlaces = [],
+  onSelectFoodPlace = null
 }) {
   const [mapProvider, setMapProvider] = useState('google_streets');
   const [selectedRegion, setSelectedRegion] = useState(
@@ -936,6 +960,51 @@ export default function MapView({
               </Popup>
             </Marker>
           ))}
+
+        {/* Swachh Food Markers */}
+        {showFoodMarkers && foodPlaces && foodPlaces.map((fp) => {
+          const score = fp.swachhScore || 75;
+          const hygieneTier = score >= 85 ? 'STRONG' : score >= 70 ? 'MODERATE' : 'LIMITED';
+          const tierColor = hygieneTier === 'STRONG' ? '#10B981' : hygieneTier === 'MODERATE' ? '#F59E0B' : '#6B7280';
+          const tierLabel = hygieneTier === 'STRONG' ? 'Strong available hygiene information' : hygieneTier === 'MODERATE' ? 'Moderate / limited information' : 'Limited hygiene information';
+
+          return (
+            <Marker
+              key={fp.id}
+              position={[fp.lat, fp.lng]}
+              icon={createFoodMarkerIcon(tierColor, score)}
+              zIndexOffset={850}
+            >
+              <Popup>
+                <div className="p-2 space-y-1.5 min-w-[220px] text-gray-900">
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-1">
+                    <span className="font-extrabold text-xs text-slate-900 truncate max-w-[150px]">{fp.name}</span>
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded text-white font-mono" style={{ background: tierColor }}>
+                      {score}/100
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 font-semibold">{fp.cuisine} · {fp.priceRange || `~₹${fp.averagePrice}`}</p>
+                  <p className="text-[10px] text-slate-500 leading-tight">{fp.localSpecialty || fp.location}</p>
+                  
+                  <div className="pt-1.5 border-t border-gray-100 flex items-center justify-between text-[10px]">
+                    <span className="font-semibold" style={{ color: tierColor }}>
+                      {hygieneTier === 'STRONG' ? '🟢' : hygieneTier === 'MODERATE' ? '🟡' : '⚪'} {tierLabel}
+                    </span>
+                    {onSelectFoodPlace && (
+                      <button
+                        type="button"
+                        onClick={() => onSelectFoodPlace(fp)}
+                        className="font-bold text-orange-600 hover:text-orange-700 underline cursor-pointer ml-1"
+                      >
+                        View
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
 
       {/* Floating Distance & Location Card (Corner Overlay) */}

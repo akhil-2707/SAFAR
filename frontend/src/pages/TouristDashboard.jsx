@@ -21,7 +21,8 @@ import { useBrowserGeolocation } from '../hooks/useBrowserGeolocation';
 import { 
   ShieldCheck, MapPin, Navigation, AlertTriangle, Radio, Compass, 
   PhoneCall, Zap, WifiOff, Sparkles, ShieldAlert, Activity, Wifi, Shield,
-  Phone, AlertCircle, Clock, HeartHandshake, ArrowRight
+  Phone, AlertCircle, Clock, HeartHandshake, ArrowRight,
+  Calendar, Building2, Luggage, CheckCircle2, BedDouble, Utensils
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -753,6 +754,66 @@ export default function TouristDashboard({
           {/* 🛺 Local Transport Budget & Anti-Scam Auto/Cab Fare Guide */}
           <motion.div variants={itemVariants}>
             <LocalFareEstimator currentTourist={currentTourist} />
+          </motion.div>
+
+          {/* 🍽️ Swachh Food Near Your Journey (Flagship Food & Hygiene Intelligence) */}
+          <motion.div variants={itemVariants}>
+            <div className="rounded-3xl p-4 sm:p-5 bg-gradient-to-br from-orange-50/80 via-white to-amber-50/60 border border-orange-200/80 shadow-md space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold shadow-sm">
+                    <Utensils className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-1.5">
+                      <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                        🍽 Swachh Food Near Your Journey
+                      </h3>
+                      <span className="text-[9px] font-mono font-bold text-orange-700 bg-orange-100 px-1.5 py-0.5 rounded">
+                        PROTOTYPE
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-medium">
+                      Next suitable hygiene-benchmarked stop along your journey corridor
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xs font-mono font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl">
+                  {currentTourist?.touristId === 'TID-1036' ? 'Swachh 94/100' : currentTourist?.touristId === 'TID-1039' ? 'Swachh 92/100' : 'Swachh 91/100'}
+                </span>
+              </div>
+
+              <div className="p-3 bg-white rounded-2xl border border-orange-100 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="space-y-0.5">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-[10px] font-black uppercase text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded">
+                      {currentTourist?.touristId === 'TID-1036' ? 'Pilgrim Rasoi' : currentTourist?.touristId === 'TID-1039' ? 'Heritage Sweets' : 'Satvik Bhojanalaya'}
+                    </span>
+                    <strong className="text-slate-900 font-bold text-xs">
+                      {currentTourist?.touristId === 'TID-1036' ? 'Trikuta Yatri Satvik Rasoi' : currentTourist?.touristId === 'TID-1039' ? 'Petha Heritage & Brijwasi Sweets' : 'Shree Ram Bhojanalaya & Satvik Rasoi'}
+                    </strong>
+                  </div>
+                  <p className="text-[11px] text-slate-600 font-medium">
+                    {currentTourist?.touristId === 'TID-1036' ? 'Jammu Rajma Chawal with Anardana Chutney' : currentTourist?.touristId === 'TID-1039' ? 'Classic Agra Bedmi Poori & Kesar Petha' : 'Ayodhya Satvik Thali & Desi Ghee Peda'}
+                  </p>
+                  <div className="flex items-center space-x-3 text-[10px] text-slate-500 font-medium pt-0.5">
+                    <span>📍 ~0.6 km detour</span>
+                    <span>·</span>
+                    <span className="text-emerald-700 font-bold">~₹150–250 / person</span>
+                    <span>·</span>
+                    <span>★ 4.8 Rating</span>
+                  </div>
+                </div>
+
+                <Link
+                  to={`/swachh-food?destination=${currentTourist?.touristId === 'TID-1036' ? 'KATRA' : currentTourist?.touristId === 'TID-1039' ? 'AGRA' : 'AYODHYA'}`}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm transition-all flex items-center justify-center space-x-1 shrink-0"
+                >
+                  <span>View Food Options</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
           </motion.div>
 
           {/* Live Telemetry Inspector */}

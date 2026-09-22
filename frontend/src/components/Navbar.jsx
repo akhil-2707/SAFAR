@@ -3,7 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, LogOut, LogIn, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
-  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award, Leaf
+  Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award, Leaf,
+  Navigation, Hotel, Utensils
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -137,6 +138,7 @@ export default function Navbar({
               { to: '/trip-planner', label: '✨ Plan Trip' },
               { to: '/hotels', label: '🏨 Stays' },
               { to: '/artisans', label: '🏺 Artisans' },
+              { to: '/swachh-food', label: '🍽️ Swachh Food' },
               { to: '/green-rewards', label: '🌿 Green Rewards', green: true },
             ].map((nl) => {
               const active = location.pathname === nl.to || (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname));
@@ -561,6 +563,16 @@ export default function Navbar({
                     >
                       <Hotel className="w-4 h-4 text-emerald-500" />
                       <span>🏨 Hotels & Stays</span>
+                    </Link>
+                    <Link
+                      to="/swachh-food"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        location.pathname === '/swachh-food' ? 'bg-orange-50 text-orange-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Utensils className="w-4 h-4 text-orange-500" />
+                      <span>🍽 Swachh Food Intelligence</span>
                     </Link>
                     <Link
                       to="/tourist-dashboard"

@@ -18,6 +18,7 @@ import BlockchainLedgerPage from './pages/BlockchainLedgerPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import PrivacyCompliancePage from './pages/PrivacyCompliancePage';
 import VendorMarketplacePage from './pages/VendorMarketplacePage';
+import SwachhFoodPage from './pages/SwachhFoodPage';
 
 // Dedicated New Pages for Every Button
 import DigitalIdPage from './pages/DigitalIdPage';
@@ -560,7 +561,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/green-rewards'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/green-rewards', '/plan', '/swachh-food'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -586,7 +587,6 @@ function AppContent({
                   path="/login"
                   element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
                 />
-
                 {/* 1. Dedicated Live Safety Map & Tracking Dashboard */}
                 <Route
                   path="/tourist-dashboard"
@@ -847,6 +847,17 @@ function AppContent({
                     </RequireAuth>
                   }
                 />
+
+                {/* Swachh Food Tourism Intelligence */}
+                <Route
+                  path="/swachh-food"
+                  element={
+                    <RequireAuth currentUser={currentUser}>
+                      <SwachhFoodPage tourist={touristProfile} />
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/food" element={<Navigate to="/swachh-food" replace />} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
