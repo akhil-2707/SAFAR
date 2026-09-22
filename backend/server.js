@@ -56,6 +56,7 @@ app.use('/api/ai', require('./routes/aiRoutes'));
 app.use('/api/deadman', require('./routes/deadmanRoutes'));
 app.use('/api/guides', require('./routes/guideRoutes'));
 app.use('/api/fares', require('./routes/fareRoutes'));
+app.use('/api/food', require('./routes/foodRoutes'));
 
 // Serve Frontend in Production / Cloud Deployments
 const path = require('path');

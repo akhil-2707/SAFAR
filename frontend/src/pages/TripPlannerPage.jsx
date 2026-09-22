@@ -5,7 +5,7 @@ import MapView from '../components/MapView';
 import { 
   Navigation, MapPin, Calendar, Route, AlertTriangle, CheckCircle2, 
   ArrowRight, Sparkles, Coins, Users, Clock, ShieldCheck, Car, 
-  Hotel, Info, ChevronDown, ChevronUp, Compass
+  Hotel, Info, ChevronDown, ChevronUp, Compass, Utensils, Check, Plus
 } from 'lucide-react';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
@@ -46,6 +46,22 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
   const [deviateLoading, setDeviateLoading] = useState(false);
   const [deviateMessage, setDeviateMessage] = useState(null);
   const [showEvaluatorSection, setShowEvaluatorSection] = useState(false);
+
+  // Explicit user-added food stops
+  const [selectedFoodStops, setSelectedFoodStops] = useState({});
+
+  const handleToggleFoodStop = (day, mealKey, foodStop) => {
+    setSelectedFoodStops((prev) => {
+      const key = `${day}_${mealKey}`;
+      const next = { ...prev };
+      if (next[key]) {
+        delete next[key];
+      } else {
+        next[key] = foodStop;
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     handleGeneratePlan();
@@ -90,9 +106,19 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
           startDate,
           endDate: new Date(new Date(startDate).getTime() + days * 86400000).toISOString().split('T')[0],
           plannedRoute: `${activePreset.start} ➔ ${planData?.destination?.name || activePreset.name}`,
-          routeWaypoints: activePreset.waypoints
+          routeWaypoints: activePreset.waypoints,
+          foodStops: Object.values(selectedFoodStops)
         })
       });
+
+      // Also persist to localStorage for quick access
+      try {
+        const foodStopsArr = Object.values(selectedFoodStops);
+        if (foodStopsArr.length > 0) {
+          localStorage.setItem('safar_added_food_stops', JSON.stringify(foodStopsArr));
+        }
+      } catch {}
+
       setSaveSuccess(true);
       setTimeout(() => {
         navigate('/tourist-dashboard');
@@ -291,6 +317,65 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
         </div>
       )}
 
+      {/* 🍽️ Daily Food Budget Breakdown (SIH Flagship Swachh Food Module) */}
+      {planData?.planSummary?.itemizedBudget?.foodBudgetBreakdown && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-amber-50/70 border border-amber-200/80 shadow-sm space-y-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 rounded-lg bg-orange-500 text-white flex items-center justify-center">
+                <Utensils className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <span className="text-xs font-black text-amber-900 block">
+                  Daily Food Budget Breakdown (~₹{planData.planSummary.itemizedBudget.foodBudgetBreakdown.dailyTotal} / person)
+                </span>
+                <span className="text-[10px] text-amber-800/80 font-medium">
+                  Estimated prototype benchmark values for meals and local heritage tastings
+                </span>
+              </div>
+            </div>
+            <Link
+              to={`/swachh-food?destination=${selectedDestinationKey}`}
+              className="text-[11px] font-bold text-orange-700 hover:text-orange-900 underline flex items-center gap-1 shrink-0"
+            >
+              <span>Explore Swachh Food Registry</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <div className="p-2.5 rounded-xl bg-white border border-amber-200/60 shadow-xs space-y-0.5">
+              <span className="text-[10px] text-slate-400 font-bold uppercase block">Breakfast</span>
+              <span className="font-extrabold text-slate-900 font-mono text-sm">
+                ₹{planData.planSummary.itemizedBudget.foodBudgetBreakdown.breakfast}
+              </span>
+              <span className="text-[10px] text-slate-500 block">Morning energizer</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-white border border-amber-200/60 shadow-xs space-y-0.5">
+              <span className="text-[10px] text-slate-400 font-bold uppercase block">Lunch</span>
+              <span className="font-extrabold text-slate-900 font-mono text-sm">
+                ₹{planData.planSummary.itemizedBudget.foodBudgetBreakdown.lunch}
+              </span>
+              <span className="text-[10px] text-slate-500 block">Midday heritage meal</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-white border border-amber-200/60 shadow-xs space-y-0.5">
+              <span className="text-[10px] text-slate-400 font-bold uppercase block">Dinner</span>
+              <span className="font-extrabold text-slate-900 font-mono text-sm">
+                ₹{planData.planSummary.itemizedBudget.foodBudgetBreakdown.dinner}
+              </span>
+              <span className="text-[10px] text-slate-500 block">Evening sit-down dining</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-white border border-amber-200/60 shadow-xs space-y-0.5">
+              <span className="text-[10px] text-slate-400 font-bold uppercase block">Local Experience</span>
+              <span className="font-extrabold text-slate-900 font-mono text-sm">
+                ₹{planData.planSummary.itemizedBudget.foodBudgetBreakdown.localExperience}
+              </span>
+              <span className="text-[10px] text-slate-500 block">Signature sweet / chaat</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 🗺️ Main View: Itinerary (Left 2 cols) & Map + Stays + Tips (Right 1 col) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -312,56 +397,182 @@ export default function TripPlannerPage({ tourist, geofences = [], onSimulateDev
             </div>
           ) : (
             <div className="space-y-4">
-              {(planData?.itinerary || []).map((dayItem) => (
-                <motion.div
-                  key={dayItem.day}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={SPRING}
-                  className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-sm space-y-3.5 hover:border-orange-200 transition-all"
-                >
-                  <div className="flex items-center justify-between border-b pb-2.5">
-                    <div>
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-orange-100 text-orange-800">
-                        {dayItem.focus}
-                      </span>
-                      <h4 className="text-sm font-black text-slate-900 mt-1">{dayItem.title}</h4>
-                    </div>
-                    <span className="text-xs font-mono font-bold text-slate-700">
-                      Day Est: ₹{dayItem.estimatedDayBudget?.totalDay?.toLocaleString('en-IN')}
-                    </span>
-                  </div>
+              {(planData?.itinerary || []).map((dayItem) => {
+                const lunchRec = dayItem.foodRecommendations?.lunch;
+                const dinnerRec = dayItem.foodRecommendations?.dinner;
+                const lunchAdded = Boolean(selectedFoodStops[`${dayItem.day}_lunch`]);
+                const dinnerAdded = Boolean(selectedFoodStops[`${dayItem.day}_dinner`]);
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                    {/* Morning */}
-                    <div className="p-3 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-1">
-                      <span className="text-[10px] font-bold text-amber-700 uppercase flex items-center gap-1">
-                        <span>🌅 Morning</span>
+                return (
+                  <motion.div
+                    key={dayItem.day}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={SPRING}
+                    className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-sm space-y-4 hover:border-orange-200 transition-all"
+                  >
+                    <div className="flex items-center justify-between border-b pb-2.5">
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-orange-100 text-orange-800">
+                          {dayItem.focus}
+                        </span>
+                        <h4 className="text-sm font-black text-slate-900 mt-1">{dayItem.title}</h4>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-700">
+                        Day Est: ₹{dayItem.estimatedDayBudget?.totalDay?.toLocaleString('en-IN')}
                       </span>
-                      <p className="font-bold text-slate-900">{dayItem.morning?.name}</p>
-                      <span className="text-[10px] text-slate-500 block">{dayItem.morning?.category} ({dayItem.morning?.durationHours || 2}h)</span>
                     </div>
 
-                    {/* Afternoon */}
-                    <div className="p-3 rounded-2xl bg-orange-50/60 border border-orange-200/70 space-y-1">
-                      <span className="text-[10px] font-bold text-orange-700 uppercase flex items-center gap-1">
-                        <span>☀️ Afternoon</span>
-                      </span>
-                      <p className="font-bold text-slate-900">{dayItem.afternoon?.name}</p>
-                      <span className="text-[10px] text-slate-500 block">{dayItem.afternoon?.category} ({dayItem.afternoon?.durationHours || 2}h)</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                      {/* Morning */}
+                      <div className="p-3 rounded-2xl bg-amber-50/60 border border-amber-200/70 space-y-1">
+                        <span className="text-[10px] font-bold text-amber-700 uppercase flex items-center gap-1">
+                          <span>🌅 08:00 Morning</span>
+                        </span>
+                        <p className="font-bold text-slate-900">{dayItem.morning?.name}</p>
+                        <span className="text-[10px] text-slate-500 block">{dayItem.morning?.category} ({dayItem.morning?.durationHours || 2}h)</span>
+                      </div>
+
+                      {/* Afternoon */}
+                      <div className="p-3 rounded-2xl bg-orange-50/60 border border-orange-200/70 space-y-1">
+                        <span className="text-[10px] font-bold text-orange-700 uppercase flex items-center gap-1">
+                          <span>☀️ 14:30 Afternoon</span>
+                        </span>
+                        <p className="font-bold text-slate-900">{dayItem.afternoon?.name}</p>
+                        <span className="text-[10px] text-slate-500 block">{dayItem.afternoon?.category} ({dayItem.afternoon?.durationHours || 2}h)</span>
+                      </div>
+
+                      {/* Evening */}
+                      <div className="p-3 rounded-2xl bg-indigo-50/60 border border-indigo-200/70 space-y-1">
+                        <span className="text-[10px] font-bold text-indigo-700 uppercase flex items-center gap-1">
+                          <span>🌆 19:30 Evening</span>
+                        </span>
+                        <p className="font-bold text-slate-900">{dayItem.evening?.name}</p>
+                        <span className="text-[10px] text-slate-500 block">{dayItem.evening?.category} ({dayItem.evening?.durationHours || 2}h)</span>
+                      </div>
                     </div>
 
-                    {/* Evening */}
-                    <div className="p-3 rounded-2xl bg-indigo-50/60 border border-indigo-200/70 space-y-1">
-                      <span className="text-[10px] font-bold text-indigo-700 uppercase flex items-center gap-1">
-                        <span>🌆 Evening</span>
-                      </span>
-                      <p className="font-bold text-slate-900">{dayItem.evening?.name}</p>
-                      <span className="text-[10px] text-slate-500 block">{dayItem.evening?.category} ({dayItem.evening?.durationHours || 2}h)</span>
+                    {/* 🍽️ Food Intelligence Recommendations (User explicitly clicks [Add Food Stop]) */}
+                    <div className="pt-2 border-t border-slate-100 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-extrabold uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                          <Utensils className="w-3 h-3 text-orange-600" />
+                          <span>🍽 Food Intelligence Recommendations</span>
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          Click [Add Food Stop] to incorporate into Day {dayItem.day}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        {/* Lunch Stop Recommendation */}
+                        {lunchRec && (
+                          <div className={`p-3 rounded-2xl border transition-all ${
+                            lunchAdded
+                              ? 'bg-emerald-50/70 border-emerald-300 shadow-xs'
+                              : 'bg-slate-50/80 border-slate-200'
+                          }`}>
+                            <div className="flex items-start justify-between gap-1 mb-1">
+                              <div>
+                                <span className="text-[10px] font-black uppercase text-orange-700 block">
+                                  13:00 🍽 SAFAR Recommended Lunch
+                                </span>
+                                <h5 className="font-bold text-slate-900 text-xs mt-0.5">{lunchRec.name}</h5>
+                              </div>
+                              <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-white border border-emerald-200 text-emerald-700 shrink-0">
+                                Swachh {lunchRec.swachhScore}/100
+                              </span>
+                            </div>
+
+                            <p className="text-[10px] text-slate-500 font-medium">
+                              {lunchRec.cuisine} · ~₹{lunchRec.averagePrice}/person · {lunchRec.distanceFromReference} km detour
+                            </p>
+
+                            <div className="pt-2 mt-2 border-t border-slate-200/60 flex items-center justify-between">
+                              <span className="text-[10px] font-semibold text-slate-600 truncate max-w-[140px]">
+                                {lunchRec.localSpecialty?.split(',')[0]}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleFoodStop(dayItem.day, 'lunch', lunchRec)}
+                                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all flex items-center space-x-1 ${
+                                  lunchAdded
+                                    ? 'bg-emerald-600 text-white'
+                                    : 'bg-white hover:bg-orange-50 text-orange-600 border border-orange-200'
+                                }`}
+                              >
+                                {lunchAdded ? (
+                                  <>
+                                    <Check className="w-3 h-3" />
+                                    <span>Added Stop</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Plus className="w-3 h-3" />
+                                    <span>Add Food Stop</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Dinner Stop Recommendation */}
+                        {dinnerRec && (
+                          <div className={`p-3 rounded-2xl border transition-all ${
+                            dinnerAdded
+                              ? 'bg-emerald-50/70 border-emerald-300 shadow-xs'
+                              : 'bg-slate-50/80 border-slate-200'
+                          }`}>
+                            <div className="flex items-start justify-between gap-1 mb-1">
+                              <div>
+                                <span className="text-[10px] font-black uppercase text-indigo-700 block">
+                                  20:30 🍽 Local Dinner Experience
+                                </span>
+                                <h5 className="font-bold text-slate-900 text-xs mt-0.5">{dinnerRec.name}</h5>
+                              </div>
+                              <span className="text-[10px] font-mono font-black px-1.5 py-0.5 rounded bg-white border border-emerald-200 text-emerald-700 shrink-0">
+                                Swachh {dinnerRec.swachhScore}/100
+                              </span>
+                            </div>
+
+                            <p className="text-[10px] text-slate-500 font-medium">
+                              {dinnerRec.cuisine} · ~₹{dinnerRec.averagePrice}/person · {dinnerRec.distanceFromReference} km detour
+                            </p>
+
+                            <div className="pt-2 mt-2 border-t border-slate-200/60 flex items-center justify-between">
+                              <span className="text-[10px] font-semibold text-slate-600 truncate max-w-[140px]">
+                                {dinnerRec.localSpecialty?.split(',')[0]}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleFoodStop(dayItem.day, 'dinner', dinnerRec)}
+                                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all flex items-center space-x-1 ${
+                                  dinnerAdded
+                                    ? 'bg-emerald-600 text-white'
+                                    : 'bg-white hover:bg-orange-50 text-orange-600 border border-orange-200'
+                                }`}
+                              >
+                                {dinnerAdded ? (
+                                  <>
+                                    <Check className="w-3 h-3" />
+                                    <span>Added Stop</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Plus className="w-3 h-3" />
+                                    <span>Add Food Stop</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </div>

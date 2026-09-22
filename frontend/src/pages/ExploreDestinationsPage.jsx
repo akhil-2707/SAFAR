@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   Compass, MapPin, Calendar, Sparkles, ArrowRight, ShieldCheck, 
   Star, Coins, Users, Search, Filter, CheckCircle2, Navigation,
-  Hotel, Award, Car, Clock
+  Hotel, Award, Car, Clock, Utensils
 } from 'lucide-react';
 import SafarLogo from '../components/SafarLogo';
 
@@ -198,15 +198,23 @@ export default function ExploreDestinationsPage() {
               </div>
 
               {/* Card Footer Actions */}
-              <div className="p-4 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2">
+              <div className="p-4 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => handlePlanTrip(dest.key)}
-                  className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm transition-all flex items-center justify-center space-x-1.5"
+                  className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-sm transition-all flex items-center justify-center space-x-1.5 min-w-[120px]"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
-                  <span>Plan Trip Here</span>
+                  <span>Plan Trip</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
+                <Link
+                  to={`/swachh-food?destination=${dest.key}`}
+                  className="py-2.5 px-3 rounded-xl bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 transition-colors flex items-center gap-1.5 font-bold text-xs"
+                  title="Explore Local Food & Swachh Scores"
+                >
+                  <Utensils className="w-3.5 h-3.5 text-orange-600" />
+                  <span>Explore Local Food</span>
+                </Link>
                 <Link
                   to={`/hotels?circuit=${encodeURIComponent(dest.name.split(' ')[0])}`}
                   className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors"

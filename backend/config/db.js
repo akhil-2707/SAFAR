@@ -85,7 +85,7 @@ async function connectMongoDB() {
 
     // Sync from MongoDB into state
     const db = mongoose.connection.db;
-    const collectionsToSync = ['users', 'tourists', 'digitalids', 'geofences', 'incidents', 'emergencyservices', 'trips', 'guides', 'guiderequests', 'guidecomplaints'];
+    const collectionsToSync = ['users', 'tourists', 'digitalids', 'geofences', 'incidents', 'emergencyservices', 'trips', 'guides', 'guiderequests', 'guidecomplaints', 'foodoutlets', 'foodfeedback'];
 
     for (const colName of collectionsToSync) {
       try {
@@ -100,6 +100,8 @@ async function connectMongoDB() {
             : colName === 'emergencyservices' ? 'emergencyServices' 
             : colName === 'guiderequests' ? 'guideRequests'
             : colName === 'guidecomplaints' ? 'guideComplaints'
+            : colName === 'foodoutlets' ? 'foodOutlets'
+            : colName === 'foodfeedback' ? 'foodFeedback'
             : colName;
           state[targetKey] = cleanDocs;
           console.log(`✓ Loaded ${cleanDocs.length} ${targetKey} from MongoDB Atlas`);
@@ -116,7 +118,10 @@ async function connectMongoDB() {
 const dbStore = {
   get: (collectionName) => {
     const currentState = initState();
-    return currentState[collectionName] || [];
+    if (!currentState[collectionName]) {
+      currentState[collectionName] = [];
+    }
+    return currentState[collectionName];
   },
 
   find: (collectionName, filterFn = null) => {

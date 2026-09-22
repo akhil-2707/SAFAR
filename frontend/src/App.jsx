@@ -22,6 +22,7 @@ import VendorMarketplacePage from './pages/VendorMarketplacePage';
 import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
 import TripPlannerPage from './pages/TripPlannerPage';
 import HotelsPage from './pages/HotelsPage';
+import SwachhFoodPage from './pages/SwachhFoodPage';
 
 // Dedicated New Pages for Every Button
 import DigitalIdPage from './pages/DigitalIdPage';
@@ -524,7 +525,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/plan'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/plan', '/swachh-food'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -551,12 +552,13 @@ function AppContent({
                   element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
                 />
 
-                {/* Tourism-First Core Routes: Discover, Plan, Stays */}
+                {/* Tourism-First Core Routes: Discover, Plan, Stays, Swachh Food */}
                 <Route path="/explore" element={<ExploreDestinationsPage />} />
                 <Route path="/trip-planner" element={<TripPlannerPage tourist={touristProfile} />} />
                 <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
                 <Route path="/hotels" element={<HotelsPage />} />
                 <Route path="/stays" element={<Navigate to="/hotels" replace />} />
+                <Route path="/swachh-food" element={<SwachhFoodPage tourist={touristProfile} />} />
 
                 {/* 1. Dedicated Live Safety Map & Tracking Dashboard */}
                 <Route
