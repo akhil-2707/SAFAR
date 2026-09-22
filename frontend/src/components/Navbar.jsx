@@ -356,17 +356,6 @@ export default function Navbar({
                   Register
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
-                <Link
-                  to="/guide-register"
-                  className="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1 text-amber-800 bg-amber-50 hover:bg-amber-100 transition-all border border-amber-300 shadow-sm"
-                  title="Certified Local Guide Portal (Register / Login)"
-                >
-                  <Award className="w-3.5 h-3.5 text-amber-600" />
-                  <span className="hidden sm:inline">Guide</span>
-                  <span>Portal</span>
-                </Link>
-              </motion.div>
             </div>
           )}
 
