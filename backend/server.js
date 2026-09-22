@@ -71,6 +71,7 @@ app.use('/api/guides', require('./routes/guideRoutes'));
 app.use('/api/fares', require('./routes/fareRoutes'));
 app.use('/api/rewards', require('./routes/rewardRoutes'));
 app.use('/api/green-rewards', require('./routes/rewardRoutes'));
+app.use('/api/payments', require('./routes/paymentRoutes'));
 
 // Serve Frontend in Production / Cloud Deployments
 const frontendDist = path.join(__dirname, '../frontend/dist');

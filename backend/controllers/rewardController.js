@@ -901,6 +901,251 @@ function getPublicGallery(req, res) {
   }
 }
 
+// -------------------------------------------------------------
+// E-VEHICLE SUSTAINABILITY REWARDS ENGINE (NO PHOTOS REQUIRED)
+// -------------------------------------------------------------
+
+function getWeekStart() {
+  const d = new Date();
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday of current week
+  const monday = new Date(d.setDate(diff));
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
+
+/**
+ * 15. GET /api/rewards/e-vehicle/config
+ * Retrieves configurable reward parameters
+ */
+function getEVehicleConfig(req, res) {
+  try {
+    const configs = dbStore.get('rewardConfig');
+    const config = configs[0] || {};
+    const baseRewardCoins = config.eVehicleBaseCoins || 3;
+    const weeklyMilestoneTarget = config.eVehicleWeeklyMilestoneTarget || 10;
+    const weeklyMilestoneBonus = config.eVehicleWeeklyMilestoneBonus || 2;
+
+    return res.json({
+      success: true,
+      config: {
+        baseRewardCoins,
+        weeklyMilestoneTarget,
+        weeklyMilestoneBonus
+      }
+    });
+  } catch (err) {
+    console.error('getEVehicleConfig Error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+/**
+ * 16. GET /api/rewards/e-vehicle/stats/:touristId
+ * Returns weekly trip count, progress to 10-trip bonus, and payment history
+ */
+function getEVehicleStats(req, res) {
+  try {
+    const touristId = req.params.touristId || req.user?.touristId || 'TID-1035';
+    const configs = dbStore.get('rewardConfig');
+    const config = configs[0] || {};
+    const baseRewardCoins = config.eVehicleBaseCoins || 3;
+    const weeklyMilestoneTarget = config.eVehicleWeeklyMilestoneTarget || 10;
+    const weeklyMilestoneBonus = config.eVehicleWeeklyMilestoneBonus || 2;
+
+    const monday = getWeekStart();
+
+    // Query all e-vehicle payment transactions
+    const allTx = dbStore.get('greenCoinTransactions').filter((t) => 
+      t.touristId === touristId && t.transactionType === 'ECO_VEHICLE_PAYMENT'
+    );
+
+    // This week's trips
+    const thisWeekTx = allTx.filter((t) => new Date(t.createdAt) >= monday);
+    const thisWeekTrips = thisWeekTx.length;
+    const thisWeekCoins = thisWeekTx.reduce((sum, t) => sum + (Number(t.coinsAwarded) || baseRewardCoins), 0);
+
+    // Check if weekly bonus already awarded this week
+    const weeklyBonusTx = dbStore.findOne('greenCoinTransactions', (t) => 
+      t.touristId === touristId && 
+      t.transactionType === 'ECO_VEHICLE_WEEKLY_BONUS' &&
+      new Date(t.createdAt) >= monday
+    );
+    const weeklyBonusUnlocked = Boolean(weeklyBonusTx) || thisWeekTrips >= weeklyMilestoneTarget;
+    const totalWeeklyCoins = thisWeekCoins + (weeklyBonusTx ? weeklyMilestoneBonus : 0);
+    const remainingForBonus = Math.max(0, weeklyMilestoneTarget - thisWeekTrips);
+
+    // Recent payments (top 10 sorted newest first)
+    const recentPayments = allTx
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 10)
+      .map((t) => ({
+        id: t.id || t.paymentId,
+        paymentId: t.paymentId,
+        fareAmount: t.fareAmount || t.amountPaid,
+        amountPaid: t.amountPaid,
+        coinsAwarded: t.coinsAwarded || baseRewardCoins,
+        vehicleType: t.vehicleType || 'E-Rickshaw',
+        driverName: t.driverName || 'Verified E-Vehicle Pilot',
+        status: t.status || 'SUCCESS',
+        createdAt: t.createdAt
+      }));
+
+    return res.json({
+      success: true,
+      stats: {
+        thisWeekTrips,
+        thisWeekCoins: totalWeeklyCoins,
+        weeklyMilestoneTarget,
+        weeklyMilestoneBonus,
+        weeklyBonusUnlocked,
+        remainingForBonus,
+        baseRewardCoins,
+        recentPayments
+      }
+    });
+  } catch (err) {
+    console.error('getEVehicleStats Error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+/**
+ * 17. POST /api/rewards/e-vehicle/pay
+ * Passenger pays exact fare to E-Vehicle driver through SAFAR & gets rewarded Green Coins
+ */
+function processEVehiclePayment(req, res) {
+  try {
+    const {
+      touristId,
+      fareAmount,
+      vehicleType = 'E-Rickshaw',
+      driverName = 'Verified E-Vehicle Pilot',
+      paymentMethod = 'UPI'
+    } = req.body;
+
+    const fare = Number(fareAmount);
+    if (!fare || fare <= 0 || isNaN(fare)) {
+      return res.status(400).json({ success: false, error: 'A valid positive fare amount is required' });
+    }
+
+    const activeTouristId = touristId || req.user?.touristId || 'TID-1035';
+    const tourist = dbStore.findById('tourists', activeTouristId);
+    const touristName = tourist ? tourist.fullName : (req.user?.name || 'Tourist');
+
+    const configs = dbStore.get('rewardConfig');
+    const config = configs[0] || {};
+    const baseRewardCoins = config.eVehicleBaseCoins || 3;
+    const weeklyMilestoneTarget = config.eVehicleWeeklyMilestoneTarget || 10;
+    const weeklyMilestoneBonus = config.eVehicleWeeklyMilestoneBonus || 2;
+
+    const monday = getWeekStart();
+    const now = new Date().toISOString();
+
+    // Check week count before this payment
+    const existingWeekTx = dbStore.get('greenCoinTransactions').filter((t) => 
+      t.touristId === activeTouristId && 
+      t.transactionType === 'ECO_VEHICLE_PAYMENT' &&
+      new Date(t.createdAt) >= monday
+    );
+    const previousWeekCount = existingWeekTx.length;
+    const newWeekCount = previousWeekCount + 1;
+
+    // Check if bonus already awarded this week
+    const alreadyBonus = dbStore.findOne('greenCoinTransactions', (t) => 
+      t.touristId === activeTouristId && 
+      t.transactionType === 'ECO_VEHICLE_WEEKLY_BONUS' &&
+      new Date(t.createdAt) >= monday
+    );
+
+    // If new count hits milestone and not yet awarded bonus, award milestone!
+    const is10thMilestone = (newWeekCount >= weeklyMilestoneTarget && !alreadyBonus);
+    const milestoneBonusCoins = is10thMilestone ? weeklyMilestoneBonus : 0;
+    const totalCoinsEarned = baseRewardCoins + milestoneBonusCoins;
+
+    const paymentId = `EV-PAY-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    // 1. Insert Payment Transaction (Driver receives 100% full fare - NO discount!)
+    const paymentTx = dbStore.insert('greenCoinTransactions', {
+      userId: req.user?.id || `usr_${activeTouristId}`,
+      touristId: activeTouristId,
+      paymentId,
+      transactionType: 'ECO_VEHICLE_PAYMENT',
+      fareAmount: fare,
+      amountPaid: fare, // Driver gets 100% full actual fare
+      coinsAwarded: baseRewardCoins,
+      vehicleType,
+      driverName,
+      paymentMethod,
+      status: 'SUCCESS',
+      description: `E-Vehicle Trip (${vehicleType}) — Full fare ₹${fare} paid. Rewarded +${baseRewardCoins} Green Coins 🌱`,
+      createdAt: now
+    });
+
+    // 2. If 10th milestone reached, insert weekly bonus transaction
+    if (is10thMilestone) {
+      dbStore.insert('greenCoinTransactions', {
+        userId: req.user?.id || `usr_${activeTouristId}`,
+        touristId: activeTouristId,
+        paymentId: `EV-BONUS-${Date.now()}`,
+        transactionType: 'ECO_VEHICLE_WEEKLY_BONUS',
+        coinsAwarded: weeklyMilestoneBonus,
+        milestoneTripCount: newWeekCount,
+        status: 'SUCCESS',
+        description: `Weekly Green Mobility Bonus (${weeklyMilestoneTarget} E-Vehicle Trips Milestone) — Awarded +${weeklyMilestoneBonus} Green Coins 🎉`,
+        createdAt: now
+      });
+    }
+
+    // 3. Register directly in greenRewards as APPROVED so wallet auto-increments
+    dbStore.insert('greenRewards', {
+      touristId: activeTouristId,
+      touristName,
+      activityType: 'ECO_VEHICLE',
+      vehicleType,
+      farePaid: fare,
+      coins: totalCoinsEarned,
+      status: 'APPROVED',
+      sourceCategory: 'Eco Travel',
+      submittedAt: now,
+      verifiedAt: now,
+      verifiedBy: 'SAFAR Automated Green Transit Engine'
+    });
+
+    // 4. Send notification
+    dbStore.insert('notifications', {
+      type: 'SUCCESS',
+      title: 'E-Vehicle Fare Paid',
+      message: `Paid ₹${fare} for ${vehicleType}. +${baseRewardCoins} Green Coins earned 🌱${is10thMilestone ? ` + ${weeklyMilestoneBonus} Weekly Bonus Coins! 🎉` : ''}`,
+      timestamp: now,
+      read: false,
+      touristId: activeTouristId
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'E-Vehicle fare payment successful',
+      transaction: {
+        paymentId,
+        fareAmount: fare,
+        amountPaid: fare,
+        baseCoins: baseRewardCoins,
+        milestoneBonusCoins,
+        totalCoinsEarned,
+        weeklyTripCount: newWeekCount,
+        weeklyMilestoneTarget,
+        isWeeklyMilestoneReached: is10thMilestone,
+        vehicleType,
+        driverName,
+        createdAt: now
+      }
+    });
+  } catch (err) {
+    console.error('processEVehiclePayment Error:', err);
+    return res.status(500).json({ success: false, error: 'Failed to process E-Vehicle payment' });
+  }
+}
+
 module.exports = {
   getPartners,
   getPartnerById,
@@ -915,5 +1160,8 @@ module.exports = {
   processPartnerPayment,
   getRewardConfig,
   updateRewardConfig,
-  getPublicGallery
+  getPublicGallery,
+  getEVehicleConfig,
+  getEVehicleStats,
+  processEVehiclePayment
 };

@@ -35,6 +35,7 @@ import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
 import HotelsPage from './pages/HotelsPage';
 import MicroStaysPage from './pages/MicroStaysPage';
 import ArtisansPage from './pages/ArtisansPage';
+import EVehiclesPage from './pages/EVehiclesPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -833,6 +834,20 @@ function AppContent({
                     </RequireAuth>
                   }
                 />
+                <Route
+                  path="/partner-payment"
+                  element={<Navigate to="/partner-pay" replace />}
+                />
+                <Route
+                  path="/e-vehicles"
+                  element={
+                    <RequireAuth currentUser={currentUser}>
+                      <EVehiclesPage />
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/e-vehicle" element={<Navigate to="/e-vehicles" replace />} />
+                <Route path="/e-rickshaw" element={<Navigate to="/e-vehicles" replace />} />
 
                 {/* Smart Trip Planner */}
                 <Route

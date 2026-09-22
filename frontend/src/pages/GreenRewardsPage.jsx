@@ -5,10 +5,11 @@ import {
   Leaf, Car, Building2, Utensils, Coffee, ShieldCheck, CheckCircle2, 
   Clock, AlertCircle, Upload, Sparkles, CreditCard, ChevronRight, 
   ArrowRight, Info, RefreshCw, X, ShieldAlert, Check, Camera, MapPin, 
-  Landmark, Eye
+  Landmark, Eye, Zap
 } from 'lucide-react';
 import SafarLogo from '../components/SafarLogo';
 import LiveCameraCaptureModal from '../components/LiveCameraCaptureModal';
+import EVehicleTransitSection from '../components/EVehicleTransitSection';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 26 };
 
@@ -874,16 +875,14 @@ export default function GreenRewardsPage() {
             </p>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => { setSelectedPaymentMethod(null); setShowPaymentModal(true); }}
-            className="px-5 py-3 rounded-2xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-white shadow-lg flex items-center space-x-2 shrink-0 transition-all"
+          <Link
+            to="/partner-pay"
+            className="px-5 py-3 rounded-2xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-white shadow-lg flex items-center space-x-2 shrink-0 transition-all cursor-pointer"
           >
             <CreditCard className="w-4 h-4 text-emerald-400" />
-            <span>Pay at Partner with Discount</span>
+            <span>Pay to Partner</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </motion.button>
+          </Link>
         </div>
       </div>
 
@@ -1080,8 +1079,8 @@ export default function GreenRewardsPage() {
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Car className="w-4 h-4" />
-              <span>Option 1 — Eco-Friendly Travel</span>
+              <Zap className="w-4 h-4 text-emerald-300" />
+              <span>Option 1 — E-Vehicles & E-Rickshaw</span>
             </button>
 
             <button
@@ -1109,178 +1108,14 @@ export default function GreenRewardsPage() {
             </button>
           </div>
 
-          {/* ================= OPTION 1: ECO-VEHICLE FORM ================= */}
+          {/* ================= OPTION 1: E-VEHICLES & E-RICKSHAW TRANSIT HUB ================= */}
           {submissionOption === 'ECO' && (
-            <form onSubmit={handleSubmitEco} className="space-y-4 text-xs">
-              <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-200 flex items-start space-x-2.5">
-                <Info className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
-                <div className="text-[11px] text-emerald-900">
-                  <strong>How it works:</strong> Travel via E-Rickshaw, E-Auto, Electric Cab, or Electric Bus. Pay the normal journey fare, then upload proof of your journey or vehicle. Authority verifies and awards Green Coins directly into your Green Wallet!
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Eco-Friendly Vehicle Type</label>
-                  <select
-                    value={ecoForm.vehicleType}
-                    onChange={(e) => setEcoForm({ ...ecoForm, vehicleType: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium"
-                  >
-                    <option value="E-Rickshaw">🛺 E-Rickshaw (+1 Green Coin)</option>
-                    <option value="E-Auto">🛺 E-Auto (+1 Green Coin)</option>
-                    <option value="Electric Cab">⚡ Electric Cab (+2 Green Coins)</option>
-                    <option value="Electric Bus">🚌 Electric Bus (+1 Green Coin)</option>
-                    <option value="Other EV">🌱 Other Approved EV (+1 Green Coin)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Vehicle Registration Number</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g., UP-42-ER-8812"
-                    value={ecoForm.vehicleNumber}
-                    onChange={(e) => setEcoForm({ ...ecoForm, vehicleNumber: e.target.value.toUpperCase() })}
-                    className="w-full p-3 rounded-xl border border-slate-300 font-mono uppercase font-bold"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Fare Paid for Journey (₹)</label>
-                  <input
-                    type="number"
-                    placeholder="e.g., 150"
-                    value={ecoForm.farePaid}
-                    onChange={(e) => setEcoForm({ ...ecoForm, farePaid: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 font-mono"
-                  />
-                  <span className="text-[10px] text-slate-400 mt-0.5 block">
-                    Important: Normal fare is paid. Green Coins are awarded to your wallet upon verification.
-                  </span>
-                </div>
-
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Tagged Authority Desk</label>
-                  <div className="p-3 rounded-xl bg-slate-100 border border-slate-200 text-blue-700 font-bold flex items-center space-x-2">
-                    <ShieldCheck className="w-4 h-4 text-blue-600" />
-                    <span>S.A.F.A.R. Central Command Desk</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Photo Proof Upload with Camera */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="font-bold text-slate-700 block">
-                    Capture Photograph / Journey Proof <span className="text-red-500">*</span>
-                  </label>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center space-x-1">
-                    <Camera className="w-3 h-3 text-emerald-600" />
-                    <span>Live Camera Only</span>
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div 
-                    onClick={() => openCameraFor('ECO')}
-                    className="sm:col-span-2 border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50/80 rounded-2xl p-5 text-center transition-all cursor-pointer flex flex-col items-center justify-center space-y-2 group shadow-sm"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 group-hover:bg-emerald-200 text-emerald-700 flex items-center justify-center transition-colors shadow-inner">
-                      <Camera className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-black text-slate-800 block group-hover:text-emerald-900">
-                        {ecoForm.proofImage ? 'Click to Retake Photo with Camera' : 'Open Camera to Click Photo'}
-                      </span>
-                      <span className="text-[10px] text-slate-500 block mt-0.5">
-                        Real-time camera verification required · Gallery uploads disabled
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      className="px-3.5 py-1.5 rounded-xl bg-emerald-600 group-hover:bg-emerald-700 text-white text-xs font-bold shadow transition-all flex items-center space-x-1.5"
-                    >
-                      <Camera className="w-3.5 h-3.5" />
-                      <span>{ecoForm.proofImage ? 'Retake Photo' : 'Take Photo'}</span>
-                    </button>
-                  </div>
-
-                  {/* Preset Demo Photos */}
-                  <div className="p-3 rounded-2xl bg-slate-100 border border-slate-200 space-y-1.5">
-                    <span className="text-[10px] font-black uppercase text-slate-500 block">Quick Demo Photos:</span>
-                    {DEMO_PROOF_PRESETS_ECO.map((preset) => (
-                      <button
-                        key={preset.name}
-                        type="button"
-                        onClick={() => {
-                          setEcoForm((prev) => ({
-                            ...prev,
-                            proofImage: preset.url,
-                            vehicleType: preset.vehicleType,
-                            vehicleNumber: preset.vehicleNumber,
-                            farePaid: preset.fare
-                          }));
-                        }}
-                        className="w-full text-left p-1.5 rounded-lg text-[11px] font-semibold bg-white hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 truncate transition-colors"
-                      >
-                        {preset.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {ecoForm.proofImage && (
-                  <div className="mt-2 flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 border border-emerald-300">
-                    <div className="flex items-center space-x-3">
-                      <img src={ecoForm.proofImage} alt="Selected Proof" className="w-16 h-12 rounded-lg object-cover border border-emerald-400" />
-                      <div className="text-xs">
-                        <span className="font-bold text-emerald-800 flex items-center space-x-1">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Live Camera Verified Photo Attached</span>
-                        </span>
-                        <span className="text-[10px] text-emerald-600">SHA-256 hash will be computed for on-chain duplicate check</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => openCameraFor('ECO')}
-                        className="px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-[11px] font-bold transition-colors flex items-center space-x-1"
-                      >
-                        <RefreshCw className="w-3 h-3" />
-                        <span>Retake</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setEcoForm((prev) => ({ ...prev, proofImage: '' }))}
-                        className="p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-3.5 rounded-2xl font-black text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg transition-all flex items-center justify-center space-x-2"
-              >
-                {submitting ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Submit Eco-Travel for Authority Verification</span>
-                  </>
-                )}
-              </button>
-            </form>
+            <div className="pt-2">
+              <EVehicleTransitSection
+                touristId={activeTid}
+                onCoinsUpdated={fetchInitialPageData}
+              />
+            </div>
           )}
 
           {/* ================= OPTION 2: PARTNER VISIT FORM ================= */}
@@ -1912,8 +1747,8 @@ export default function GreenRewardsPage() {
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
                   <span className="text-[11px] font-bold text-slate-500">📞 {partner.contactPhone}</span>
                   <Link
-                    to={`/partner-payment?partnerId=${partner.id}`}
-                    className="py-1.5 px-3 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center space-x-1"
+                    to={`/partner-pay?partnerId=${partner.id}&amount=1000`}
+                    className="py-1.5 px-3 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm flex items-center space-x-1 cursor-pointer"
                   >
                     <span>Pay Bill</span>
                     <ArrowRight className="w-3 h-3" />
@@ -2381,7 +2216,7 @@ export default function GreenRewardsPage() {
 
               {/* Proceed Button */}
               <Link
-                to={selectedPaymentMethod ? `/partner-payment?paymentMethod=${encodeURIComponent(selectedPaymentMethod)}` : '/partner-payment'}
+                to={selectedPaymentMethod ? `/partner-pay?paymentMethod=${encodeURIComponent(selectedPaymentMethod)}` : '/partner-pay'}
                 onClick={() => { if (selectedPaymentMethod) setShowPaymentModal(false); }}
                 className={`block w-full py-4 rounded-2xl font-black text-sm text-center transition-all flex items-center justify-center space-x-2 ${
                   selectedPaymentMethod

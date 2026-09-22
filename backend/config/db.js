@@ -29,6 +29,7 @@ function getFallbackInitialState() {
     rewardConfig: initialData.rewardConfig || [],
     greenRewards: initialData.greenRewards || [],
     greenCoinTransactions: initialData.greenCoinTransactions || [],
+    payments: initialData.payments || [],
     notifications: [
       {
         id: 'notif_01',
@@ -127,7 +128,10 @@ async function connectMongoDB() {
 const dbStore = {
   get: (collectionName) => {
     const currentState = initState();
-    return currentState[collectionName] || [];
+    if (!currentState[collectionName]) {
+      currentState[collectionName] = [];
+    }
+    return currentState[collectionName];
   },
 
   find: (collectionName, filterFn = null) => {

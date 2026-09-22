@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Banknote, Navigation, ShieldCheck, AlertTriangle, Info, CheckCircle2, 
-  MapPin, Clock, Moon, Luggage, HelpCircle, PhoneCall, ChevronRight, Calculator, Sparkles, Zap
+  MapPin, Clock, Moon, Luggage, HelpCircle, PhoneCall, ChevronRight, Calculator, Sparkles, Zap, ArrowRight
 } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import RideCompareView from '../components/RideCompareView';
@@ -410,6 +410,18 @@ export default function FaresPage({ tourist }) {
               <span><strong>E-Rickshaw Shared Route Tip:</strong> Short-distance rides within 3 km commonly operate on seat-sharing at ₹15–₹25 per passenger. Full private vehicle hire is metered at ₹{city.perKmERickshaw}/km.</span>
             </div>
           )}
+
+          {/* Direct Pay via SAFAR Gateway CTA */}
+          <div className="pt-2 border-t border-emerald-200/80">
+            <Link
+              to={`/partner-pay?amount=${govtFare}&category=e-vehicle&vehicleType=${encodeURIComponent(normType.includes('RICK') ? 'E-Rickshaw' : normType.includes('CAB') ? 'Electric Cab' : 'E-Auto')}`}
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-lg transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+            >
+              <Zap className="w-4 h-4 text-emerald-300" />
+              <span>Pay Official Fare (₹{govtFare}) via SAFAR Payment Gateway</span>
+              <ArrowRight className="w-4 h-4 text-white" />
+            </Link>
+          </div>
         </div>
       </div>
 

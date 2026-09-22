@@ -22,7 +22,8 @@ const TOURIST_ROUTES = [
   '/emergency-help',
   '/green-rewards',
   '/partner-pay',
-  '/trip-planner'
+  '/trip-planner',
+  '/hotels'
 ];
 
 export default function BottomDock({ currentUser, onTriggerSos }) {

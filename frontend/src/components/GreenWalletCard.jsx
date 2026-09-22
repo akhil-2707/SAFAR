@@ -199,7 +199,7 @@ export default function GreenWalletCard({ tourist, onRefreshTrigger }) {
         </Link>
 
         <Link
-          to="/partner-payment"
+          to="/partner-pay"
           className="py-2 px-2.5 rounded-xl font-bold text-xs bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 shadow-sm flex items-center justify-center space-x-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <CreditCard className="w-3.5 h-3.5 text-blue-600 shrink-0" />

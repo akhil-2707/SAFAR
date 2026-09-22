@@ -5,13 +5,14 @@ import {
   ExternalLink, Search, Star, AlertTriangle, ArrowRight, IndianRupee, ShieldAlert,
   Cpu, PlusCircle, Filter, Phone, MapPin
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AICraftScannerModal from '../components/AICraftScannerModal';
 import ArtisanOnboardModal from '../components/ArtisanOnboardModal';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
 export default function ArtisansPage({ tourist }) {
+  const navigate = useNavigate();
   const [artisans, setArtisans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedState, setSelectedState] = useState('ALL');
@@ -58,27 +59,10 @@ export default function ArtisansPage({ tourist }) {
     }
   };
 
-  const handleExecutePayment = async () => {
+  const handleExecutePayment = () => {
     if (!directPayModal) return;
-    try {
-      const totalAmount = directPayModal.fairBasePrice + customTip;
-      const res = await fetch('/api/artisans/direct-pay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          artisanId: directPayModal.id,
-          amount: totalAmount,
-          payerName: tourist?.fullName || 'Verified Tourist'
-        })
-      });
-      const data = await res.json();
-      if (data.success && data.receipt) {
-        setPaymentSuccess(data.receipt);
-        setDirectPayModal(null);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    const totalAmount = directPayModal.fairBasePrice + customTip;
+    navigate(`/partner-pay?amount=${totalAmount}&category=artisan&partnerName=${encodeURIComponent(directPayModal.name)}`);
   };
 
   const filteredArtisans = artisans.filter(art => {
