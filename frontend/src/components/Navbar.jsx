@@ -136,11 +136,10 @@ export default function Navbar({
               { to: '/explore', label: '🧭 Explore' },
               { to: '/trip-planner', label: '✨ Plan Trip' },
               { to: '/hotels', label: '🏨 Stays' },
-              { to: '/micro-stays', label: '🏘️ Satellite Stays' },
               { to: '/artisans', label: '🏺 Artisans' },
               { to: '/green-rewards', label: '🌿 Green Rewards', green: true },
             ].map((nl) => {
-              const active = location.pathname === nl.to;
+              const active = location.pathname === nl.to || (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname));
               return (
                 <Link key={nl.to} to={nl.to}>
                   <motion.div

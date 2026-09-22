@@ -722,8 +722,8 @@ function AppContent({
                 {/* Tourism & Stays Routes (SIH PS 26204) */}
                 <Route path="/explore" element={<ExploreDestinationsPage />} />
                 <Route path="/destinations" element={<Navigate to="/explore" replace />} />
-                <Route path="/hotels" element={<HotelsPage />} />
-                <Route path="/micro-stays" element={<MicroStaysPage tourist={touristProfile} />} />
+                <Route path="/hotels" element={<HotelsPage tourist={touristProfile} />} />
+                <Route path="/micro-stays" element={<Navigate to="/hotels?tab=micro" replace />} />
                 <Route path="/stays" element={<Navigate to="/hotels" replace />} />
                 <Route path="/artisans" element={<ArtisansPage tourist={touristProfile} />} />
                 <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
