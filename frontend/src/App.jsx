@@ -36,6 +36,7 @@ import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
 import HotelsPage from './pages/HotelsPage';
 import MicroStaysPage from './pages/MicroStaysPage';
 import ArtisansPage from './pages/ArtisansPage';
+import VirtualQueuePage from './pages/VirtualQueuePage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -561,7 +562,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/green-rewards', '/plan', '/swachh-food'].includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help', '/explore', '/trip-planner', '/hotels', '/stays', '/green-rewards', '/plan', '/swachh-food', '/virtual-queue', '/vq'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -858,6 +859,17 @@ function AppContent({
                   }
                 />
                 <Route path="/food" element={<Navigate to="/swachh-food" replace />} />
+
+                {/* S.A.F.A.R. VQ-Commerce Engine (Virtual Queue & Micro-Economy Vouchers) */}
+                <Route
+                  path="/virtual-queue"
+                  element={
+                    <RequireAuth currentUser={currentUser}>
+                      <VirtualQueuePage tourist={touristProfile} />
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/vq" element={<Navigate to="/virtual-queue" replace />} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

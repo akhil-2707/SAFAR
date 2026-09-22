@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, LogOut, LogIn, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
   Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award, Leaf,
-  Navigation, Hotel, Utensils
+  Navigation, Hotel, Utensils, Ticket
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -135,13 +135,16 @@ export default function Navbar({
           }}>
             {[
               { to: '/explore', label: '🧭 Explore' },
+              { to: '/virtual-queue', label: '🎟️ Virtual Queue' },
               { to: '/trip-planner', label: '✨ Plan Trip' },
               { to: '/hotels', label: '🏨 Stays' },
               { to: '/artisans', label: '🏺 Artisans' },
               { to: '/swachh-food', label: '🍽️ Swachh Food' },
               { to: '/green-rewards', label: '🌿 Green Rewards', green: true },
             ].map((nl) => {
-              const active = location.pathname === nl.to || (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname));
+              const active = location.pathname === nl.to || 
+                (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname)) ||
+                (nl.to === '/virtual-queue' && ['/virtual-queue', '/vq'].includes(location.pathname));
               return (
                 <Link key={nl.to} to={nl.to}>
                   <motion.div
@@ -543,6 +546,16 @@ export default function Navbar({
                     >
                       <Compass className="w-4 h-4 text-orange-500" />
                       <span>🧭 Explore Destinations</span>
+                    </Link>
+                    <Link
+                      to="/virtual-queue"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        ['/virtual-queue', '/vq'].includes(location.pathname) ? 'bg-amber-50 text-amber-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Ticket className="w-4 h-4 text-amber-500" />
+                      <span>🎟️ Virtual Queue & Vouchers</span>
                     </Link>
                     <Link
                       to="/trip-planner"
