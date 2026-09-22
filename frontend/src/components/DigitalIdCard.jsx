@@ -95,14 +95,23 @@ export default function DigitalIdCard({ digitalId, tourist }) {
           <span className="text-emerald-700 font-bold shrink-0 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Block #{digitalId?.blockIndex || 1}</span>
         </div>
 
-        {/* Verification Link Button */}
-        <Link
-          to={`/tourist/verify/${idStr}?hash=${hash.substring(0, 16)}`}
-          className="w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-2 border border-emerald-200 shadow-sm"
-        >
-          <span>Verify Digital ID on Ledger</span>
-          <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
-        </Link>
+        {/* Action Buttons: Verify Ledger + 1-Tap Hotel Check-in */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to={`/tourist/verify/${idStr}?hash=${hash.substring(0, 16)}`}
+            className="py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5 border border-emerald-200 shadow-sm"
+          >
+            <span>Verify on Ledger</span>
+            <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
+          </Link>
+
+          <Link
+            to="/hotels"
+            className="py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl text-xs font-extrabold transition-all flex items-center justify-center space-x-1.5 shadow-sm"
+          >
+            <span>🏨 1-Tap Hotel Check-In</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

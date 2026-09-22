@@ -5,9 +5,10 @@ import {
   Hotel, Home, MapPin, Star, ShieldCheck, Sparkles, Filter, 
   Search, CheckCircle2, QrCode, ExternalLink, Info, ArrowRight,
   Wifi, Coffee, Car, Lock, Shield, PhoneCall, Building2, Clock,
-  Luggage, Zap, Percent, PlusCircle, Award
+  Luggage, Zap, Percent, PlusCircle, Award, Key, Smartphone, LogOut
 } from 'lucide-react';
 import HotelOnboardModal from '../components/HotelOnboardModal';
+import HotelFastCheckinModal from '../components/HotelFastCheckinModal';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
@@ -71,6 +72,9 @@ export default function HotelsPage({ tourist }) {
   const [spilloverDeals, setSpilloverDeals] = useState([]);
   const [loadingMicro, setLoadingMicro] = useState(true);
   const [showHotelOnboardModal, setShowHotelOnboardModal] = useState(false);
+  const [showFastCheckinModal, setShowFastCheckinModal] = useState(false);
+  const [selectedCheckinHotel, setSelectedCheckinHotel] = useState(null);
+  const [activeStay, setActiveStay] = useState(null);
 
   // Booking states
   const [selectedHotel, setSelectedHotel] = useState(null);
@@ -83,8 +87,24 @@ export default function HotelsPage({ tourist }) {
   useEffect(() => {
     if (tourist) {
       setSelectedCity(getCityFromTourist(tourist));
+      fetchActiveStay();
     }
   }, [tourist?.touristId, tourist?.destination]);
+
+  const fetchActiveStay = async () => {
+    try {
+      const tid = tourist?.touristId || 'TID-1035';
+      const res = await fetch(`/api/hotels/active-checkin/${tid}`);
+      const data = await res.json();
+      if (data.success && data.hasActiveStay) {
+        setActiveStay(data.stay);
+      } else {
+        setActiveStay(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Fetch Curated Stays (Blockchain Vendors)
   useEffect(() => {
@@ -212,8 +232,83 @@ export default function HotelsPage({ tourist }) {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-8 select-none pb-28">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 space-y-6 select-none pb-28">
       
+      {/* ⚡ 1-Tap Digital ID Hotel Fast Check-in Hero Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-600 via-orange-500 to-emerald-600 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border border-amber-300/30"
+      >
+        <div className="relative z-10 flex items-start sm:items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/30 text-2xl shadow-inner">
+            ⚡
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full border border-white/25">
+                DPDP Act 2023 Compliant
+              </span>
+              <span className="text-[10px] font-bold bg-amber-300 text-amber-950 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Sparkles className="w-2.5 h-2.5" /> Zero Paper / 3-Sec Protocol
+              </span>
+            </div>
+            <h2 className="text-base sm:text-lg font-black tracking-tight mt-1">
+              1-Tap Digital ID Hotel Fast Check-in Terminal
+            </h2>
+            <p className="text-xs sm:text-sm text-white/90 font-medium max-w-2xl mt-0.5">
+              Skip 15-minute front-desk queues & risky paper Aadhaar photocopies. Show your S.A.F.A.R. QR for instant cryptographic check-in, smart door PIN & automatic police e-register compliance.
+            </p>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex items-center gap-2.5 shrink-0">
+          <button
+            onClick={() => {
+              setSelectedCheckinHotel(null);
+              setShowFastCheckinModal(true);
+            }}
+            className="px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-white text-orange-600 hover:bg-orange-50 transition-all shadow-lg flex items-center space-x-2 cursor-pointer active:scale-95"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Open Fast Check-In Desk</span>
+          </button>
+        </div>
+      </motion.div>
+
+      {/* 🟢 Active Hotel Stay Notice Banner */}
+      {activeStay && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 border-2 border-emerald-500/40 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm">
+              <Key className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                  Active Guest In-House
+                </span>
+                <strong className="text-sm font-black text-slate-900">{activeStay.hotelName}</strong>
+              </div>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Allotted: <strong className="text-slate-900 font-mono">{activeStay.roomNumber}</strong> • Door PIN: <strong className="text-emerald-700 font-mono">{activeStay.digitalKeyPin}</strong> • Register ID: {activeStay.registerId}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setSelectedCheckinHotel(hotels.find(h => h.id === activeStay.hotelId) || null);
+              setShowFastCheckinModal(true);
+            }}
+            className="px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-xs shadow-sm flex items-center space-x-1.5 self-start sm:self-auto cursor-pointer"
+          >
+            <span>View Digital Room Key</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* 🏨 Unified Hospitality & Stays Header Banner */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -271,8 +366,19 @@ export default function HotelsPage({ tourist }) {
           </div>
         </div>
 
-        {/* 4 Unified Mode Tabs */}
+        {/* 5 Unified Mode Tabs */}
         <div className="flex items-center gap-2 pt-5 mt-4 border-t border-slate-100 flex-wrap">
+          <button
+            onClick={() => {
+              setSelectedCheckinHotel(null);
+              setShowFastCheckinModal(true);
+            }}
+            className="px-4 py-2.5 rounded-2xl text-xs font-extrabold flex items-center space-x-2 transition-all bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-600 text-white shadow-md shadow-orange-500/20 hover:scale-[1.02] cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>⚡ 1-Tap Fast Check-In Desk</span>
+          </button>
+
           {[
             { id: 'CURATED_STAYS', label: '🏨 Curated Stays & Homestays', desc: 'Full night stays with blockchain badge' },
             { id: 'MICRO_STAYS', label: '⚡ 2–6 Hr Hourly Micro-Stays', desc: 'Daytime rest, shower & recharge' },
@@ -466,13 +572,22 @@ export default function HotelsPage({ tourist }) {
                   </div>
 
                   {/* Card Footer Action */}
-                  <div className="p-4 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2">
-                    <Link
-                      to={`/trip-planner?dest=${encodeURIComponent(stay.city)}`}
-                      className="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-sm transition-all flex items-center justify-center space-x-1.5"
+                  <div className="p-4 bg-slate-50/80 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedCheckinHotel(stay);
+                        setShowFastCheckinModal(true);
+                      }}
+                      className="w-full sm:w-auto flex-1 py-2.5 px-3 rounded-xl text-xs font-black text-white bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-600 hover:from-amber-600 hover:to-emerald-700 shadow-sm transition-all flex items-center justify-center space-x-1.5 cursor-pointer active:scale-98"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Add to Trip Plan</span>
+                      <span>⚡ 1-Tap Fast Check-In</span>
+                    </button>
+                    <Link
+                      to={`/trip-planner?dest=${encodeURIComponent(stay.city)}`}
+                      className="w-full sm:w-auto py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition-all flex items-center justify-center space-x-1.5"
+                    >
+                      <span>Plan Trip</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                     <a
@@ -603,13 +718,24 @@ export default function HotelsPage({ tourist }) {
                     </div>
                   </div>
 
-                  <div className="p-5 pt-0">
+                  <div className="p-5 pt-0 space-y-2">
+                    <button
+                      onClick={() => {
+                        setSelectedCheckinHotel(hotel);
+                        setShowFastCheckinModal(true);
+                      }}
+                      className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-600 hover:from-amber-600 hover:to-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 active:scale-98 cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>⚡ 1-Tap Fast Check-In (3s Zero Paper)</span>
+                    </button>
+
                     <button
                       onClick={() => handleBookMicroStay(hotel)}
-                      className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5"
+                      className="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                     >
-                      <span>Book Instant {duration} Day Stay</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>Book Scheduled {duration} Day Stay</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -905,6 +1031,17 @@ export default function HotelsPage({ tourist }) {
         }}
       />
 
+      {/* 1-Tap Hotel Fast Check-in Modal */}
+      <HotelFastCheckinModal
+        isOpen={showFastCheckinModal}
+        onClose={() => setShowFastCheckinModal(false)}
+        tourist={tourist}
+        preselectedHotel={selectedCheckinHotel}
+        allHotels={hotels.length > 0 ? hotels : stays}
+        onCheckinSuccess={(rec) => {
+          setActiveStay(rec);
+        }}
+      />
     </div>
   );
 }

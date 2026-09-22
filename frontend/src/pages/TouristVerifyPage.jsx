@@ -3,9 +3,11 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   ShieldCheck, CheckCircle2, AlertTriangle, MapPin, HeartPulse, 
-  Phone, User, Calendar, Shield, Lock, ArrowLeft, ExternalLink, Globe
+  Phone, User, Calendar, Shield, Lock, ArrowLeft, ExternalLink, Globe,
+  Building2, Sparkles
 } from 'lucide-react';
 import SafarLogo from '../components/SafarLogo';
+import HotelFastCheckinModal from '../components/HotelFastCheckinModal';
 
 export default function TouristVerifyPage() {
   const { touristId } = useParams();
@@ -15,6 +17,7 @@ export default function TouristVerifyPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showFastCheckin, setShowFastCheckin] = useState(false);
 
   useEffect(() => {
     fetchVerification();
@@ -166,6 +169,43 @@ export default function TouristVerifyPage() {
             </span>
           </div>
 
+          {/* 🏨 Hotel Reception Fast Check-In Callout */}
+          {isVerified && (
+            <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-emerald-500/10 border-2 border-orange-400/40 text-left space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center font-bold shadow-xs">
+                    <Building2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">
+                      Hotel Front Desk Terminal
+                    </span>
+                    <h4 className="text-xs sm:text-sm font-black text-slate-900">
+                      1-Tap Hotel Fast Check-in (Zero Paper)
+                    </h4>
+                  </div>
+                </div>
+
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  DPDP Act 2023
+                </span>
+              </div>
+
+              <p className="text-[11px] text-slate-600 font-medium">
+                Hotel reception? Allot room number, digital door PIN & log police e-register in 3 seconds. Zero paper photocopies.
+              </p>
+
+              <button
+                onClick={() => setShowFastCheckin(true)}
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-xs shadow-md flex items-center justify-center space-x-2 transition-transform active:scale-98 cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Execute 1-Tap Check-In For This Guest</span>
+              </button>
+            </div>
+          )}
+
           {digitalId?.digitalSignature && (
             <div className="text-[10px] text-gray-400 font-mono">
               Sig: {digitalId.digitalSignature}
@@ -274,6 +314,13 @@ export default function TouristVerifyPage() {
           <span>Cryptographically validated against S.A.F.A.R. Prototype Blockchain Ledger • SIH 2026</span>
         </div>
       </motion.div>
+
+      {/* 1-Tap Hotel Fast Check-in Modal */}
+      <HotelFastCheckinModal
+        isOpen={showFastCheckin}
+        onClose={() => setShowFastCheckin(false)}
+        tourist={tourist || data?.tourist || { touristId, fullName: data?.digitalId?.fullName }}
+      />
     </div>
   );
 }
