@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Bell, LogOut, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
+  Bell, LogOut, LogIn, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
   Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award, Leaf
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
@@ -331,18 +331,19 @@ export default function Navbar({
               </motion.button>
             </div>
           ) : (
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <Link
-                to="/login"
-                className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-xl transition-colors"
-                style={{
-                  background: 'rgba(120,120,128,0.1)',
-                  color: 'rgba(60,60,67,0.8)',
-                  border: '0.5px solid rgba(60,60,67,0.12)',
-                }}
-              >
-                {t('navLogin', 'Sign In')}
-              </Link>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <motion.div whileHover={{ scale: 1.05, y: -1 }} whileTap={{ scale: 0.95 }} transition={SPRING}>
+                <Link
+                  to="/login"
+                  className="px-3.5 sm:px-4 py-1.5 text-xs font-black rounded-xl transition-all flex items-center gap-1.5 text-slate-900 bg-white border border-slate-200/90 shadow-[0_3px_8px_rgba(0,0,0,0.12)] hover:shadow-[0_6px_16px_rgba(10,132,255,0.22)] hover:border-blue-400 hover:text-blue-600"
+                  style={{
+                    boxShadow: '0 3px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <LogIn className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span>{t('navLogin', 'Login')}</span>
+                </Link>
+              </motion.div>
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
                 <Link
                   to="/register"

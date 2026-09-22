@@ -74,11 +74,15 @@ export default function LoginPage({ onLoginSuccess }) {
       if (!data.success) throw new Error(data.error || 'Login failed');
 
       onLoginSuccess(data);
-      setShowDemoModal(false);
-
-      if (data.user.role === 'AUTHORITY') navigate('/authority-dashboard');
-      else if (data.user.role === 'GUIDE') navigate('/guide-dashboard');
-      else navigate('/tourist-dashboard');
+      if (redirectTarget) {
+        navigate(redirectTarget);
+      } else if (data.user.role === 'AUTHORITY') {
+        navigate('/authority-dashboard');
+      } else if (data.user.role === 'GUIDE') {
+        navigate('/guide-dashboard');
+      } else {
+        navigate('/tourist-dashboard');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -221,9 +225,15 @@ export default function LoginPage({ onLoginSuccess }) {
       if (!data.success) throw new Error(data.error || 'OTP verification failed');
 
       onLoginSuccess(data);
-      if (data.user.role === 'AUTHORITY') navigate('/authority-dashboard');
-      else if (data.user.role === 'GUIDE') navigate('/guide-dashboard');
-      else navigate('/tourist-dashboard');
+      if (redirectTarget) {
+        navigate(redirectTarget);
+      } else if (data.user.role === 'AUTHORITY') {
+        navigate('/authority-dashboard');
+      } else if (data.user.role === 'GUIDE') {
+        navigate('/guide-dashboard');
+      } else {
+        navigate('/tourist-dashboard');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
