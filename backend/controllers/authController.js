@@ -385,25 +385,16 @@ async function sendOTP(req, res) {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // If login, verify user exists
-    if (purpose === 'LOGIN') {
-      const user = dbStore.findOne('users', (u) => u.email.toLowerCase() === normalizedEmail);
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          error: `No registered account found for "${email}". Please enter a registered email or register first.`
-        });
-      }
-    }
-
     const otp = generateOTP(normalizedEmail);
     const emailResult = await sendOTPEmail(normalizedEmail, otp, purpose);
 
     return res.json({
       success: true,
-      message: `Verification OTP dispatched to ${normalizedEmail}`,
+      message: emailResult.sentRealEmail
+        ? `✓ Verification OTP sent to your Gmail inbox (${normalizedEmail})! Please check your email.`
+        : `Verification OTP dispatched to ${normalizedEmail}`,
       email: normalizedEmail,
-      demoOtp: otp, // Provided for instant demo testing by evaluators/users
+      demoOtp: emailResult.sentRealEmail ? null : otp, // Real email active: hide demo OTP
       sentRealEmail: emailResult.sentRealEmail,
       expiresInSeconds: 600
     });
@@ -428,9 +419,63 @@ function verifyOTPLogin(req, res) {
       return res.status(401).json({ success: false, error: verification.error });
     }
 
-    const user = dbStore.findOne('users', (u) => u.email.toLowerCase() === normalizedEmail);
+    let user = dbStore.findOne('users', (u) => u.email.toLowerCase() === normalizedEmail);
     if (!user) {
-      return res.status(404).json({ success: false, error: 'User account not found' });
+      // Auto-provision new Tourist account for seamless OTP sign-in / sign-up
+      const nextIdNum = (dbStore.get('tourists') || []).length + 1040;
+      const touristId = `TID-${nextIdNum}`;
+      const defaultPasswordHash = bcrypt.hashSync('tourist123', 10);
+      const emailPrefix = normalizedEmail.split('@')[0];
+      const displayName = emailPrefix.replace(/[._0-9]/g, ' ').trim().replace(/\b\w/g, (l) => l.toUpperCase()) || 'Verified Tourist';
+
+      user = dbStore.insert('users', {
+        name: displayName,
+        email: normalizedEmail,
+        password: defaultPasswordHash,
+        role: 'TOURIST',
+        touristId,
+        isDemo: false,
+        isRealUser: true
+      });
+
+      const newTourist = dbStore.insert('tourists', {
+        id: `tourist_${nextIdNum}`,
+        touristId,
+        fullName: displayName,
+        dob: '2000-01-01',
+        gender: 'Other',
+        nationality: 'Indian',
+        preferredLanguage: 'en',
+        mobileNumber: '+91 98765 43210',
+        email: normalizedEmail,
+        idProofType: 'Aadhaar Card',
+        idVerificationStatus: 'PROVISIONALLY_ACTIVE',
+        destination: 'National Safe Tourism Circuit',
+        travelStartDate: new Date().toISOString().split('T')[0],
+        travelEndDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+        currentLocation: { lat: 26.1445, lng: 91.7362, address: 'Gateway Tourist Safe Hub' },
+        riskScore: 10,
+        riskLevel: 'LOW',
+        status: 'SAFE',
+        lastSeen: new Date().toISOString()
+      });
+
+      const rawMeta = `${touristId}:${displayName}:Indian:Aadhaar Card`;
+      const touristIdHash = crypto.createHash('sha256').update(touristId).digest('hex');
+      const digitalIdHash = crypto.createHash('sha256').update(rawMeta).digest('hex');
+
+      dbStore.insert('digitalIds', {
+        id: `did_${touristId}`,
+        touristId,
+        fullName: displayName,
+        verificationStatus: 'PROVISIONALLY_ACTIVE',
+        touristIdHash,
+        digitalIdHash,
+        blockIndex: 1,
+        issuedAt: new Date().toISOString(),
+        expiryDate: newTourist.travelEndDate,
+        qrCodeData: `https://safetour.gov.in/verify/${digitalIdHash.substring(0, 16)}`
+      });
     }
 
     const token = jwt.sign(

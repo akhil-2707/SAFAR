@@ -122,15 +122,26 @@ async function sendOTPEmail(email, otp, purpose = 'LOGIN') {
 
   if (smtpHost && smtpUser && smtpPass) {
     try {
-      const transporter = nodemailer.createTransporter({
-        host: smtpHost,
-        port: Number(smtpPort),
-        secure: Number(smtpPort) === 465,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass
-        }
-      });
+      const cleanPass = (smtpPass || '').replace(/\s+/g, '');
+      const transporter = nodemailer.createTransport(
+        smtpHost === 'smtp.gmail.com'
+          ? {
+              service: 'gmail',
+              auth: {
+                user: smtpUser,
+                pass: cleanPass
+              }
+            }
+          : {
+              host: smtpHost,
+              port: Number(smtpPort),
+              secure: Number(smtpPort) === 465,
+              auth: {
+                user: smtpUser,
+                pass: cleanPass
+              }
+            }
+      );
 
       await transporter.sendMail({
         from: `"S.A.F.A.R. Tourist Safety" <${smtpUser}>`,
