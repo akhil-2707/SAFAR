@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Navbar from './components/Navbar';
-import BottomDock, { TOURIST_ROUTES } from './components/BottomDock';
+import BottomDock from './components/BottomDock';
 
 import LandingPage from './pages/LandingPage';
 import TouristDashboard from './pages/TouristDashboard';
@@ -18,7 +18,13 @@ import BlockchainLedgerPage from './pages/BlockchainLedgerPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import PrivacyCompliancePage from './pages/PrivacyCompliancePage';
 import VendorMarketplacePage from './pages/VendorMarketplacePage';
-import SwachhFoodPage from './pages/SwachhFoodPage';
+
+// Marketplace Feature Pages
+import PartnerRegisterPage from './pages/partner/PartnerRegisterPage';
+import PartnerDashboard from './pages/partner/PartnerDashboard';
+import PackageVerification from './pages/authority/PackageVerification';
+import Marketplace from './pages/tourist/Marketplace';
+import MyBookings from './pages/tourist/MyBookings';
 
 // Dedicated New Pages for Every Button
 import DigitalIdPage from './pages/DigitalIdPage';
@@ -29,28 +35,13 @@ import DeadmanSwitchPage from './pages/DeadmanSwitchPage';
 import GuideDashboard from './pages/GuideDashboard';
 import GuideRegisterPage from './pages/GuideRegisterPage';
 import GuideVerifyPage from './pages/GuideVerifyPage';
-import GreenRewardsPage from './pages/GreenRewardsPage';
-import PartnerPaymentPage from './pages/PartnerPaymentPage';
-import TripPlannerPage from './pages/TripPlannerPage';
-import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
-import HotelsPage from './pages/HotelsPage';
-import MicroStaysPage from './pages/MicroStaysPage';
-import ArtisansPage from './pages/ArtisansPage';
-import EVehiclesPage from './pages/EVehiclesPage';
-import VirtualQueuePage from './pages/VirtualQueuePage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
-  const [showPatrioticLoader, setShowPatrioticLoader] = useState(() => {
-    try {
-      return !sessionStorage.getItem('safar_loader_shown');
-    } catch {
-      return true;
-    }
-  });
+  const [showPatrioticLoader, setShowPatrioticLoader] = useState(true);
   const [showMeshModal, setShowMeshModal] = useState(false);
 
   // Authenticated user recovered from localStorage or initialized as null
@@ -277,6 +268,15 @@ export default function App() {
       };
       setCurrentUser(guideUser);
       localStorage.setItem('safar_user', JSON.stringify(guideUser));
+    } else if (role === 'PARTNER') {
+      const partnerUser = {
+        id: 'usr_partner_01',
+        name: 'Himalayan Tours & Treks',
+        email: 'contact@himalayantours.in',
+        role: 'PARTNER'
+      };
+      setCurrentUser(partnerUser);
+      localStorage.setItem('safar_user', JSON.stringify(partnerUser));
     } else {
       const defaultTourist = touristProfile || allTourists[0];
       if (defaultTourist) {
@@ -461,39 +461,6 @@ export default function App() {
   );
 }
 
-// Protected Route for any authenticated user (Tourist or anyone logged in)
-function RequireAuth({ currentUser, children }) {
-  const location = useLocation();
-  if (!currentUser) {
-    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
-  }
-  return children;
-}
-
-// Strictly for Govt Authority Officers
-function AuthorityRouteGuard({ currentUser, children }) {
-  const location = useLocation();
-  if (!currentUser) {
-    return <Navigate to={`/login?role=authority&redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
-  }
-  if (currentUser.role !== 'AUTHORITY') {
-    return <Navigate to="/tourist-dashboard" replace />;
-  }
-  return children;
-}
-
-// Strictly for Certified Local Guides
-function GuideRouteGuard({ currentUser, children }) {
-  const location = useLocation();
-  if (!currentUser) {
-    return <Navigate to={`/login?role=guide&redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
-  }
-  if (currentUser.role !== 'GUIDE') {
-    return <Navigate to="/tourist-dashboard" replace />;
-  }
-  return children;
-}
-
 function AppContent({
   showPatrioticLoader,
   setShowPatrioticLoader,
@@ -553,7 +520,6 @@ function AppContent({
       <OfflineGhostMeshModal
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
-        tourist={touristProfile}
       />
 
       {/* Bottom Dock — iPhone-style tab navigation for tourists */}
@@ -564,7 +530,7 @@ function AppContent({
 
       {/* Main Route Body with Silky iOS Page Transitions */}
       <main className={`flex-1 w-full max-w-full overflow-x-hidden ${
-        (currentUser?.role === 'TOURIST' && TOURIST_ROUTES.includes(location.pathname))
+        (currentUser?.role === 'TOURIST' && ['/tourist-dashboard', '/digital-id', '/sos', '/fares', '/deadman-switch', '/emergency-help'].includes(location.pathname))
           ? 'pb-36 sm:pb-28'
           : 'pb-12 sm:pb-8'
       }`}>
@@ -587,29 +553,33 @@ function AppContent({
                 />
 
                 <Route
+                  path="/partner-register"
+                  element={<PartnerRegisterPage onRegisterSuccess={handleLoginSuccess} />}
+                />
+
+                <Route
                   path="/login"
                   element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
                 />
+
                 {/* 1. Dedicated Live Safety Map & Tracking Dashboard */}
                 <Route
                   path="/tourist-dashboard"
                   element={
-                    <RequireAuth currentUser={currentUser}>
-                      <TouristDashboard
-                        tourist={touristProfile}
-                        allTourists={allTourists}
-                        onSelectTourist={handleSelectTourist}
-                        digitalId={digitalId}
-                        geofences={geofences}
-                        emergencyServices={emergencyServices}
-                        activeSosIncident={activeSosIncident}
-                        onUpdateLocation={handleUpdateLocation}
-                        onSimulateZone={handleSimulateZone}
-                        onSimulateDeviation={handleSimulateDeviation}
-                        onTriggerSos={handleTriggerSos}
-                        onCancelSos={handleCancelSos}
-                      />
-                    </RequireAuth>
+                    <TouristDashboard
+                      tourist={touristProfile}
+                      allTourists={allTourists}
+                      onSelectTourist={handleSelectTourist}
+                      digitalId={digitalId}
+                      geofences={geofences}
+                      emergencyServices={emergencyServices}
+                      activeSosIncident={activeSosIncident}
+                      onUpdateLocation={handleUpdateLocation}
+                      onSimulateZone={handleSimulateZone}
+                      onSimulateDeviation={handleSimulateDeviation}
+                      onTriggerSos={handleTriggerSos}
+                      onCancelSos={handleCancelSos}
+                    />
                   }
                 />
                 <Route path="/map" element={<Navigate to="/tourist-dashboard" replace />} />
@@ -618,13 +588,11 @@ function AppContent({
                 <Route
                   path="/digital-id"
                   element={
-                    <RequireAuth currentUser={currentUser}>
-                      <DigitalIdPage
-                        tourist={touristProfile}
-                        allTourists={allTourists}
-                        onSelectTourist={handleSelectTourist}
-                      />
-                    </RequireAuth>
+                    <DigitalIdPage
+                      tourist={touristProfile}
+                      allTourists={allTourists}
+                      onSelectTourist={handleSelectTourist}
+                    />
                   }
                 />
                 
@@ -637,15 +605,13 @@ function AppContent({
                 <Route
                   path="/sos"
                   element={
-                    <RequireAuth currentUser={currentUser}>
-                      <SosPage
-                        tourist={touristProfile}
-                        activeSosIncident={activeSosIncident}
-                        onTriggerSos={handleTriggerSos}
-                        onCancelSos={handleCancelSos}
-                        emergencyServices={emergencyServices}
-                      />
-                    </RequireAuth>
+                    <SosPage
+                      tourist={touristProfile}
+                      activeSosIncident={activeSosIncident}
+                      onTriggerSos={handleTriggerSos}
+                      onCancelSos={handleCancelSos}
+                      emergencyServices={emergencyServices}
+                    />
                   }
                 />
 
@@ -653,11 +619,9 @@ function AppContent({
                 <Route
                   path="/fares"
                   element={
-                    <RequireAuth currentUser={currentUser}>
-                      <FaresPage
-                        tourist={touristProfile}
-                      />
-                    </RequireAuth>
+                    <FaresPage
+                      tourist={touristProfile}
+                    />
                   }
                 />
 
@@ -665,12 +629,10 @@ function AppContent({
                 <Route
                   path="/emergency-help"
                   element={
-                    <RequireAuth currentUser={currentUser}>
-                      <EmergencyHelpPage
-                        tourist={touristProfile}
-                        emergencyServices={emergencyServices}
-                      />
-                    </RequireAuth>
+                    <EmergencyHelpPage
+                      tourist={touristProfile}
+                      emergencyServices={emergencyServices}
+                    />
                   }
                 />
 
@@ -678,12 +640,10 @@ function AppContent({
                 <Route
                   path="/deadman-switch"
                   element={
-                    <RequireAuth currentUser={currentUser}>
-                      <DeadmanSwitchPage
-                        tourist={touristProfile}
-                        onTriggerSos={handleTriggerSos}
-                      />
-                    </RequireAuth>
+                    <DeadmanSwitchPage
+                      tourist={touristProfile}
+                      onTriggerSos={handleTriggerSos}
+                    />
                   }
                 />
 
@@ -691,17 +651,15 @@ function AppContent({
                 <Route
                   path="/authority-dashboard"
                   element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <AuthorityDashboard
-                        tourists={allTourists}
-                        geofences={geofences}
-                        incidents={incidents}
-                        notifications={notifications}
-                        emergencyServices={emergencyServices}
-                        onUpdateIncidentStatus={handleUpdateIncidentStatus}
-                        onRefreshData={fetchInitialData}
-                      />
-                    </AuthorityRouteGuard>
+                    <AuthorityDashboard
+                      tourists={allTourists}
+                      geofences={geofences}
+                      incidents={incidents}
+                      notifications={notifications}
+                      emergencyServices={emergencyServices}
+                      onUpdateIncidentStatus={handleUpdateIncidentStatus}
+                      onRefreshData={fetchInitialData}
+                    />
                   }
                 />
                 <Route path="/authority" element={<Navigate to="/authority-dashboard" replace />} />
@@ -709,44 +667,32 @@ function AppContent({
                 <Route
                   path="/geo-fence-management"
                   element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <GeoFenceManagementPage
-                        geofences={geofences}
-                        onRefreshData={fetchInitialData}
-                      />
-                    </AuthorityRouteGuard>
+                    <GeoFenceManagementPage
+                      geofences={geofences}
+                      onRefreshData={fetchInitialData}
+                    />
                   }
                 />
 
                 <Route
                   path="/incidents"
                   element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <IncidentManagementPage
-                        incidents={incidents}
-                        geofences={geofences}
-                        onUpdateStatus={handleUpdateIncidentStatus}
-                      />
-                    </AuthorityRouteGuard>
+                    <IncidentManagementPage
+                      incidents={incidents}
+                      geofences={geofences}
+                      onUpdateStatus={handleUpdateIncidentStatus}
+                    />
                   }
                 />
 
                 <Route
                   path="/blockchain-ledger"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <BlockchainLedgerPage />
-                    </RequireAuth>
-                  }
+                  element={<BlockchainLedgerPage />}
                 />
 
                 <Route
                   path="/analytics"
-                  element={
-                    <AuthorityRouteGuard currentUser={currentUser}>
-                      <AnalyticsPage />
-                    </AuthorityRouteGuard>
-                  }
+                  element={<AnalyticsPage />}
                 />
 
                 <Route
@@ -756,23 +702,23 @@ function AppContent({
 
                 <Route
                   path="/vendor-marketplace"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <VendorMarketplacePage />
-                    </RequireAuth>
-                  }
+                  element={<VendorMarketplacePage />}
                 />
+
+                {/* Marketplace New Routes */}
+                <Route path="/packages" element={<Marketplace />} />
+                <Route path="/my-bookings" element={<MyBookings />} />
+                <Route path="/partner-dashboard" element={<PartnerDashboard />} />
+                <Route path="/authority-packages" element={<PackageVerification />} />
 
                 {/* Local Tourist Guide Routes */}
                 <Route
                   path="/guide-dashboard"
                   element={
-                    <GuideRouteGuard currentUser={currentUser}>
-                      <GuideDashboard
-                        currentUser={currentUser}
-                        onLogout={handleLogout}
-                      />
-                    </GuideRouteGuard>
+                    <GuideDashboard
+                      currentUser={currentUser}
+                      onLogout={handleLogout}
+                    />
                   }
                 />
                 <Route path="/guide" element={<Navigate to="/guide-dashboard" replace />} />
@@ -786,106 +732,6 @@ function AppContent({
                   path="/guide/verify/:guideId"
                   element={<GuideVerifyPage />}
                 />
-
-                {/* Tourism & Stays Routes (SIH PS 26204) */}
-                <Route
-                  path="/explore"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <ExploreDestinationsPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/destinations" element={<Navigate to="/explore" replace />} />
-
-                <Route
-                  path="/hotels"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <HotelsPage tourist={touristProfile} />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/micro-stays" element={<Navigate to="/hotels?tab=micro" replace />} />
-                <Route path="/stays" element={<Navigate to="/hotels" replace />} />
-
-                <Route
-                  path="/artisans"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <ArtisansPage tourist={touristProfile} />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
-
-                {/* Green Rewards & Partner Payment */}
-                <Route
-                  path="/green-rewards"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <GreenRewardsPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/partner-pay"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <PartnerPaymentPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/partner-payment"
-                  element={<Navigate to="/partner-pay" replace />}
-                />
-                <Route
-                  path="/e-vehicles"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <EVehiclesPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/e-vehicle" element={<Navigate to="/e-vehicles" replace />} />
-                <Route path="/e-rickshaw" element={<Navigate to="/e-vehicles" replace />} />
-
-                {/* Smart Trip Planner */}
-                <Route
-                  path="/trip-planner"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <TripPlannerPage 
-                        tourist={touristProfile} 
-                        geofences={geofences}
-                        onSimulateDeviation={handleSimulateDeviation}
-                      />
-                    </RequireAuth>
-                  }
-                />
-
-                {/* Swachh Food Tourism Intelligence */}
-                <Route
-                  path="/swachh-food"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <SwachhFoodPage tourist={touristProfile} />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/food" element={<Navigate to="/swachh-food" replace />} />
-
-                {/* S.A.F.A.R. VQ-Commerce Engine (Virtual Queue & Micro-Economy Vouchers) */}
-                <Route
-                  path="/virtual-queue"
-                  element={
-                    <RequireAuth currentUser={currentUser}>
-                      <VirtualQueuePage tourist={touristProfile} />
-                    </RequireAuth>
-                  }
-                />
-                <Route path="/vq" element={<Navigate to="/virtual-queue" replace />} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
