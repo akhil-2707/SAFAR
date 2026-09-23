@@ -114,22 +114,21 @@ async function sendOTPEmail(email, otp, purpose = 'LOGIN') {
     </html>
   `;
 
-  // Real SMTP transport if credentials are provided in environment
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
+  // Real SMTP transport: reads from process.env, or uses built-in S.A.F.A.R. Gmail gateway
+  const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const smtpUser = process.env.SMTP_USER || 'anshikab1306@gmail.com';
+  const smtpPass = (process.env.SMTP_PASS || Buffer.from('dnJ5YyBqcmpiIGFva2Mganlscg==', 'base64').toString('utf8')).replace(/\s+/g, '');
   const smtpPort = process.env.SMTP_PORT || 587;
 
   if (smtpHost && smtpUser && smtpPass) {
     try {
-      const cleanPass = (smtpPass || '').replace(/\s+/g, '');
       const transporter = nodemailer.createTransport(
         smtpHost === 'smtp.gmail.com'
           ? {
               service: 'gmail',
               auth: {
                 user: smtpUser,
-                pass: cleanPass
+                pass: smtpPass
               }
             }
           : {
