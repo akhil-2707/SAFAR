@@ -50,6 +50,14 @@ function getInitialData() {
       phone: '+91 98640 99887'
     },
     {
+      id: 'usr_tourist_anshika',
+      name: 'Anshika Shukla',
+      email: 'anshikab1306@gmail.com',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-1306'
+    },
+    {
       id: 'usr_tourist_01',
       name: 'Rohan Verma',
       email: 'rohan.verma@example.com',
@@ -379,6 +387,33 @@ function getInitialData() {
 
   // Registered Tourists
   const tourists = [
+    {
+      id: 'tourist_anshika',
+      touristId: 'TID-1306',
+      fullName: 'Anshika Shukla',
+      dob: '2002-06-13',
+      gender: 'Female',
+      nationality: 'Indian',
+      preferredLanguage: 'hi',
+      mobileNumber: '+91 98765 43210',
+      emergencyContact: {
+        name: 'Family Contact',
+        phone: '+91 98765 00001',
+        relation: 'Family'
+      },
+      email: 'anshikab1306@gmail.com',
+      idProofType: 'Aadhaar Card',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Ayodhya & Saryu Heritage Circuit',
+      travelStartDate: '2026-09-01',
+      travelEndDate: '2026-10-31',
+      currentLocation: { lat: 26.7980, lng: 82.2040, address: 'Ram Ki Paidi, Ayodhya', isLiveGps: true },
+      riskScore: 8,
+      riskLevel: 'LOW',
+      isSosActive: false,
+      status: 'SAFE',
+      lastSeen: new Date().toISOString()
+    },
     {
       id: 'tourist_01',
       touristId: 'TID-1024',

@@ -579,12 +579,20 @@ export default function LoginPage({ onLoginSuccess }) {
                     </form>
                   ) : (
                     <form onSubmit={handleVerifyOtp} className="space-y-3.5">
-                      <div className="p-3 rounded-xl bg-emerald-50 text-emerald-900 text-xs font-medium space-y-1">
-                        <p>OTP dispatched to: <strong>{email}</strong></p>
+                      <div className="p-3.5 rounded-xl bg-emerald-50 text-emerald-900 text-xs font-medium space-y-1.5 border border-emerald-200">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                          <p>
+                            OTP dispatched to: <strong className="text-emerald-950 font-bold">{email}</strong>
+                          </p>
+                        </div>
+                        <p className="text-[11px] text-emerald-700">
+                          Please check your Gmail inbox (or Spam/Promotions folder) and enter the 6-digit code below.
+                        </p>
                         {demoOtp && (
-                          <div className="flex items-center justify-between pt-1 border-t border-emerald-200">
-                            <span className="font-mono font-bold text-sm text-emerald-800">
-                              Demo OTP: {demoOtp}
+                          <div className="flex items-center justify-between pt-1.5 border-t border-emerald-200/80">
+                            <span className="font-mono font-bold text-xs text-emerald-800">
+                              Demo Fallback: {demoOtp}
                             </span>
                             <button
                               type="button"
