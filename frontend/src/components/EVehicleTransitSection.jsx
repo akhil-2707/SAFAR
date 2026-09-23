@@ -70,7 +70,18 @@ export default function EVehicleTransitSection({ touristId = 'TID-1035', onCoins
     }
 
     setErrorMessage(null);
-    navigate(`/partner-pay?amount=${numFare}&category=e-vehicle&vehicleType=${encodeURIComponent(selectedVehicleType)}`);
+    navigate(`/partner-pay?amount=${numFare}&category=e-vehicle&vehicleType=${encodeURIComponent(selectedVehicleType)}&paymentMethod=demo_paytm`);
+  };
+
+  const handlePayWithApp = (appKey = 'demo_paytm') => {
+    const numFare = Number(fareAmount);
+    if (!numFare || numFare <= 0) {
+      setErrorMessage('Please enter a valid journey fare.');
+      return;
+    }
+
+    setErrorMessage(null);
+    navigate(`/partner-pay?amount=${numFare}&category=e-vehicle&vehicleType=${encodeURIComponent(selectedVehicleType)}&paymentMethod=${encodeURIComponent(appKey)}&autoPay=true`);
   };
 
   const tripsCount = stats.thisWeekTrips;
@@ -250,6 +261,74 @@ export default function EVehicleTransitSection({ touristId = 'TID-1035', onCoins
             <p className="text-[11px] text-emerald-800 leading-relaxed">
               The driver receives the full <strong>₹{fareAmount}</strong> actual fare. Green Coins are awarded directly to your SAFAR Green Wallet as an eco-incentive!
             </p>
+          </div>
+        </div>
+
+        {/* Quick App Settlement Options */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-slate-700 block">
+            Pay with your favorite UPI App:
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              onClick={() => handlePayWithApp('demo_paytm')}
+              disabled={!fareAmount || fareAmount <= 0}
+              className="p-3 rounded-2xl border border-sky-200 bg-sky-50/70 hover:bg-sky-100 hover:border-sky-300 transition-all flex items-center space-x-2.5 text-left cursor-pointer group shadow-xs"
+            >
+              <span className="text-xl">🔵</span>
+              <div className="overflow-hidden">
+                <span className="text-xs font-black text-slate-900 block group-hover:text-sky-700 truncate">Paytm</span>
+                <span className="text-[10px] text-slate-500 block font-medium">Instant Pay</span>
+              </div>
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              onClick={() => handlePayWithApp('demo_phonepe')}
+              disabled={!fareAmount || fareAmount <= 0}
+              className="p-3 rounded-2xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 hover:border-purple-300 transition-all flex items-center space-x-2.5 text-left cursor-pointer group shadow-xs"
+            >
+              <span className="text-xl">💜</span>
+              <div className="overflow-hidden">
+                <span className="text-xs font-black text-slate-900 block group-hover:text-purple-700 truncate">PhonePe</span>
+                <span className="text-[10px] text-slate-500 block font-medium">UPI Pay</span>
+              </div>
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              onClick={() => handlePayWithApp('demo_gpay')}
+              disabled={!fareAmount || fareAmount <= 0}
+              className="p-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 hover:border-emerald-300 transition-all flex items-center space-x-2.5 text-left cursor-pointer group shadow-xs"
+            >
+              <span className="text-xl">🟢</span>
+              <div className="overflow-hidden">
+                <span className="text-xs font-black text-slate-900 block group-hover:text-emerald-700 truncate">Google Pay</span>
+                <span className="text-[10px] text-slate-500 block font-medium">Tez Pay</span>
+              </div>
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              onClick={() => handlePayWithApp('demo_upi')}
+              disabled={!fareAmount || fareAmount <= 0}
+              className="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 transition-all flex items-center space-x-2.5 text-left cursor-pointer group shadow-xs"
+            >
+              <span className="text-xl">📲</span>
+              <div className="overflow-hidden">
+                <span className="text-xs font-black text-slate-900 block group-hover:text-slate-700 truncate">Any UPI</span>
+                <span className="text-[10px] text-slate-500 block font-medium">Scan / App</span>
+              </div>
+            </motion.button>
           </div>
         </div>
 

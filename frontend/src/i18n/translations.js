@@ -1,10 +1,5 @@
-export const SUPPORTED_LANGUAGES = [
-  { code: 'en', label: 'English', nativeName: 'English', flag: '🇬🇧' },
-  { code: 'hi', label: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
-  { code: 'fr', label: 'French', nativeName: 'Français', flag: '🇫🇷' },
-  { code: 'ko', label: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
-  { code: 'zh', label: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
-];
+import { SUPPORTED_LANGUAGES, SAFAR_GLOSSARY_TERMS } from './languages';
+export { SUPPORTED_LANGUAGES, SAFAR_GLOSSARY_TERMS };
 
 export const translations = {
   en: {
@@ -22,6 +17,8 @@ export const translations = {
     selectLanguage: 'Select Language',
     currentLanguage: 'English',
     navExplore: 'Explore',
+    navPackages: 'Packages',
+    navVerifyPackages: 'Verify Packages',
     navVirtualQueue: 'Virtual Queue',
     navQueue: 'Queue',
     navPlanTrip: 'Plan Trip',
@@ -125,6 +122,8 @@ export const translations = {
     selectLanguage: 'भाषा चुनें',
     currentLanguage: 'हिन्दी',
     navExplore: 'गंतव्य खोजें',
+    navPackages: 'टूर पैकेज',
+    navVerifyPackages: 'पैकेज सत्यापित करें',
     navVirtualQueue: 'वर्चुअल कतार',
     navQueue: 'कतार',
     navPlanTrip: 'यात्रा योजना',
@@ -460,6 +459,8 @@ export const translations = {
 export const HINDI_EXACT_MAP = {
   // Navigation & Actions
   'Explore': 'गंतव्य खोजें',
+  'Packages': 'टूर पैकेज',
+  'Verify Packages': 'पैकेज सत्यापित करें',
   'Virtual Queue': 'वर्चुअल कतार',
   'Queue': 'कतार',
   'Plan Trip': 'यात्रा योजना',

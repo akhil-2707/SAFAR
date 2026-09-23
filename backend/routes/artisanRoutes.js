@@ -204,7 +204,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     lng: 78.8142,
     craftHeritageYears: 85,
     artisanStory: 'Pioneered double-ikat weaving where warp and weft threads are individually tied and resist-dyed before mounting on the loom, achieving hypnotic geometric symmetry.',
-    image: 'https://images.unsplash.com/photo-1610030469803-b097b69a1ec4?w=600&auto=format&fit=crop&q=80',
+    image: '/images/pochampally-ikat.jpg',
     typicalMarketScamPrice: 8000,
     officialFairPriceRange: '₹2,100 – ₹2,900',
     fairBasePrice: 2300,
@@ -224,6 +224,13 @@ function getArtisans() {
     OFFICIAL_GOVT_GI_ARTISANS.forEach(art => dbStore.insert('artisans', { ...art }));
     return dbStore.get('artisans');
   }
+  // Synchronize dataset updates (e.g. image URLs) into dbStore
+  OFFICIAL_GOVT_GI_ARTISANS.forEach(art => {
+    const existing = current.find(c => c.id === art.id);
+    if (existing && existing.image !== art.image) {
+      existing.image = art.image;
+    }
+  });
   return current;
 }
 

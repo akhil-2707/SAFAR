@@ -148,24 +148,20 @@ export default function PaymentAppModal({
               type="button"
               onClick={onSimulateSuccess}
               disabled={loading}
-              className="w-full py-3.5 rounded-2xl font-black text-xs text-white shadow-lg flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] cursor-pointer"
+              className="w-full py-4 rounded-2xl font-black text-sm text-white shadow-lg flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] cursor-pointer"
               style={{
                 backgroundColor: app.color,
                 boxShadow: `0 8px 24px ${app.color}40`
               }}
             >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Simulate Successful Payment via {app.shortName}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onSimulateFailure}
-              disabled={loading}
-              className="w-full py-3 rounded-2xl font-bold text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 flex items-center justify-center space-x-2 transition-all transform active:scale-[0.98] cursor-pointer"
-            >
-              <XCircle className="w-4 h-4 text-rose-500" />
-              <span>Simulate Declined Payment</span>
+              {loading ? (
+                <span>Processing Payment...</span>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span>Pay ₹{amount.toLocaleString()} with {app.name}</span>
+                </>
+              )}
             </button>
 
             <button
@@ -176,6 +172,17 @@ export default function PaymentAppModal({
             >
               Cancel & Return
             </button>
+
+            {onSimulateFailure && (
+              <button
+                type="button"
+                onClick={onSimulateFailure}
+                disabled={loading}
+                className="w-full text-center text-[10px] text-slate-400 hover:text-rose-600 transition-colors pt-1 cursor-pointer"
+              >
+                (Demo Simulation: Test Declined Payment State)
+              </button>
+            )}
           </div>
         </motion.div>
       </div>

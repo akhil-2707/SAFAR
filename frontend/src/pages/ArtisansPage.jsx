@@ -184,8 +184,12 @@ export default function ArtisansPage({ tourist }) {
                 {/* Image & Official GI Tag Badge */}
                 <div className="h-48 relative overflow-hidden">
                   <img
-                    src={artisan.image}
+                    src={artisan.image || '/images/pochampally-ikat.jpg'}
                     alt={artisan.craftName}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/pochampally-ikat.jpg';
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-3 left-3 flex items-center gap-1.5">

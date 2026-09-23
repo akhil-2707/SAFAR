@@ -56,15 +56,15 @@ export default function Navbar({
         background: 'linear-gradient(90deg, #FF9F0A 0%, #FF9F0A 33%, #ffffff 33%, #ffffff 66%, #34C759 66%, #34C759 100%)',
       }} />
 
-      <div className="w-full max-w-[1440px] mx-auto px-2.5 sm:px-4 lg:px-6 h-16 flex items-center justify-between gap-1.5 sm:gap-2.5 lg:gap-3">
+      <div className="w-full max-w-[1680px] mx-auto px-3 sm:px-5 lg:px-6 xl:px-8 h-16 flex items-center justify-between gap-2 lg:gap-3.5">
 
         {/* Brand */}
         <Link to="/" className="shrink-0 group">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }} transition={SPRING}>
-            <div className="hidden 2xl:block">
+            <div className="hidden min-[1680px]:block">
               <SafarLogo size="sm" showSubtitle={true} />
             </div>
-            <div className="2xl:hidden">
+            <div className="min-[1680px]:hidden">
               <SafarLogo size="sm" showSubtitle={false} />
             </div>
           </motion.div>
@@ -72,12 +72,12 @@ export default function Navbar({
 
         {/* Desktop Nav Links — centered pill nav */}
         {currentUser?.role === 'AUTHORITY' ? (
-          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl" style={{
+          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl shrink-0" style={{
             background: 'rgba(120,120,128,0.1)',
           }}>
             {[
               { to: '/authority-dashboard', label: t('navCommandDesk', 'Command Desk'), icon: ShieldCheck },
-              { to: '/authority-packages', label: 'Verify Packages', icon: Package },
+              { to: '/authority-packages', label: t('navVerifyPackages', 'Verify Packages'), icon: Package },
               { to: '/incidents', label: t('navIncidents', 'Incidents'), icon: AlertTriangle },
               { to: '/geo-fence-management', label: 'Zones', icon: Activity },
               { to: '/blockchain-ledger', label: 'Blockchain', icon: ShieldCheck },
@@ -106,7 +106,7 @@ export default function Navbar({
             })}
           </nav>
         ) : currentUser?.role === 'GUIDE' ? (
-          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl" style={{
+          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl shrink-0" style={{
             background: 'rgba(120,120,128,0.1)',
           }}>
             {[
@@ -136,7 +136,7 @@ export default function Navbar({
             })}
           </nav>
         ) : currentUser?.role === 'PARTNER' ? (
-          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl" style={{
+          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl shrink-0" style={{
             background: 'rgba(120,120,128,0.1)',
           }}>
             {[
@@ -166,13 +166,10 @@ export default function Navbar({
             })}
           </nav>
         ) : (
-          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-2xl border border-slate-200/80 shadow-xs shrink min-w-0" style={{
-            background: 'rgba(255, 255, 255, 0.75)',
-            backdropFilter: 'blur(16px)',
-          }}>
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-2xl border border-slate-200/90 shadow-xs bg-slate-50/75 backdrop-blur-xl shrink-0 select-none">
             {[
               { to: '/explore', label: t('navExplore', 'Explore'), shortLabel: t('navExplore', 'Explore'), icon: Compass, color: '#EA580C' },
-              { to: '/packages', label: 'Packages', shortLabel: 'Packages', icon: Package, color: '#0EA5E9' },
+              { to: '/packages', label: t('navPackages', 'Packages'), shortLabel: t('navPackages', 'Packages'), icon: Package, color: '#0EA5E9' },
               { to: '/virtual-queue', label: t('navVirtualQueue', 'Virtual Queue'), shortLabel: t('navQueue', 'Queue'), icon: Ticket, color: '#D97706' },
               { to: '/trip-planner', label: t('navPlanTrip', 'Plan Trip'), shortLabel: t('navPlan', 'Plan'), icon: Sparkles, color: '#2563EB' },
               { to: '/hotels', label: t('navStays', 'Stays'), shortLabel: t('navStays', 'Stays'), icon: Hotel, color: '#059669' },
@@ -191,22 +188,24 @@ export default function Navbar({
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
                     transition={SPRING}
-                    className="px-2 xl:px-2.5 2xl:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 xl:gap-1.5 whitespace-nowrap select-none"
+                    className="px-1.5 xl:px-2 2xl:px-2.5 py-1 xl:py-1.2 rounded-xl text-[11px] xl:text-xs font-semibold transition-all flex items-center gap-1 xl:gap-1.5 whitespace-nowrap select-none"
                     style={{
                       background: active 
-                        ? (nl.green ? 'rgba(22, 163, 74, 0.12)' : 'rgba(255, 255, 255, 0.95)') 
+                        ? (nl.green ? 'rgba(22, 163, 74, 0.12)' : 'rgba(255, 255, 255, 0.98)') 
                         : 'transparent',
                       color: active 
                         ? (nl.green ? '#15803D' : '#0F172A') 
-                        : 'rgba(71, 85, 105, 0.85)',
-                      boxShadow: active ? '0 2px 6px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)' : 'none',
+                        : (nl.green ? '#166534' : 'rgba(71, 85, 105, 0.88)'),
+                      boxShadow: active 
+                        ? (nl.green ? '0 1px 4px rgba(22,163,74,0.15), 0 0 0 1px rgba(22,163,74,0.2)' : '0 2px 6px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)') 
+                        : 'none',
                     }}
                   >
-                    <IconC className="w-3.5 h-3.5 shrink-0" style={{ color: active ? nl.color : undefined }} />
+                    <IconC className="w-3.5 h-3.5 shrink-0" style={{ color: active ? nl.color : (nl.green ? '#16A34A' : undefined) }} />
                     {nl.shortLabel ? (
                       <>
-                        <span className="hidden 2xl:inline tracking-tight">{nl.label}</span>
-                        <span className="2xl:hidden tracking-tight">{nl.shortLabel}</span>
+                        <span className="hidden xl:inline tracking-tight">{nl.label}</span>
+                        <span className="xl:hidden tracking-tight">{nl.shortLabel}</span>
                       </>
                     ) : (
                       <span className="tracking-tight">{nl.label}</span>
@@ -369,7 +368,7 @@ export default function Navbar({
               >
                 {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
               </motion.div>
-              <div className="hidden sm:block text-left min-w-0 pr-0.5 max-w-[90px] md:max-w-[115px] xl:max-w-[140px]">
+              <div className="hidden sm:block text-left min-w-0 pr-0.5 max-w-[80px] lg:max-w-[95px] xl:max-w-[125px] 2xl:max-w-[140px]">
                 <p className="text-xs font-bold leading-tight truncate text-slate-800" style={{ letterSpacing: '-0.01em' }}>
                   {currentUser.name}
                 </p>

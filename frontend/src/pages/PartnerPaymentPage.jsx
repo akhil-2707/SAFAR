@@ -104,8 +104,9 @@ const DEFAULT_PARTNERS = [
 export default function PartnerPaymentPage() {
   const [searchParams] = useSearchParams();
   const initialPartnerId = searchParams.get('partnerId') || 'part_01';
-  const initialMethodParam = searchParams.get('paymentMethod') || 'SCANNER';
+  const initialMethodParam = searchParams.get('paymentMethod') || '';
   const autoScanParam = searchParams.get('scan') === 'true';
+  const autoPayParam = searchParams.get('autoPay') === 'true';
   const categoryParam = searchParams.get('category') || 'partner';
   const isEVehicle = categoryParam === 'e-vehicle' || categoryParam === 'e_vehicle';
   const isArtisan = categoryParam === 'artisan';
@@ -114,6 +115,24 @@ export default function PartnerPaymentPage() {
   const amountParam = searchParams.get('amount');
   const initialAmount = amountParam ? Math.max(1, Number(amountParam)) : (isEVehicle ? 600 : 1000);
   const navigate = useNavigate();
+
+  // Normalize initial payment method
+  const normMethod = (initialMethodParam || '').toLowerCase();
+  const initialCategory = 
+    normMethod.includes('app') || normMethod.includes('paytm') || normMethod.includes('phonepe') || normMethod.includes('gpay') || normMethod.includes('google') || normMethod.includes('bhim')
+      ? 'APPS'
+      : normMethod.includes('upi')
+      ? 'UPI_ID'
+      : isEVehicle
+      ? 'APPS'
+      : 'SCANNER';
+
+  const initialAppKey = 
+    normMethod.includes('paytm') ? 'demo_paytm'
+    : normMethod.includes('phonepe') ? 'demo_phonepe'
+    : normMethod.includes('gpay') || normMethod.includes('google') ? 'demo_gpay'
+    : normMethod.includes('bhim') ? 'demo_bhim'
+    : 'demo_paytm';
 
   // User session
   const [currentUser] = useState(() => {
@@ -135,10 +154,7 @@ export default function PartnerPaymentPage() {
   const [applyDiscount, setApplyDiscount] = useState(!isEVehicle && !isArtisan);
 
   // Active Method Tab: 'SCANNER' | 'APPS' | 'UPI_ID' | 'SHOW_QR'
-  const [selectedMethodCategory, setSelectedMethodCategory] = useState(
-    initialMethodParam.toUpperCase().includes('APP') ? 'APPS' :
-    initialMethodParam.toUpperCase().includes('UPI') ? 'UPI_ID' : 'SCANNER'
-  );
+  const [selectedMethodCategory, setSelectedMethodCategory] = useState(initialCategory);
 
   // Live Camera Scanner State
   const [isScannerOpen, setIsScannerOpen] = useState(autoScanParam);
@@ -164,7 +180,7 @@ export default function PartnerPaymentPage() {
   const [processingAction, setProcessingAction] = useState(false);
 
   // App Modal State
-  const [selectedAppKey, setSelectedAppKey] = useState('demo_paytm');
+  const [selectedAppKey, setSelectedAppKey] = useState(initialAppKey);
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
 
   // 1. Fetch Gateway Config
@@ -288,11 +304,15 @@ export default function PartnerPaymentPage() {
   };
 
   // Trigger: User selects a Payment App
-  const handleSelectApp = async (appKey) => {
+  const handleSelectApp = async (appKey, directSimulate = false) => {
     setSelectedAppKey(appKey);
     const session = await createPaymentSession(appKey);
     if (session) {
-      setIsAppModalOpen(true);
+      if (directSimulate) {
+        await handleSimulateSuccess(session.id);
+      } else {
+        setIsAppModalOpen(true);
+      }
     }
   };
 
@@ -303,13 +323,21 @@ export default function PartnerPaymentPage() {
     setTimeout(() => setScannedAlert(null), 4000);
   };
 
-  // Simulate Success
-  const handleSimulateSuccess = async (vpa = null) => {
-    let paymentId = activePayment?.id;
+  // Simulate Success (supporting direct session ID or fallback)
+  const handleSimulateSuccess = async (targetSessionOrId = null) => {
+    let paymentId = null;
+    if (typeof targetSessionOrId === 'string' && targetSessionOrId.startsWith('PAY-')) {
+      paymentId = targetSessionOrId;
+    } else if (targetSessionOrId && typeof targetSessionOrId === 'object' && targetSessionOrId.id) {
+      paymentId = targetSessionOrId.id;
+    } else {
+      paymentId = activePayment?.id;
+    }
 
     if (!paymentId) {
+      const vpa = (typeof targetSessionOrId === 'string' && !targetSessionOrId.startsWith('PAY-')) ? targetSessionOrId : null;
       const newSession = await createPaymentSession(
-        selectedMethodCategory === 'UPI_ID' ? 'demo_upi_id' : 'demo_qr',
+        selectedMethodCategory === 'UPI_ID' ? 'demo_upi_id' : selectedAppKey || 'demo_paytm',
         vpa
       );
       if (!newSession) return;
@@ -339,6 +367,18 @@ export default function PartnerPaymentPage() {
       setProcessingAction(false);
     }
   };
+
+  // Auto-Pay trigger if coming with autoPay=true (e.g. from E-Vehicle Pay with Paytm)
+  useEffect(() => {
+    if (autoPayParam) {
+      const appToUse = initialAppKey || 'demo_paytm';
+      createPaymentSession(appToUse).then((session) => {
+        if (session) {
+          handleSimulateSuccess(session.id);
+        }
+      });
+    }
+  }, []);
 
   // Simulate Failure
   const handleSimulateFailure = async (reason = 'Simulated payment decline') => {
@@ -1015,15 +1055,19 @@ export default function PartnerPaymentPage() {
                 <>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Transit Mode:</span>
-                    <span className="text-slate-800 font-bold">{paymentReceipt.vehicleType || 'E-Rickshaw'}</span>
+                    <span className="text-slate-800 font-bold">{paymentReceipt.vehicleType || vehicleTypeParam || 'E-Rickshaw'}</span>
                   </div>
-                  <div className="flex justify-between text-emerald-700">
-                    <span>Driver Payout (100% Full Fare):</span>
-                    <span className="font-black">₹{paymentReceipt.finalAmountPaid} (No deduction)</span>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Original Bill:</span>
+                    <span className="text-slate-800 font-bold">₹{paymentReceipt.originalBill || paymentReceipt.finalAmountPaid}</span>
                   </div>
                   <div className="flex justify-between text-emerald-700 font-bold">
                     <span>Green Reward Earned:</span>
                     <span className="font-black">+{paymentReceipt.coinsAwarded || 3} Green Coins 🌱</span>
+                  </div>
+                  <div className="flex justify-between text-emerald-700">
+                    <span>Driver Payout (100% Full Fare):</span>
+                    <span className="font-black">₹{paymentReceipt.finalAmountPaid} (No deduction)</span>
                   </div>
                 </>
               ) : (
@@ -1164,8 +1208,14 @@ export default function PartnerPaymentPage() {
         onClose={() => setIsAppModalOpen(false)}
         appKey={selectedAppKey}
         amount={finalPayable}
-        partnerName={selectedPartner?.name}
-        onSimulateSuccess={handleSimulateSuccess}
+        partnerName={
+          isEVehicle
+            ? `SAFAR Eco-Transit (${vehicleTypeParam})`
+            : isArtisan
+            ? (partnerNameParam || 'Master Artisan Guild')
+            : selectedPartner?.name
+        }
+        onSimulateSuccess={() => handleSimulateSuccess(activePayment?.id)}
         onSimulateFailure={handleSimulateFailure}
         loading={processingAction}
       />

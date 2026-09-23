@@ -2060,11 +2060,31 @@ function getInitialData() {
       exclusions: 'Special Puja donations',
       groupCapacity: 12,
       availableDates: ['2026-10-08', '2026-10-15'],
-      images: ['https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80'],
+      images: ['/images/varanasi-ganga-aarti.jpg'],
       guideDetails: 'Local Heritage Historian & Registered Guide',
       emergencyContact: '+91 98123 45678',
       safetyInformation: 'Varanasi Tourist Police CAD linked with S.A.F.A.R. real-time SOS.',
-      status: 'PENDING',
+      status: 'APPROVED',
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'pkg_kaziranga_04',
+      partnerId: 'PRT-101',
+      partnerName: 'Kaziranga Eco-Trails & Safaris',
+      name: 'Kaziranga Rhino Wildlife & Brahmaputra River Cruise',
+      destination: 'Kaziranga, Assam',
+      itinerary: 'Day 1: Arrival & Brahmaputra Sunset Cruise, Day 2: Early Morning Elephant Safari & Central Range Jeep Safari, Day 3: Tea Estate Walk & Departure.',
+      duration: '3 Days / 2 Nights',
+      price: 5499,
+      groupCapacity: 8,
+      status: 'APPROVED',
+      images: ['https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop'],
+      availableDates: ['2026-10-06', '2026-10-14', '2026-10-22'],
+      inclusions: 'Forest Jeep Safari, Certified Nature Guide, Eco-Lodge Stay, Breakfast & Dinner, Wildlife Permits',
+      exclusions: 'Airfare, Personal Expenses, Alcoholic Beverages',
+      guideDetails: 'Forest Department Certified Wildlife Naturalist',
+      emergencyContact: '+91 3776 268007 / 24x7 Forest Ranger Desk',
+      safetyInformation: 'Mandatory GPS tracker tag provided at entry gate, 24x7 Forest Ranger emergency support, First aid kit with escort vehicle.',
       createdAt: new Date().toISOString()
     }
   ];

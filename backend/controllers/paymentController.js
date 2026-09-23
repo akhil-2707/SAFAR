@@ -257,6 +257,7 @@ async function simulateSuccess(req, res) {
 
     // Idempotent check: if already successful, return existing receipt
     if (payment.status === 'SUCCESS') {
+      const isEVehicle = payment.category === 'e-vehicle' || payment.category === 'e_vehicle';
       return res.json({
         success: true,
         message: 'Payment has already completed successfully',
@@ -265,13 +266,19 @@ async function simulateSuccess(req, res) {
           paymentId: payment.id,
           transactionId: payment.transactionId,
           authorizationCode: payment.authorizationCode,
+          partnerId: payment.partnerId,
           partnerName: payment.partnerName,
+          touristId: payment.touristId,
           originalBill: payment.originalBill,
-          discountPercent: payment.effectiveDiscountPercent,
-          discountSavings: payment.discountSavings,
+          discountPercent: payment.effectiveDiscountPercent || 0,
+          discountSavings: payment.discountSavings || 0,
           finalAmountPaid: payment.finalAmount,
+          paymentMethod: payment.paymentMethod || 'DEMO_PAYTM',
+          isEVehicle,
+          vehicleType: payment.vehicleType || 'E-Rickshaw',
+          coinsAwarded: isEVehicle ? 3 : 0,
           completedAt: payment.completedAt,
-          verifiedBy: 'S.A.F.A.R. Mock Payment Settlement Authority'
+          verifiedBy: isEVehicle ? 'S.A.F.A.R. Eco-Transit Network' : 'S.A.F.A.R. Mock Payment Settlement Authority'
         }
       });
     }
