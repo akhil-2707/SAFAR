@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, LogOut, LogIn, ShieldCheck, AlertTriangle, Activity, X, CheckCircle, 
   Menu, Compass, CreditCard, Clock, PhoneCall, Radio, FileText, Sparkles, BarChart2, UserCheck, Award, Leaf,
-  Navigation, Hotel, Utensils, Ticket, Zap
+  Navigation, Hotel, Utensils, Ticket, Zap, Package
 } from 'lucide-react';
 import SafarLogo from './SafarLogo';
 import LanguageSelector from './LanguageSelector';
@@ -78,6 +78,7 @@ export default function Navbar({
             {[
               { to: '/authority-dashboard', label: t('navCommandDesk', 'Command Desk'), icon: ShieldCheck },
               { to: '/incidents', label: t('navIncidents', 'Incidents'), icon: AlertTriangle },
+              { to: '/authority-packages', label: 'Verify Packages', icon: Package },
               { to: '/geo-fence-management', label: 'Zones', icon: Activity },
               { to: '/blockchain-ledger', label: 'Blockchain', icon: ShieldCheck },
               { to: '/analytics', label: 'Analytics', icon: BarChart2 },
@@ -141,6 +142,7 @@ export default function Navbar({
           }}>
             {[
               { to: '/explore', label: t('navExplore', 'Explore'), shortLabel: t('navExplore', 'Explore'), icon: Compass, color: '#EA580C' },
+              { to: '/packages', label: 'Packages', shortLabel: 'Packages', icon: Package, color: '#0EA5E9' },
               { to: '/virtual-queue', label: t('navVirtualQueue', 'Virtual Queue'), shortLabel: t('navQueue', 'Queue'), icon: Ticket, color: '#D97706' },
               { to: '/trip-planner', label: t('navPlanTrip', 'Plan Trip'), shortLabel: t('navPlan', 'Plan'), icon: Sparkles, color: '#2563EB' },
               { to: '/hotels', label: t('navStays', 'Stays'), shortLabel: t('navStays', 'Stays'), icon: Hotel, color: '#059669' },
@@ -149,6 +151,7 @@ export default function Navbar({
               { to: '/green-rewards', label: t('navGreenRewards', 'Green Rewards'), shortLabel: t('navRewards', 'Rewards'), icon: Leaf, color: '#16A34A', green: true },
             ].map((nl) => {
               const active = location.pathname === nl.to || 
+                (nl.to === '/packages' && ['/packages', '/my-bookings'].includes(location.pathname)) ||
                 (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname)) ||
                 (nl.to === '/virtual-queue' && ['/virtual-queue', '/vq'].includes(location.pathname));
               const IconC = nl.icon;
@@ -566,6 +569,16 @@ export default function Navbar({
                     >
                       <Compass className="w-4 h-4 text-orange-500" />
                       <span>🧭 Explore Destinations</span>
+                    </Link>
+                    <Link
+                      to="/packages"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                        ['/packages', '/my-bookings'].includes(location.pathname) ? 'bg-sky-50 text-sky-600 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Package className="w-4 h-4 text-sky-500" />
+                      <span>📦 Tour Packages</span>
                     </Link>
                     <Link
                       to="/virtual-queue"

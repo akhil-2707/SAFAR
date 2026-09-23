@@ -36,12 +36,30 @@ import GuideDashboard from './pages/GuideDashboard';
 import GuideRegisterPage from './pages/GuideRegisterPage';
 import GuideVerifyPage from './pages/GuideVerifyPage';
 
+// Tourism & Stays Feature Pages (SIH PS 26204)
+import GreenRewardsPage from './pages/GreenRewardsPage';
+import PartnerPaymentPage from './pages/PartnerPaymentPage';
+import TripPlannerPage from './pages/TripPlannerPage';
+import ExploreDestinationsPage from './pages/ExploreDestinationsPage';
+import HotelsPage from './pages/HotelsPage';
+import MicroStaysPage from './pages/MicroStaysPage';
+import ArtisansPage from './pages/ArtisansPage';
+import EVehiclesPage from './pages/EVehiclesPage';
+import VirtualQueuePage from './pages/VirtualQueuePage';
+import SwachhFoodPage from './pages/SwachhFoodPage';
+
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
-  const [showPatrioticLoader, setShowPatrioticLoader] = useState(true);
+  const [showPatrioticLoader, setShowPatrioticLoader] = useState(() => {
+    try {
+      return !sessionStorage.getItem('safar_loader_shown');
+    } catch {
+      return true;
+    }
+  });
   const [showMeshModal, setShowMeshModal] = useState(false);
 
   // Authenticated user recovered from localStorage or initialized as null
@@ -732,6 +750,48 @@ function AppContent({
                   path="/guide/verify/:guideId"
                   element={<GuideVerifyPage />}
                 />
+
+                {/* Partner Registration */}
+                <Route path="/partner-register" element={<PartnerRegisterPage />} />
+
+                {/* Tourism & Stays Routes (SIH PS 26204) */}
+                <Route path="/explore" element={<ExploreDestinationsPage />} />
+                <Route path="/destinations" element={<Navigate to="/explore" replace />} />
+
+                <Route path="/hotels" element={<HotelsPage tourist={touristProfile} />} />
+                <Route path="/micro-stays" element={<Navigate to="/hotels?tab=micro" replace />} />
+                <Route path="/stays" element={<Navigate to="/hotels" replace />} />
+
+                <Route path="/artisans" element={<ArtisansPage tourist={touristProfile} />} />
+                <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
+
+                {/* Green Rewards & Partner Payment */}
+                <Route path="/green-rewards" element={<GreenRewardsPage />} />
+                <Route path="/partner-pay" element={<PartnerPaymentPage />} />
+                <Route path="/partner-payment" element={<Navigate to="/partner-pay" replace />} />
+                <Route path="/e-vehicles" element={<EVehiclesPage />} />
+                <Route path="/e-vehicle" element={<Navigate to="/e-vehicles" replace />} />
+                <Route path="/e-rickshaw" element={<Navigate to="/e-vehicles" replace />} />
+
+                {/* Smart Trip Planner */}
+                <Route
+                  path="/trip-planner"
+                  element={
+                    <TripPlannerPage 
+                      tourist={touristProfile} 
+                      geofences={geofences}
+                      onSimulateDeviation={handleSimulateDeviation}
+                    />
+                  }
+                />
+
+                {/* Swachh Food Tourism Intelligence */}
+                <Route path="/swachh-food" element={<SwachhFoodPage tourist={touristProfile} />} />
+                <Route path="/food" element={<Navigate to="/swachh-food" replace />} />
+
+                {/* S.A.F.A.R. VQ-Commerce Engine (Virtual Queue & Micro-Economy Vouchers) */}
+                <Route path="/virtual-queue" element={<VirtualQueuePage tourist={touristProfile} />} />
+                <Route path="/vq" element={<Navigate to="/virtual-queue" replace />} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
