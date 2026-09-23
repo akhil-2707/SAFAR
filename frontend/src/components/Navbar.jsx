@@ -77,6 +77,7 @@ export default function Navbar({
           }}>
             {[
               { to: '/authority-dashboard', label: t('navCommandDesk', 'Command Desk'), icon: ShieldCheck },
+              { to: '/authority-packages', label: 'Verify Packages', icon: CheckCircle },
               { to: '/incidents', label: t('navIncidents', 'Incidents'), icon: AlertTriangle },
               { to: '/geo-fence-management', label: 'Zones', icon: Activity },
               { to: '/blockchain-ledger', label: 'Blockchain', icon: ShieldCheck },
@@ -134,6 +135,36 @@ export default function Navbar({
               );
             })}
           </nav>
+        ) : currentUser?.role === 'PARTNER' ? (
+          <nav className="hidden md:flex items-center gap-1 p-1 rounded-2xl" style={{
+            background: 'rgba(120,120,128,0.1)',
+          }}>
+            {[
+              { to: '/partner-dashboard', label: 'Partner Dashboard', icon: Hotel },
+              { to: '/packages', label: 'View Marketplace', icon: Compass },
+            ].map((nl) => {
+              const IconC = nl.icon;
+              const active = location.pathname === nl.to;
+              return (
+                <Link key={nl.to} to={nl.to}>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.96 }}
+                    transition={SPRING}
+                    className="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    style={{
+                      background: active ? 'rgba(255,255,255,0.85)' : 'transparent',
+                      color: active ? '#059669' : 'rgba(60,60,67,0.7)',
+                      boxShadow: active ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                    }}
+                  >
+                    <IconC className="w-3.5 h-3.5" />
+                    <span>{nl.label}</span>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </nav>
         ) : (
           <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-2xl border border-slate-200/80 shadow-xs shrink min-w-0" style={{
             background: 'rgba(255, 255, 255, 0.75)',
@@ -141,6 +172,7 @@ export default function Navbar({
           }}>
             {[
               { to: '/explore', label: t('navExplore', 'Explore'), shortLabel: t('navExplore', 'Explore'), icon: Compass, color: '#EA580C' },
+              { to: '/packages', label: 'Packages', shortLabel: 'Packages', icon: Ticket, color: '#4F46E5' },
               { to: '/virtual-queue', label: t('navVirtualQueue', 'Virtual Queue'), shortLabel: t('navQueue', 'Queue'), icon: Ticket, color: '#D97706' },
               { to: '/trip-planner', label: t('navPlanTrip', 'Plan Trip'), shortLabel: t('navPlan', 'Plan'), icon: Sparkles, color: '#2563EB' },
               { to: '/hotels', label: t('navStays', 'Stays'), shortLabel: t('navStays', 'Stays'), icon: Hotel, color: '#059669' },
@@ -150,6 +182,7 @@ export default function Navbar({
             ].map((nl) => {
               const active = location.pathname === nl.to || 
                 (nl.to === '/hotels' && ['/hotels', '/micro-stays', '/stays'].includes(location.pathname)) ||
+                (nl.to === '/packages' && ['/packages', '/marketplace', '/my-bookings'].includes(location.pathname)) ||
                 (nl.to === '/virtual-queue' && ['/virtual-queue', '/vq'].includes(location.pathname));
               const IconC = nl.icon;
               return (

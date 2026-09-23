@@ -287,11 +287,15 @@ const SEED_SPILLOVER_STAYS = [
 ];
 
 // Initialize in dbStore
+// Initialize in dbStore
 function getHotels() {
   const current = dbStore.get('hotels') || [];
   OFFICIAL_HOTELS_AND_PODS.forEach((seedH) => {
-    if (!current.some((ch) => ch.id === seedH.id)) {
-      dbStore.insert('hotels', { ...seedH });
+    const existing = current.find((ch) => ch.id === seedH.id);
+    if (!existing) {
+      dbStore.insert('hotels', { ...seedH, status: 'APPROVED' });
+    } else if (!existing.status) {
+      existing.status = 'APPROVED';
     }
   });
   return dbStore.get('hotels');
@@ -302,21 +306,22 @@ const bookingsStore = {
   cloakroom: []
 };
 
-// 0. GET /api/hotels (Root Alias to micro-stays)
+// 0. GET /api/hotels (Root Alias to micro-stays, tourists see approved only)
 router.get('/', (req, res) => {
-  const hotels = getHotels();
+  const allHotels = getHotels();
+  const approvedHotels = allHotels.filter(h => h.status === 'APPROVED' || !h.status);
   res.json({
     success: true,
-    hotels,
-    totalHotels: hotels.length,
+    hotels: approvedHotels,
+    totalHotels: approvedHotels.length,
     authority: 'IRCTC & State Tourism Development Corporations'
   });
 });
 
-// 1. GET /api/hotels/micro-stays
+// 1. GET /api/hotels/micro-stays (Tourists see approved only)
 router.get('/micro-stays', (req, res) => {
   const { city } = req.query;
-  let hotels = getHotels();
+  let hotels = getHotels().filter(h => h.status === 'APPROVED' || !h.status);
   let cloakrooms = OFFICIAL_CLOAKROOMS;
   if (city) {
     const qCity = city.toLowerCase();
@@ -351,12 +356,79 @@ router.get('/spillover-deals', (req, res) => {
   });
 });
 
-// 3. POST /api/hotels - Dynamic Hotel/Cloakroom Onboarding Desk (Persists in MongoDB)
+// 3a. GET /api/hotels/authority/all - Returns all hotels for Authority Desk (pending, approved, rejected)
+router.get('/authority/all', (req, res) => {
+  try {
+    const allHotels = getHotels();
+    const pending = allHotels.filter(h => h.status === 'PENDING_VERIFICATION');
+    const approved = allHotels.filter(h => h.status === 'APPROVED' || !h.status);
+    const rejected = allHotels.filter(h => h.status === 'REJECTED');
+
+    res.json({
+      success: true,
+      total: allHotels.length,
+      pendingCount: pending.length,
+      approvedCount: approved.length,
+      rejectedCount: rejected.length,
+      hotels: allHotels,
+      pending,
+      approved,
+      rejected
+    });
+  } catch (err) {
+    console.error('Fetch authority hotels error:', err);
+    res.status(500).json({ success: false, error: 'Failed to retrieve hotels for authority' });
+  }
+});
+
+// 3b. PATCH /api/hotels/:id/verify - Authority Officer approves or rejects hotel
+router.patch('/:id/verify', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, reviewNotes, officerName } = req.body;
+
+    if (!['APPROVED', 'REJECTED'].includes(status)) {
+      return res.status(400).json({ success: false, error: 'Status must be APPROVED or REJECTED' });
+    }
+
+    const allHotels = getHotels();
+    const hotel = allHotels.find(h => h.id === id);
+
+    if (!hotel) {
+      return res.status(404).json({ success: false, error: 'Hotel not found' });
+    }
+
+    const isApproval = status === 'APPROVED';
+    const updatedFields = {
+      status,
+      authorityBadge: isApproval ? 'Verified S.A.F.A.R. Hospitality Partner' : 'Verification Denied / Compliance Required',
+      verifiedAt: new Date().toISOString(),
+      verifiedBy: officerName || 'Central Tourism Authority Officer',
+      reviewNotes: reviewNotes || (isApproval ? 'All safety, trade license & hygiene guidelines verified.' : 'Missing statutory compliance documents.')
+    };
+
+    Object.assign(hotel, updatedFields);
+    dbStore.update('hotels', id, updatedFields);
+
+    res.json({
+      success: true,
+      message: isApproval 
+        ? `✓ Hotel "${hotel.name}" officially APPROVED and granted S.A.F.A.R. Verification Seal!`
+        : `Hotel "${hotel.name}" rejected/flagged for compliance review.`,
+      hotel
+    });
+  } catch (err) {
+    console.error('Hotel verify error:', err);
+    res.status(500).json({ success: false, error: 'Failed to update hotel verification status' });
+  }
+});
+
+// 3. POST /api/hotels - Dynamic Hotel/Cloakroom Onboarding Desk (Starts in PENDING_VERIFICATION)
 router.post('/', (req, res) => {
   try {
     const {
       name, city, state, stationCode, location, hourlyRates,
-      amenities, phoneContact, authorityBadge, image
+      amenities, phoneContact, image
     } = req.body;
 
     if (!name || !city || !location) {
@@ -375,8 +447,9 @@ router.post('/', (req, res) => {
       lat: 26.0 + Math.random() * 5,
       lng: 78.0 + Math.random() * 5,
       rating: 4.8,
-      reviewsCount: 1,
-      authorityBadge: authorityBadge || 'Verified S.A.F.A.R. Hospitality Partner',
+      reviewsCount: 0,
+      status: 'PENDING_VERIFICATION', // Queued for official review by Authority Officer
+      authorityBadge: 'Under Review by Tourism Authority',
       amenities: amenities || ['Air-Conditioned Day Room', 'Luggage Security', 'Clean Washroom', 'Wi-Fi'],
       image: image || 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&auto=format&fit=crop&q=80',
       hourlyRates: hourlyRates || { '2h': 350, '4h': 590, '6h': 850, 'fullDay': 2800 },
@@ -385,14 +458,18 @@ router.post('/', (req, res) => {
       isAccessible: true,
       hasRamp: true,
       wheelchairFriendly: true,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      submittedAt: new Date().toISOString(),
+      verifiedBy: null,
+      verifiedAt: null,
+      reviewNotes: null
     };
 
     dbStore.insert('hotels', newHotel);
 
     res.status(201).json({
       success: true,
-      message: 'New Hotel / Day-Stay Partner successfully onboarded to S.A.F.A.R. network!',
+      message: `✓ Application Submitted! Hotel "${newHotel.name}" is queued for official verification by S.A.F.A.R. Tourism Authority Officer.`,
       hotel: newHotel
     });
   } catch (err) {

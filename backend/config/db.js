@@ -32,6 +32,8 @@ function getFallbackInitialState() {
     payments: initialData.payments || [],
     foodOutlets: initialData.foodOutlets || [],
     foodFeedback: initialData.foodFeedback || [],
+    packages: initialData.packages || [],
+    bookings: initialData.bookings || [],
     notifications: [
       {
         id: 'notif_01',

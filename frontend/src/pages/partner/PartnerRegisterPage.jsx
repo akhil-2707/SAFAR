@@ -34,7 +34,7 @@ export default function PartnerRegisterPage({ onRegisterSuccess }) {
       const loginRes = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'contact@himalayantours.in', password: 'tourist123' })
+        body: JSON.stringify({ email: 'contact@himalayantours.in', password: 'admin123' })
       });
       const data = await loginRes.json();
       if (!data.success) throw new Error(data.error || 'Registration failed');

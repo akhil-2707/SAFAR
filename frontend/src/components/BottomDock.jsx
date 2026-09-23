@@ -36,7 +36,10 @@ export const TOURIST_ROUTES = [
   '/food',
   '/green-rewards',
   '/partner-pay',
-  '/e-vehicles'
+  '/e-vehicles',
+  '/packages',
+  '/marketplace',
+  '/my-bookings'
 ];
 
 export default function BottomDock({ currentUser, onTriggerSos }) {

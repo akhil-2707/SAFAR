@@ -137,6 +137,17 @@ function getInitialData() {
       password: defaultPasswordHash,
       role: 'GUIDE',
       guideId: 'GID-PENDING-001'
+    },
+    // Verified Tour & Safety Partner
+    {
+      id: 'usr_partner_01',
+      name: 'Himalayan Tours & Treks',
+      email: 'contact@himalayantours.in',
+      password: defaultPasswordHash,
+      role: 'PARTNER',
+      status: 'APPROVED',
+      phone: '+91 98123 45678',
+      partnerId: 'PRT-101'
     }
   ];
 
@@ -1397,6 +1408,19 @@ function getInitialData() {
       description: 'Demo inactive commercial establishment (not eligible for green rewards).',
       discountPolicy: [],
       maximumDiscount: 0
+    },
+    {
+      id: 'part_himalayan_01',
+      partnerId: 'PRT-101',
+      userId: 'usr_partner_01',
+      businessName: 'Himalayan Tours & Treks',
+      name: 'Himalayan Tours & Treks',
+      contactEmail: 'contact@himalayantours.in',
+      contactPhone: '+91 98123 45678',
+      address: 'Near Old Bus Stand, Manali / Ayodhya Office',
+      registrationNumber: 'HP-TO-2024-8841',
+      status: 'APPROVED',
+      createdAt: new Date().toISOString()
     }
   ];
 
@@ -1981,6 +2005,89 @@ function getInitialData() {
       createdAt: r.verifiedAt || r.submittedAt
     }));
 
+  // 5. Tourism Safety Packages (Private Operators & Authority Approved)
+  const packages = [
+    {
+      id: 'pkg_ayodhya_01',
+      partnerId: 'PRT-101',
+      partnerName: 'Himalayan Tours & Treks',
+      name: 'Ayodhya Divine Heritage & Ram Mandir VIP Circuit',
+      destination: 'Ayodhya, Uttar Pradesh',
+      itinerary: 'Day 1: Arrival & Saryu Aarti, Day 2: Ram Janmabhoomi & Hanuman Garhi Darshan, Day 3: Heritage Craft & Souvenir Walk.',
+      duration: '3 Days / 2 Nights',
+      price: 4999,
+      inclusions: 'Hotel Stay, Breakfast & Dinner, VIP Darshan Slot, Certified Guide, AC Transport',
+      exclusions: 'Personal Expenses, Flight/Train Tickets',
+      groupCapacity: 15,
+      availableDates: ['2026-10-05', '2026-10-12', '2026-10-20'],
+      images: ['https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80'],
+      guideDetails: 'Govt Certified English/Hindi Pilgrimage Guide included',
+      emergencyContact: '+91 98123 45678 (24x7 Escort Desk)',
+      safetyInformation: 'Linked to S.A.F.A.R. 112 ERSS & High-Altitude / Sacred Corridor Geo-fence alerts.',
+      status: 'APPROVED',
+      createdAt: new Date(Date.now() - 5 * 86400000).toISOString()
+    },
+    {
+      id: 'pkg_manali_02',
+      partnerId: 'PRT-101',
+      partnerName: 'Himalayan Tours & Treks',
+      name: 'Kullu-Manali Alpine Safe Trek & Solang Valley Expedition',
+      destination: 'Manali, Himachal Pradesh',
+      itinerary: 'Day 1: Acclimatization & Old Manali Walk, Day 2: Solang Valley & Atal Tunnel Safe Corridor, Day 3: Jogini Waterfalls Eco-Trek, Day 4: Departure.',
+      duration: '4 Days / 3 Nights',
+      price: 8999,
+      inclusions: 'Eco Resort Homestay, High-Altitude Safety Kit, All Meals, Local Guide, Trekking Permits',
+      exclusions: 'Snow Gear Rental, Paragliding Tickets',
+      groupCapacity: 10,
+      availableDates: ['2026-10-10', '2026-10-18', '2026-10-25'],
+      images: ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'],
+      guideDetails: 'Certified Mountaineering Guide (NIM Uttarkashi)',
+      emergencyContact: '+91 98123 45678 / Manali Police Rescue Desk',
+      safetyInformation: 'Ghost-Mesh offline relay beacons deployed at all high-altitude campsite transit points.',
+      status: 'APPROVED',
+      createdAt: new Date(Date.now() - 3 * 86400000).toISOString()
+    },
+    {
+      id: 'pkg_kashi_03',
+      partnerId: 'PRT-101',
+      partnerName: 'Himalayan Tours & Treks',
+      name: 'Kashi Vishwanath Corridor & Ganga Heritage Walk',
+      destination: 'Varanasi, Uttar Pradesh',
+      itinerary: 'Day 1: Sunrise Boat Ride, Kashi Vishwanath Temple, Evening Dashashwamedh Aarti. Day 2: Sarnath Heritage Site & Banarasi Silk Weaving Village.',
+      duration: '2 Days / 1 Night',
+      price: 3499,
+      inclusions: 'Heritage Stay near Ghats, Private Boat Ride, Temple Entry, Verified Guide',
+      exclusions: 'Special Puja donations',
+      groupCapacity: 12,
+      availableDates: ['2026-10-08', '2026-10-15'],
+      images: ['https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80'],
+      guideDetails: 'Local Heritage Historian & Registered Guide',
+      emergencyContact: '+91 98123 45678',
+      safetyInformation: 'Varanasi Tourist Police CAD linked with S.A.F.A.R. real-time SOS.',
+      status: 'PENDING',
+      createdAt: new Date().toISOString()
+    }
+  ];
+
+  // 6. Tourism Package Bookings
+  const bookings = [
+    {
+      id: 'bkg_demo_01',
+      bookingId: 'BKG-2026-1001',
+      touristId: 'TID-1035',
+      touristName: 'Ananya Mishra',
+      packageId: 'pkg_ayodhya_01',
+      packageName: 'Ayodhya Divine Heritage & Ram Mandir VIP Circuit',
+      partnerId: 'PRT-101',
+      partnerName: 'Himalayan Tours & Treks',
+      travelDate: '2026-10-12',
+      touristsCount: 2,
+      totalPrice: 9998,
+      status: 'CONFIRMED',
+      createdAt: new Date(Date.now() - 2 * 86400000).toISOString()
+    }
+  ];
+
   return {
     users,
     geofences,
@@ -1993,6 +2100,8 @@ function getInitialData() {
     guideRequests,
     guideComplaints,
     partners,
+    packages,
+    bookings,
     rewardConfig,
     greenRewards,
     greenCoinTransactions

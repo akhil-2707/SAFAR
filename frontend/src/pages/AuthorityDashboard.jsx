@@ -5,6 +5,7 @@ import MiniMap from '../components/MiniMap';
 import CreateDangerAreaModal from '../components/CreateDangerAreaModal';
 import DeadmanAuthoritySentinel from '../components/DeadmanAuthoritySentinel';
 import AuthorityGuideDesk from '../components/AuthorityGuideDesk';
+import AuthorityHotelDesk from '../components/AuthorityHotelDesk';
 import AuthorityGreenRewardsDesk from '../components/AuthorityGreenRewardsDesk';
 import SafarLogo from '../components/SafarLogo';
 import { 
@@ -36,9 +37,26 @@ export default function AuthorityDashboard({
 }) {
   const [selectedTourist, setSelectedTourist] = useState(null);
   const [filterRisk, setFilterRisk] = useState('ALL');
-  const [activeView, setActiveView] = useState('OVERVIEW'); // 'OVERVIEW' | 'GUIDES'
+  const [activeView, setActiveView] = useState('OVERVIEW'); // 'OVERVIEW' | 'GUIDES' | 'HOTELS' | 'REWARDS'
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [actionSuccessMessage, setActionSuccessMessage] = useState(null);
+  const [pendingHotelsCount, setPendingHotelsCount] = useState(0);
+
+  const fetchPendingHotelsCount = async () => {
+    try {
+      const res = await fetch('/api/hotels/authority/all');
+      const data = await res.json();
+      if (data.success) {
+        setPendingHotelsCount(data.pendingCount || 0);
+      }
+    } catch (e) {
+      console.error('Error fetching pending hotels count:', e);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingHotelsCount();
+  }, []);
 
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -394,6 +412,23 @@ export default function AuthorityDashboard({
         </button>
 
         <button
+          onClick={() => setActiveView('HOTELS')}
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${
+            activeView === 'HOTELS'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Building2 className="w-3.5 h-3.5" />
+          <span>🏨 Hotel & Stay Verification Desk</span>
+          {pendingHotelsCount > 0 && (
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-red-500 text-white font-black animate-pulse">
+              {pendingHotelsCount}
+            </span>
+          )}
+        </button>
+
+        <button
           onClick={() => setActiveView('REWARDS')}
           className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center space-x-1.5 ${
             activeView === 'REWARDS'
@@ -426,10 +461,14 @@ export default function AuthorityDashboard({
         )}
       </AnimatePresence>
 
-      {/* Main Content Area: Overview, Guides Desk, or Rewards Desk */}
+      {/* Main Content Area: Overview, Guides Desk, Hotels Desk, or Rewards Desk */}
       {activeView === 'GUIDES' ? (
         <motion.div variants={itemVariants}>
           <AuthorityGuideDesk onRefreshData={onRefreshData} />
+        </motion.div>
+      ) : activeView === 'HOTELS' ? (
+        <motion.div variants={itemVariants}>
+          <AuthorityHotelDesk onRefreshData={() => { fetchPendingHotelsCount(); if (onRefreshData) onRefreshData(); }} />
         </motion.div>
       ) : activeView === 'REWARDS' ? (
         <motion.div variants={itemVariants}>

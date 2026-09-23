@@ -75,6 +75,7 @@ app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/food', require('./routes/foodRoutes'));
 app.use('/api/vq', require('./routes/vqRoutes'));
 app.use('/api/virtual-queue', require('./routes/vqRoutes'));
+app.use('/api/marketplace', require('./controllers/marketplaceRoutes'));
 
 // Serve Frontend in Production / Cloud Deployments
 const frontendDist = path.join(__dirname, '../frontend/dist');
