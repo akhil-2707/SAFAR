@@ -137,7 +137,7 @@ async function sendOTPEmail(email, otp, purpose = 'LOGIN') {
               secure: Number(smtpPort) === 465,
               auth: {
                 user: smtpUser,
-                pass: cleanPass
+                pass: smtpPass
               }
             }
       );
