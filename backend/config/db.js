@@ -32,41 +32,43 @@ function getFallbackInitialState() {
     payments: initialData.payments || [],
     foodOutlets: initialData.foodOutlets || [],
     foodFeedback: initialData.foodFeedback || [],
-    packages: [
-      {
-        id: 'PKG-101',
-        partnerId: 'PRT-01',
-        partnerName: 'Kaziranga Eco-Trails & Safaris',
-        name: 'Kaziranga Rhino Wildlife & Brahmaputra River Cruise',
-        destination: 'Assam',
-        duration: '3 Days / 2 Nights',
-        price: 4500,
-        groupCapacity: 8,
-        status: 'APPROVED',
-        images: ['https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop'],
-        availableDates: ['2026-10-01', '2026-10-05', '2026-10-12'],
-        inclusions: 'Forest Jeep Safari, Certified Nature Guide, Eco-Lodge Stay, Breakfast & Dinner, Wildlife Permits',
-        exclusions: 'Airfare, Personal Expenses, Alcoholic Beverages',
-        safetyInformation: 'Mandatory GPS tracker tag provided at entry gate, 24x7 Forest Ranger emergency support, First aid kit with escort vehicle.'
-      },
-      {
-        id: 'PKG-102',
-        partnerId: 'PRT-02',
-        partnerName: 'Himalayan Heritage Expeditions',
-        name: 'Tawang Monastic Circuit & Sela Pass Adventure',
-        destination: 'Arunachal Pradesh',
-        duration: '4 Days / 3 Nights',
-        price: 7800,
-        groupCapacity: 6,
-        status: 'APPROVED',
-        images: ['https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&auto=format&fit=crop'],
-        availableDates: ['2026-10-03', '2026-10-10', '2026-10-18'],
-        inclusions: 'ILP Permit processing, 4x4 Heated SUV, Local Monpa Guide, Monastery Entry, Heritage Homestay',
-        exclusions: 'Personal gear, Tips, Unscheduled stop charges',
-        safetyInformation: 'High altitude medical oxygen cylinder equipped in vehicle, SOS satellite relay support, DPDP Act verified guide.'
-      }
-    ],
-    bookings: [],
+    packages: (initialData.packages && initialData.packages.length > 0)
+      ? initialData.packages
+      : [
+          {
+            id: 'PKG-101',
+            partnerId: 'PRT-01',
+            partnerName: 'Kaziranga Eco-Trails & Safaris',
+            name: 'Kaziranga Rhino Wildlife & Brahmaputra River Cruise',
+            destination: 'Assam',
+            duration: '3 Days / 2 Nights',
+            price: 4500,
+            groupCapacity: 8,
+            status: 'APPROVED',
+            images: ['https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop'],
+            availableDates: ['2026-10-01', '2026-10-05', '2026-10-12'],
+            inclusions: 'Forest Jeep Safari, Certified Nature Guide, Eco-Lodge Stay, Breakfast & Dinner, Wildlife Permits',
+            exclusions: 'Airfare, Personal Expenses, Alcoholic Beverages',
+            safetyInformation: 'Mandatory GPS tracker tag provided at entry gate, 24x7 Forest Ranger emergency support, First aid kit with escort vehicle.'
+          },
+          {
+            id: 'PKG-102',
+            partnerId: 'PRT-02',
+            partnerName: 'Himalayan Heritage Expeditions',
+            name: 'Tawang Monastic Circuit & Sela Pass Adventure',
+            destination: 'Arunachal Pradesh',
+            duration: '4 Days / 3 Nights',
+            price: 7800,
+            groupCapacity: 6,
+            status: 'APPROVED',
+            images: ['https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&auto=format&fit=crop'],
+            availableDates: ['2026-10-03', '2026-10-10', '2026-10-18'],
+            inclusions: 'ILP Permit processing, 4x4 Heated SUV, Local Monpa Guide, Monastery Entry, Heritage Homestay',
+            exclusions: 'Personal gear, Tips, Unscheduled stop charges',
+            safetyInformation: 'High altitude medical oxygen cylinder equipped in vehicle, SOS satellite relay support, DPDP Act verified guide.'
+          }
+        ],
+    bookings: initialData.bookings || [],
     notifications: [
       {
         id: 'notif_01',

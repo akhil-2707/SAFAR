@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, CheckCircle, AlertTriangle, Building, MapPin } from 'lucide-react';
+import { X, CheckCircle, AlertTriangle, Building, MapPin, ShieldCheck } from 'lucide-react';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
@@ -12,7 +12,6 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
     stationCode: '',
     location: '',
     phoneContact: '',
-    authorityBadge: 'Verified S.A.F.A.R. Hospitality Partner',
     rate2h: 299,
     rate4h: 499,
     rate6h: 750,
@@ -42,7 +41,6 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
       stationCode: formData.stationCode,
       location: formData.location,
       phoneContact: formData.phoneContact,
-      authorityBadge: formData.authorityBadge,
       hourlyRates: {
         '2h': Number(formData.rate2h),
         '4h': Number(formData.rate4h),
@@ -67,7 +65,7 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
         if (onHotelAdded) onHotelAdded(data.hotel);
         setTimeout(() => {
           onClose();
-        }, 1800);
+        }, 3200);
       } else {
         setErrorMsg(data.error || 'Failed to onboard hotel partner');
       }
@@ -102,6 +100,14 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
           >
             <X className="w-4 h-4 text-white" />
           </button>
+        </div>
+
+        {/* Official Authority Notice */}
+        <div className="mx-5 mt-4 p-3 bg-blue-50 border border-blue-200 rounded-2xl flex items-start gap-2.5 text-blue-900 text-xs font-medium">
+          <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+          <p>
+            <strong>Official Verification Notice:</strong> All newly onboarded stays undergo compliance & safety review by the S.A.F.A.R. Tourism Authority Officer before going live for tourist booking.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 max-h-[calc(85vh-100px)] overflow-y-auto text-xs">
