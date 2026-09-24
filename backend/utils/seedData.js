@@ -2092,7 +2092,7 @@ function getInitialData() {
       exclusions: 'Personal Expenses, Flight/Train Tickets',
       groupCapacity: 15,
       availableDates: ['2026-10-05', '2026-10-12', '2026-10-20'],
-      images: ['https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80'],
+      images: ['/images/ram-mandir-ayodhya.jpg'],
       guideDetails: 'Govt Certified English/Hindi Pilgrimage Guide included',
       emergencyContact: '+91 98123 45678 (24x7 Escort Desk)',
       safetyInformation: 'Linked to S.A.F.A.R. 112 ERSS & High-Altitude / Sacred Corridor Geo-fence alerts.',

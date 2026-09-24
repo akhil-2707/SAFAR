@@ -5,6 +5,7 @@ import {
   ExternalLink, ArrowRight, Camera, Upload, RefreshCw, Award,
   Cpu, FileCheck, Layers, HelpCircle
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 };
 
@@ -373,15 +374,14 @@ export default function AICraftScannerModal({ isOpen, onClose }) {
                     Audit Token: {report.auditToken} · SHA-256: {report.blockchainVerificationHash.substring(0, 16)}...
                   </span>
                 </div>
-                <a
-                  href={report.officialRegistryUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold flex items-center gap-1 transition-colors shrink-0"
+                <Link
+                  to={report.officialRegistryUrl || `/gi-registry/${report.officialApplicationNumber || 19}`}
+                  onClick={onClose}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-purple-100 text-slate-800 hover:text-purple-900 font-bold flex items-center gap-1 transition-colors shrink-0"
                 >
+                  <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
                   <span>Verify at IP India (DPIIT)</span>
-                  <ExternalLink className="w-3 h-3 text-slate-500" />
-                </a>
+                </Link>
               </div>
             </motion.div>
           )}

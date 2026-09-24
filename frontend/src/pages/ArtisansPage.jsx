@@ -269,17 +269,13 @@ export default function ArtisansPage({ tourist }) {
                   </button>
                 </div>
 
-                {artisan.officialRegistryUrl && (
-                  <a
-                    href={artisan.officialRegistryUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-2 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200/70 font-bold text-[10px] rounded-xl transition-all flex items-center justify-center space-x-1 cursor-pointer"
-                  >
-                    <span>Inspect Record on IP India (DPIIT)</span>
-                    <ExternalLink className="w-3 h-3 text-slate-400" />
-                  </a>
-                )}
+                <Link
+                  to={`/gi-registry/${artisan.applicationNumber || artisan.id}`}
+                  className="w-full py-2 bg-slate-50 hover:bg-purple-50 text-slate-700 hover:text-purple-900 border border-slate-200/80 hover:border-purple-300 font-bold text-[10px] rounded-xl transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                  <span>Inspect Record on IP India (DPIIT)</span>
+                </Link>
               </div>
             </div>
           ))}

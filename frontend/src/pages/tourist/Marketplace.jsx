@@ -270,7 +270,12 @@ export default function Marketplace() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
             {filteredPackages.map((pkg) => {
-              const defaultImage = pkg.images?.[0] || 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80';
+              const nameLower = (pkg.name || '').toLowerCase();
+              const destLower = (pkg.destination || '').toLowerCase();
+              const isAyodhya = pkg.id === 'pkg_ayodhya_01' || nameLower.includes('ayodhya') || nameLower.includes('ram') || destLower.includes('ayodhya');
+              const defaultImage = isAyodhya 
+                ? '/images/ram-mandir-ayodhya.jpg' 
+                : (pkg.images?.[0] && !pkg.images[0].includes('1548013146-72479768bada') ? pkg.images[0] : '/images/ram-mandir-ayodhya.jpg');
               return (
                 <div 
                   key={pkg.id} 
@@ -284,7 +289,7 @@ export default function Marketplace() {
                         alt={pkg.name} 
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80';
+                          e.currentTarget.src = isAyodhya ? '/images/ram-mandir-ayodhya.jpg' : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80';
                         }}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                       />
@@ -416,6 +421,23 @@ export default function Marketplace() {
               >
                 {/* Left Column: Tour Details & Itinerary */}
                 <div className="w-full md:w-3/5 p-6 overflow-y-auto bg-slate-50/70 space-y-5">
+                  {/* Tour Image Banner */}
+                  <div className="h-44 w-full rounded-2xl overflow-hidden relative shadow-sm border border-slate-200">
+                    <img
+                      src={
+                        (selectedPackage.id === 'pkg_ayodhya_01' || selectedPackage.name?.toLowerCase().includes('ayodhya') || selectedPackage.destination?.toLowerCase().includes('ayodhya') || selectedPackage.name?.toLowerCase().includes('ram'))
+                          ? '/images/ram-mandir-ayodhya.jpg'
+                          : (selectedPackage.images?.[0] || '/images/ram-mandir-ayodhya.jpg')
+                      }
+                      alt={selectedPackage.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent" />
+                    <span className="absolute bottom-2.5 left-3 text-white text-[10px] font-black uppercase bg-slate-900/80 px-2.5 py-1 rounded-full backdrop-blur-md">
+                      {selectedPackage.destination}
+                    </span>
+                  </div>
+
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
                       <span className="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-extrabold uppercase">

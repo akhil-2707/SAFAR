@@ -27,6 +27,15 @@ exports.getPackages = (req, res) => {
   const user = req.user;
   let allPackages = dbStore.get('packages');
 
+  // Enforce authentic Ram Mandir photograph for Ayodhya circuits
+  allPackages.forEach(pkg => {
+    const name = (pkg.name || '').toLowerCase();
+    const dest = (pkg.destination || '').toLowerCase();
+    if (pkg.id === 'pkg_ayodhya_01' || name.includes('ayodhya') || name.includes('ram') || dest.includes('ayodhya')) {
+      pkg.images = ['/images/ram-mandir-ayodhya.jpg'];
+    }
+  });
+
   if (user && user.role === 'AUTHORITY') {
     // Authority sees all
     return res.json({ success: true, packages: allPackages });
