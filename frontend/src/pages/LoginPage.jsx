@@ -204,7 +204,7 @@ export default function LoginPage({ onLoginSuccess }) {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), purpose: 'LOGIN' })
+        body: JSON.stringify({ email: email.trim(), purpose: 'LOGIN', role: roleTab })
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || 'Failed to send OTP');
@@ -233,7 +233,7 @@ export default function LoginPage({ onLoginSuccess }) {
       const res = await fetch('/api/auth/verify-otp-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), otp: otpCode.trim() })
+        body: JSON.stringify({ email: email.trim(), otp: otpCode.trim(), role: roleTab })
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || 'OTP verification failed');

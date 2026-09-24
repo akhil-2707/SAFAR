@@ -378,14 +378,14 @@ function getMe(req, res) {
 // Send OTP to Email
 async function sendOTP(req, res) {
   try {
-    const { email, purpose = 'LOGIN' } = req.body;
+    const { email, purpose = 'LOGIN', role } = req.body;
     if (!email || !email.includes('@')) {
       return res.status(400).json({ success: false, error: 'Please provide a valid email address' });
     }
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Verify if the email is already registered in S.A.F.A.R.
+    // Check if the email is already registered in S.A.F.A.R.
     const registeredUser = dbStore.findOne('users', (u) => u.email && u.email.toLowerCase() === normalizedEmail)
       || dbStore.findOne('tourists', (t) => t.email && t.email.toLowerCase() === normalizedEmail);
 
@@ -397,13 +397,17 @@ async function sendOTP(req, res) {
         });
       }
     } else {
-      // LOGIN mode: Must already be registered!
-      if (!registeredUser) {
-        return res.status(404).json({
-          success: false,
-          error: 'Sorry wrong Gmail'
-        });
+      // LOGIN mode:
+      // If role is explicitly AUTHORITY or GUIDE, require prior clearance registration
+      if (role === 'AUTHORITY' || role === 'GUIDE') {
+        if (!registeredUser) {
+          return res.status(404).json({
+            success: false,
+            error: 'Sorry wrong Gmail: Officer / Guide email not registered.'
+          });
+        }
       }
+      // For Tourist login, seamless 1-tap OTP is allowed for all tourists (new or existing)
     }
 
     const otp = generateOTP(normalizedEmail);
@@ -428,7 +432,7 @@ async function sendOTP(req, res) {
 // Verify OTP and Complete Login
 function verifyOTPLogin(req, res) {
   try {
-    const { email, otp } = req.body;
+    const { email, otp, role } = req.body;
     if (!email || !otp) {
       return res.status(400).json({ success: false, error: 'Email and OTP code are required' });
     }
@@ -454,9 +458,68 @@ function verifyOTPLogin(req, res) {
           isRealUser: true
         });
       } else {
-        return res.status(404).json({
-          success: false,
-          error: 'Sorry wrong Gmail'
+        // If an officer or guide tries to log in with an unregistered email, reject
+        if (role === 'AUTHORITY' || role === 'GUIDE') {
+          return res.status(404).json({
+            success: false,
+            error: 'Sorry wrong Gmail: Officer / Guide email not registered.'
+          });
+        }
+
+        // Auto-provision new Tourist account for seamless OTP sign-in / sign-up
+        const nextIdNum = (dbStore.get('tourists') || []).length + 1040;
+        const touristId = `TID-${nextIdNum}`;
+        const defaultPasswordHash = bcrypt.hashSync('tourist123', 10);
+        const emailPrefix = normalizedEmail.split('@')[0];
+        const displayName = emailPrefix.replace(/[._0-9]/g, ' ').trim().replace(/\b\w/g, (l) => l.toUpperCase()) || 'Verified Tourist';
+
+        user = dbStore.insert('users', {
+          name: displayName,
+          email: normalizedEmail,
+          password: defaultPasswordHash,
+          role: 'TOURIST',
+          touristId,
+          isDemo: false,
+          isRealUser: true
+        });
+
+        const newTourist = dbStore.insert('tourists', {
+          id: `tourist_${nextIdNum}`,
+          touristId,
+          fullName: displayName,
+          dob: '2000-01-01',
+          gender: 'Other',
+          nationality: 'Indian',
+          preferredLanguage: 'en',
+          mobileNumber: '+91 98765 43210',
+          email: normalizedEmail,
+          idProofType: 'Aadhaar Card',
+          idVerificationStatus: 'PROVISIONALLY_ACTIVE',
+          destination: 'National Safe Tourism Circuit',
+          travelStartDate: new Date().toISOString().split('T')[0],
+          travelEndDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+          currentLocation: { lat: 26.1445, lng: 91.7362, address: 'Gateway Tourist Safe Hub' },
+          riskScore: 10,
+          riskLevel: 'LOW',
+          status: 'SAFE',
+          lastSeen: new Date().toISOString()
+        });
+
+        const rawMeta = `${touristId}:${displayName}:Indian:Aadhaar Card`;
+        const touristIdHash = crypto.createHash('sha256').update(touristId).digest('hex');
+        const digitalIdHash = crypto.createHash('sha256').update(rawMeta).digest('hex');
+
+        dbStore.insert('digitalIds', {
+          id: `did_${touristId}`,
+          touristId,
+          fullName: displayName,
+          verificationStatus: 'PROVISIONALLY_ACTIVE',
+          touristIdHash,
+          digitalIdHash,
+          blockIndex: 1,
+          issuedAt: new Date().toISOString(),
+          expiryDate: newTourist.travelEndDate,
+          qrCodeData: `https://safetour.gov.in/verify/${digitalIdHash.substring(0, 16)}`
         });
       }
     }
@@ -491,6 +554,23 @@ function verifyOTPLogin(req, res) {
     if (user.role === 'TOURIST' && user.touristId) {
       touristProfile = dbStore.findOne('tourists', (t) => t.touristId === user.touristId);
       digitalId = dbStore.findOne('digitalIds', (d) => d.touristId === user.touristId);
+      if (!digitalId && touristProfile) {
+        const rawMeta = `${touristProfile.touristId}:${touristProfile.fullName}:Indian:${touristProfile.idProofType || 'Aadhaar Card'}`;
+        const touristIdHash = crypto.createHash('sha256').update(touristProfile.touristId).digest('hex');
+        const digitalIdHash = crypto.createHash('sha256').update(rawMeta).digest('hex');
+        digitalId = dbStore.insert('digitalIds', {
+          id: `did_${touristProfile.touristId}`,
+          touristId: touristProfile.touristId,
+          fullName: touristProfile.fullName,
+          verificationStatus: touristProfile.idVerificationStatus || 'VERIFIED',
+          touristIdHash,
+          digitalIdHash,
+          blockIndex: 1,
+          issuedAt: new Date().toISOString(),
+          expiryDate: touristProfile.travelEndDate || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+          qrCodeData: `https://safetour.gov.in/verify/${digitalIdHash.substring(0, 16)}`
+        });
+      }
     }
 
     return res.json({

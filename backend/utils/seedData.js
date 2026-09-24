@@ -58,6 +58,16 @@ function getInitialData() {
       touristId: 'TID-1306'
     },
     {
+      id: 'usr_tourist_pari',
+      name: 'Pari',
+      email: 'pariii45451@gmail.com',
+      password: defaultPasswordHash,
+      role: 'TOURIST',
+      touristId: 'TID-4545',
+      isDemo: false,
+      isRealUser: true
+    },
+    {
       id: 'usr_tourist_01',
       name: 'Rohan Verma',
       email: 'rohan.verma@example.com',
@@ -409,6 +419,33 @@ function getInitialData() {
       travelEndDate: '2026-10-31',
       currentLocation: { lat: 26.7980, lng: 82.2040, address: 'Ram Ki Paidi, Ayodhya', isLiveGps: true },
       riskScore: 8,
+      riskLevel: 'LOW',
+      isSosActive: false,
+      status: 'SAFE',
+      lastSeen: new Date().toISOString()
+    },
+    {
+      id: 'tourist_pari',
+      touristId: 'TID-4545',
+      fullName: 'Pari',
+      dob: '2001-05-20',
+      gender: 'Female',
+      nationality: 'Indian',
+      preferredLanguage: 'hi',
+      mobileNumber: '+91 98765 45451',
+      emergencyContact: {
+        name: 'Family Contact',
+        phone: '+91 98765 00002',
+        relation: 'Family'
+      },
+      email: 'pariii45451@gmail.com',
+      idProofType: 'Aadhaar Card',
+      idVerificationStatus: 'VERIFIED',
+      destination: 'Ayodhya & Varanasi Sacred Corridor',
+      travelStartDate: '2026-09-01',
+      travelEndDate: '2026-12-31',
+      currentLocation: { lat: 26.7980, lng: 82.2040, address: 'Ram Ki Paidi, Ayodhya', isLiveGps: true },
+      riskScore: 5,
       riskLevel: 'LOW',
       isSosActive: false,
       status: 'SAFE',
