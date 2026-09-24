@@ -471,7 +471,9 @@ export default function App() {
 // Protected Route for any authenticated user (Tourist or anyone logged in)
 function RequireAuth({ currentUser, children }) {
   const location = useLocation();
-  if (!currentUser) {
+  const token = localStorage.getItem('safar_token');
+  const storedUser = localStorage.getItem('safar_user');
+  if (!currentUser && !token && !storedUser) {
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   }
   return children;
@@ -480,10 +482,15 @@ function RequireAuth({ currentUser, children }) {
 // Strictly for Govt Authority Officers
 function AuthorityRouteGuard({ currentUser, children }) {
   const location = useLocation();
-  if (!currentUser) {
+  const token = localStorage.getItem('safar_token');
+  const storedUser = (() => {
+    try { return JSON.parse(localStorage.getItem('safar_user')); } catch { return null; }
+  })();
+  const user = currentUser || storedUser;
+  if (!user && !token) {
     return <Navigate to={`/login?role=authority&redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   }
-  if (currentUser.role !== 'AUTHORITY') {
+  if (user && user.role !== 'AUTHORITY') {
     return <Navigate to="/tourist-dashboard" replace />;
   }
   return children;
@@ -492,10 +499,15 @@ function AuthorityRouteGuard({ currentUser, children }) {
 // Strictly for Certified Local Guides
 function GuideRouteGuard({ currentUser, children }) {
   const location = useLocation();
-  if (!currentUser) {
+  const token = localStorage.getItem('safar_token');
+  const storedUser = (() => {
+    try { return JSON.parse(localStorage.getItem('safar_user')); } catch { return null; }
+  })();
+  const user = currentUser || storedUser;
+  if (!user && !token) {
     return <Navigate to={`/login?role=guide&redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   }
-  if (currentUser.role !== 'GUIDE') {
+  if (user && user.role !== 'GUIDE') {
     return <Navigate to="/tourist-dashboard" replace />;
   }
   return children;
