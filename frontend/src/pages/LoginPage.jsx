@@ -416,72 +416,156 @@ export default function LoginPage({ onLoginSuccess }) {
                 </div>
               </div>
 
-              <form onSubmit={handlePasswordSubmit} className="space-y-3.5">
-                <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">
-                    Official Command Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="w-4 h-4 text-purple-600 absolute left-3.5 top-3.5" />
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="officer@domain.gov.in"
-                      className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-500 focus:bg-white text-slate-900 font-medium"
-                    />
+              {authMode === 'PASSWORD' ? (
+                <form onSubmit={handlePasswordSubmit} className="space-y-3.5">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Official Command Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 text-purple-600 absolute left-3.5 top-3.5" />
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="officer@domain.gov.in"
+                        className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-500 focus:bg-white text-slate-900 font-medium"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">
-                    Master Security Passphrase
-                  </label>
-                  <div className="relative">
-                    <Lock className="w-4 h-4 text-purple-600 absolute left-3.5 top-3.5" />
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-500 focus:bg-white text-slate-900 font-medium"
-                    />
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Master Security Passphrase
+                    </label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-purple-600 absolute left-3.5 top-3.5" />
+                      <input
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-500 focus:bg-white text-slate-900 font-medium"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 cursor-pointer"
-                >
-                  {loading ? (
-                    <span>Verifying Security Clearance...</span>
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 cursor-pointer"
+                  >
+                    {loading ? (
+                      <span>Verifying Security Clearance...</span>
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-4 h-4" />
+                        <span>Authenticate & Enter Command Desk</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </motion.button>
+                </form>
+              ) : (
+                /* OFFICER OTP FLOW */
+                <div>
+                  {otpStep === 'EMAIL' ? (
+                    <form onSubmit={handleSendOtp} className="space-y-3.5">
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          Officer Official Email for Instant OTP
+                        </label>
+                        <div className="relative">
+                          <Mail className="w-4 h-4 text-purple-600 absolute left-3.5 top-3.5" />
+                          <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="officer@police.gov.in"
+                            className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-purple-500 focus:bg-white text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                      >
+                        {loading ? 'Sending OTP...' : 'Send Verification OTP'}
+                      </button>
+                    </form>
                   ) : (
-                    <>
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>Authenticate & Enter Command Desk</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
+                    <form onSubmit={handleVerifyOtp} className="space-y-3.5">
+                      <div className="p-3.5 rounded-xl bg-purple-50 text-purple-900 text-xs font-medium space-y-1.5 border border-purple-200">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-purple-600 shrink-0" />
+                          <p>
+                            Officer OTP dispatched to: <strong className="text-purple-950 font-bold">{email}</strong>
+                          </p>
+                        </div>
+                        <p className="text-[11px] text-purple-700">
+                          Please check your official email inbox and enter the verification code below.
+                        </p>
+                        {demoOtp && (
+                          <div className="flex items-center justify-between pt-1.5 border-t border-purple-200/80">
+                            <span className="font-mono font-bold text-xs text-purple-800">
+                              Demo Fallback: {demoOtp}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setOtpCode(demoOtp)}
+                              className="px-2 py-0.5 rounded bg-purple-600 text-white font-bold text-[10px] cursor-pointer"
+                            >
+                              Auto-Fill
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                        placeholder="••••••"
+                        className="w-full text-center tracking-[8px] font-mono text-xl font-bold py-2.5 rounded-xl border border-purple-400 bg-white"
+                      />
+                      <button
+                        type="submit"
+                        disabled={loading || otpCode.length < 4}
+                        className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-700 text-white font-bold text-xs cursor-pointer shadow-md"
+                      >
+                        Verify & Access Command Desk
+                      </button>
+                    </form>
                   )}
-                </motion.button>
-              </form>
+                </div>
+              )}
 
-              {/* Departmental officer registration note */}
-              <div className="pt-2 text-center text-xs text-slate-500">
-                <span>Departmental officer without credentials? </span>
+              {/* Toggle & Registration note */}
+              <div className="pt-2 flex items-center justify-between text-xs text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode(authMode === 'PASSWORD' ? 'OTP' : 'PASSWORD');
+                    setError(null);
+                    setOtpStep('EMAIL');
+                  }}
+                  className="text-purple-700 hover:underline font-semibold cursor-pointer"
+                >
+                  {authMode === 'PASSWORD' ? 'Use Email OTP Instead' : 'Use Passphrase Instead'}
+                </button>
                 <Link
                   to="/register?role=authority"
                   className="text-purple-700 font-bold hover:underline"
                 >
                   Register Officer Profile
                 </Link>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  (Official registrations require clearance verification by DG Akhil Gupta before activation)
-                </p>
               </div>
             </motion.div>
           )}
@@ -615,7 +699,7 @@ export default function LoginPage({ onLoginSuccess }) {
                       />
                       <button
                         type="submit"
-                        disabled={loading || otpCode.length !== 6}
+                        disabled={loading || otpCode.length < 4}
                         className="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold text-xs cursor-pointer shadow-md"
                       >
                         Verify & Access
@@ -629,7 +713,11 @@ export default function LoginPage({ onLoginSuccess }) {
               <div className="pt-2 flex items-center justify-between text-xs text-slate-500">
                 <button
                   type="button"
-                  onClick={() => setAuthMode(authMode === 'PASSWORD' ? 'OTP' : 'PASSWORD')}
+                  onClick={() => {
+                    setAuthMode(authMode === 'PASSWORD' ? 'OTP' : 'PASSWORD');
+                    setError(null);
+                    setOtpStep('EMAIL');
+                  }}
                   className="text-orange-600 hover:underline font-semibold cursor-pointer"
                 >
                   {authMode === 'PASSWORD' ? 'Use Email OTP Instead' : 'Use Password Instead'}
@@ -666,62 +754,149 @@ export default function LoginPage({ onLoginSuccess }) {
                 </div>
               </div>
 
-              <form onSubmit={handlePasswordSubmit} className="space-y-3.5">
-                <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">
-                    Licensed Guide Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="w-4 h-4 text-amber-600 absolute left-3.5 top-3.5" />
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="guide@domain.gov.in"
-                      className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-500 focus:bg-white text-slate-900 font-medium"
-                    />
+              {authMode === 'PASSWORD' ? (
+                <form onSubmit={handlePasswordSubmit} className="space-y-3.5">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Licensed Guide Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 text-amber-600 absolute left-3.5 top-3.5" />
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="guide@domain.gov.in"
+                        className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-500 focus:bg-white text-slate-900 font-medium"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">
-                    Guide Passcode
-                  </label>
-                  <div className="relative">
-                    <Lock className="w-4 h-4 text-amber-600 absolute left-3.5 top-3.5" />
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-500 focus:bg-white text-slate-900 font-medium"
-                    />
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                      Guide Passcode
+                    </label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-amber-600 absolute left-3.5 top-3.5" />
+                      <input
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-500 focus:bg-white text-slate-900 font-medium"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-600/30 cursor-pointer"
-                >
-                  {loading ? (
-                    <span>Verifying Guide License...</span>
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-600/30 cursor-pointer"
+                  >
+                    {loading ? (
+                      <span>Verifying Guide License...</span>
+                    ) : (
+                      <>
+                        <Award className="w-4 h-4" />
+                        <span>Enter Guide Cockpit</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </motion.button>
+                </form>
+              ) : (
+                /* GUIDE OTP FLOW */
+                <div>
+                  {otpStep === 'EMAIL' ? (
+                    <form onSubmit={handleSendOtp} className="space-y-3.5">
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          Accredited Guide Email for Instant OTP
+                        </label>
+                        <div className="relative">
+                          <Mail className="w-4 h-4 text-amber-600 absolute left-3.5 top-3.5" />
+                          <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="guide@domain.gov.in"
+                            className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-500 focus:bg-white text-slate-900 font-medium"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-600 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                      >
+                        {loading ? 'Sending OTP...' : 'Send Verification OTP'}
+                      </button>
+                    </form>
                   ) : (
-                    <>
-                      <Award className="w-4 h-4" />
-                      <span>Enter Guide Cockpit</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
+                    <form onSubmit={handleVerifyOtp} className="space-y-3.5">
+                      <div className="p-3.5 rounded-xl bg-amber-50 text-amber-900 text-xs font-medium space-y-1.5 border border-amber-200">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
+                          <p>
+                            Guide OTP dispatched to: <strong className="text-amber-950 font-bold">{email}</strong>
+                          </p>
+                        </div>
+                        <p className="text-[11px] text-amber-700">
+                          Please check your email inbox and enter the 6-digit verification code below.
+                        </p>
+                        {demoOtp && (
+                          <div className="flex items-center justify-between pt-1.5 border-t border-amber-200/80">
+                            <span className="font-mono font-bold text-xs text-amber-800">
+                              Demo Fallback: {demoOtp}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setOtpCode(demoOtp)}
+                              className="px-2 py-0.5 rounded bg-amber-600 text-white font-bold text-[10px] cursor-pointer"
+                            >
+                              Auto-Fill
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        required
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                        placeholder="••••••"
+                        className="w-full text-center tracking-[8px] font-mono text-xl font-bold py-2.5 rounded-xl border border-amber-400 bg-white"
+                      />
+                      <button
+                        type="submit"
+                        disabled={loading || otpCode.length < 4}
+                        className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 via-yellow-600 to-amber-700 text-white font-bold text-xs cursor-pointer shadow-md"
+                      >
+                        Verify & Enter Guide Cockpit
+                      </button>
+                    </form>
                   )}
-                </motion.button>
-              </form>
+                </div>
+              )}
 
-              <div className="pt-2 text-center text-xs text-slate-500">
-                <span>Want to register as a certified guide? </span>
+              <div className="pt-2 flex items-center justify-between text-xs text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode(authMode === 'PASSWORD' ? 'OTP' : 'PASSWORD');
+                    setError(null);
+                    setOtpStep('EMAIL');
+                  }}
+                  className="text-amber-700 hover:underline font-semibold cursor-pointer"
+                >
+                  {authMode === 'PASSWORD' ? 'Use Email OTP Instead' : 'Use Passcode Instead'}
+                </button>
                 <Link to="/guide-register" className="text-amber-700 font-bold hover:underline">
                   Apply for Accreditation
                 </Link>

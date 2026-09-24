@@ -74,6 +74,126 @@ export default function TouristRegister({ onRegisterSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Email OTP verification state (for Tourists)
+  const [touristEmailVerified, setTouristEmailVerified] = useState(false);
+  const [touristOtpSending, setTouristOtpSending] = useState(false);
+  const [touristOtpSent, setTouristOtpSent] = useState(false);
+  const [touristOtpCode, setTouristOtpCode] = useState('');
+  const [touristOtpDemo, setTouristOtpDemo] = useState('');
+  const [touristOtpError, setTouristOtpError] = useState(null);
+  const [touristOtpSuccess, setTouristOtpSuccess] = useState(null);
+
+  // Email OTP verification state (for Authority Officers)
+  const [officerEmailVerified, setOfficerEmailVerified] = useState(false);
+  const [officerOtpSending, setOfficerOtpSending] = useState(false);
+  const [officerOtpSent, setOfficerOtpSent] = useState(false);
+  const [officerOtpCode, setOfficerOtpCode] = useState('');
+  const [officerOtpDemo, setOfficerOtpDemo] = useState('');
+  const [officerOtpError, setOfficerOtpError] = useState(null);
+  const [officerOtpSuccess, setOfficerOtpSuccess] = useState(null);
+
+  const handleSendTouristEmailOtp = async () => {
+    if (!formData.email || !formData.email.includes('@')) {
+      setTouristOtpError('Please enter a valid Gmail / Email address');
+      return;
+    }
+    setTouristOtpSending(true);
+    setTouristOtpError(null);
+    setTouristOtpSuccess(null);
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email.trim(), purpose: 'REGISTER' })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to dispatch verification OTP');
+      setTouristOtpSent(true);
+      setTouristOtpDemo(data.demoOtp || '');
+      setTouristOtpSuccess('Verification OTP sent to your Gmail inbox!');
+    } catch (err) {
+      setTouristOtpError(err.message);
+    } finally {
+      setTouristOtpSending(false);
+    }
+  };
+
+  const handleVerifyTouristEmailOtp = async () => {
+    if (!touristOtpCode || touristOtpCode.trim().length < 4) {
+      setTouristOtpError('Please enter the OTP code');
+      return;
+    }
+    setTouristOtpSending(true);
+    setTouristOtpError(null);
+    try {
+      const res = await fetch('/api/auth/verify-email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email.trim(), otp: touristOtpCode.trim() })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Invalid OTP code');
+      setTouristEmailVerified(true);
+      setTouristOtpSuccess('✓ Email verified successfully!');
+      setTouristOtpSent(false);
+    } catch (err) {
+      setTouristOtpError(err.message);
+    } finally {
+      setTouristOtpSending(false);
+    }
+  };
+
+  const handleSendOfficerEmailOtp = async () => {
+    if (!authorityForm.email || !authorityForm.email.includes('@')) {
+      setOfficerOtpError('Please enter a valid official email address');
+      return;
+    }
+    setOfficerOtpSending(true);
+    setOfficerOtpError(null);
+    setOfficerOtpSuccess(null);
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: authorityForm.email.trim(), purpose: 'REGISTER' })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to dispatch verification OTP');
+      setOfficerOtpSent(true);
+      setOfficerOtpDemo(data.demoOtp || '');
+      setOfficerOtpSuccess('Verification OTP sent to your official email!');
+    } catch (err) {
+      setOfficerOtpError(err.message);
+    } finally {
+      setOfficerOtpSending(false);
+    }
+  };
+
+  const handleVerifyOfficerEmailOtp = async () => {
+    if (!officerOtpCode || officerOtpCode.trim().length < 4) {
+      setOfficerOtpError('Please enter the OTP code');
+      return;
+    }
+    setOfficerOtpSending(true);
+    setOfficerOtpError(null);
+    try {
+      const res = await fetch('/api/auth/verify-email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: authorityForm.email.trim(), otp: officerOtpCode.trim() })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Invalid OTP code');
+      setOfficerEmailVerified(true);
+      setOfficerOtpSuccess('✓ Official email verified successfully!');
+      setOfficerOtpSent(false);
+    } catch (err) {
+      setOfficerOtpError(err.message);
+    } finally {
+      setOfficerOtpSending(false);
+    }
+  };
+
   const availableCheckpoints = [
     { id: 'CHK-GW-01', name: 'Guwahati Entry Gateway Desk', region: 'North East (Assam)' },
     { id: 'CHK-TW-02', name: 'Tawang Military & Border Pass', region: 'Arunachal Pradesh' },
@@ -100,6 +220,13 @@ export default function TouristRegister({ onRegisterSuccess }) {
     }));
     if (name === 'preferredLanguage') {
       setLanguage(value);
+    }
+    if (name === 'email') {
+      setTouristEmailVerified(false);
+      setTouristOtpSent(false);
+      setTouristOtpSuccess(null);
+      setTouristOtpError(null);
+      setTouristOtpCode('');
     }
   };
 
@@ -136,6 +263,11 @@ export default function TouristRegister({ onRegisterSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!touristEmailVerified) {
+      setError('Please verify your Gmail address with OTP before generating your Digital Tourist ID.');
+      window.scrollTo({ top: 350, behavior: 'smooth' });
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -183,10 +315,13 @@ export default function TouristRegister({ onRegisterSuccess }) {
         throw new Error(data.error || 'Registration failed');
       }
 
-      onRegisterSuccess(data);
-      navigate('/tourist-dashboard');
+      if (onRegisterSuccess) {
+        onRegisterSuccess(data);
+      }
+      navigate('/digital-id');
     } catch (err) {
       setError(err.message);
+      window.scrollTo({ top: 100, behavior: 'smooth' });
     } finally {
       setLoading(false);
     }
@@ -195,10 +330,22 @@ export default function TouristRegister({ onRegisterSuccess }) {
   const handleAuthorityChange = (e) => {
     const { name, value } = e.target;
     setAuthorityForm((prev) => ({ ...prev, [name]: value }));
+    if (name === 'email') {
+      setOfficerEmailVerified(false);
+      setOfficerOtpSent(false);
+      setOfficerOtpSuccess(null);
+      setOfficerOtpError(null);
+      setOfficerOtpCode('');
+    }
   };
 
   const handleAuthoritySubmit = async (e) => {
     e.preventDefault();
+    if (!officerEmailVerified) {
+      setError('Please verify your official department email with OTP before submitting.');
+      window.scrollTo({ top: 350, behavior: 'smooth' });
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -393,19 +540,107 @@ export default function TouristRegister({ onRegisterSuccess }) {
                   />
                 </div>
 
-                <div>
-                  <label className="text-xs text-gray-700 font-bold block mb-1">
-                    Official Department Email *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    value={authorityForm.email}
-                    onChange={handleAuthorityChange}
-                    placeholder="officer@police.gov.in or sdrf.cad@gmail.com"
-                    className="w-full bg-white border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-500 shadow-xs"
-                  />
+                <div className="sm:col-span-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs text-gray-700 font-bold block">
+                      Official Department Email *
+                    </label>
+                    {officerEmailVerified ? (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        Verified Official Email
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                        Official OTP Verification Required
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      value={authorityForm.email}
+                      onChange={handleAuthorityChange}
+                      placeholder="officer@police.gov.in or sdrf.cad@gmail.com"
+                      className={`flex-1 bg-white border rounded-xl p-2.5 text-xs text-gray-900 placeholder-gray-400 focus:outline-none shadow-xs transition-colors ${
+                        officerEmailVerified
+                          ? 'border-emerald-500 bg-emerald-50/20'
+                          : 'border-gray-200 focus:border-purple-500'
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSendOfficerEmailOtp}
+                      disabled={officerOtpSending || officerEmailVerified || !authorityForm.email}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer shadow-xs ${
+                        officerEmailVerified
+                          ? 'bg-emerald-100 text-emerald-800 cursor-default'
+                          : 'bg-gradient-to-r from-purple-700 to-indigo-700 hover:opacity-95 text-white active:scale-95 disabled:opacity-50'
+                      }`}
+                    >
+                      {officerEmailVerified ? 'Verified ✓' : officerOtpSending ? 'Sending OTP...' : officerOtpSent ? 'Resend OTP' : 'Verify Email'}
+                    </button>
+                  </div>
+
+                  {officerOtpError && (
+                    <p className="text-[11px] text-red-600 font-medium mt-1.5 flex items-center gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      {officerOtpError}
+                    </p>
+                  )}
+
+                  {officerOtpSuccess && (
+                    <p className="text-[11px] text-emerald-700 font-medium mt-1.5 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      {officerOtpSuccess}
+                    </p>
+                  )}
+
+                  {officerOtpSent && !officerEmailVerified && (
+                    <div className="mt-2.5 p-3.5 bg-purple-50/80 border border-purple-300 rounded-2xl space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-bold text-purple-950">
+                          Enter Verification OTP sent to {authorityForm.email}
+                        </p>
+                        <span className="text-[10px] text-purple-700 font-semibold">10 min validity</span>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={officerOtpCode}
+                          onChange={(e) => setOfficerOtpCode(e.target.value.replace(/\D/g, ''))}
+                          placeholder="••••••"
+                          className="flex-1 bg-white border border-purple-400 rounded-xl px-3 py-2 text-center font-mono font-bold text-sm tracking-widest text-purple-950 focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleVerifyOfficerEmailOtp}
+                          disabled={officerOtpSending || officerOtpCode.length < 4}
+                          className="px-5 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
+                        >
+                          {officerOtpSending ? 'Checking...' : 'Confirm'}
+                        </button>
+                      </div>
+
+                      {officerOtpDemo && (
+                        <div className="flex items-center justify-between pt-1 border-t border-purple-200 text-[10px]">
+                          <span className="font-mono text-purple-800">Demo Code: {officerOtpDemo}</span>
+                          <button
+                            type="button"
+                            onClick={() => setOfficerOtpCode(officerOtpDemo)}
+                            className="text-purple-700 font-bold underline cursor-pointer"
+                          >
+                            Auto-Fill
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -626,17 +861,107 @@ export default function TouristRegister({ onRegisterSuccess }) {
                 />
               </div>
 
-              <div>
-                <label className="text-xs text-gray-700 font-bold block mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="tourist@example.com"
-                  className="w-full bg-white border border-gray-200 rounded-xl p-2.5 text-xs text-gray-900 focus:outline-none focus:border-emerald-500 shadow-xs"
-                />
+              <div className="sm:col-span-2">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs text-gray-700 font-bold block">
+                    Email Address (Gmail) *
+                  </label>
+                  {touristEmailVerified ? (
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      Verified Gmail
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
+                      Gmail OTP Verification Required
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="tourist@example.com"
+                    className={`flex-1 bg-white border rounded-xl p-2.5 text-xs text-gray-900 focus:outline-none shadow-xs transition-colors ${
+                      touristEmailVerified
+                        ? 'border-emerald-500 bg-emerald-50/20'
+                        : 'border-gray-200 focus:border-emerald-500'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSendTouristEmailOtp}
+                    disabled={touristOtpSending || touristEmailVerified || !formData.email}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer shadow-xs ${
+                      touristEmailVerified
+                        ? 'bg-emerald-100 text-emerald-800 cursor-default'
+                        : 'bg-emerald-600 hover:bg-emerald-700 text-white active:scale-95 disabled:opacity-50'
+                    }`}
+                  >
+                    {touristEmailVerified ? 'Verified ✓' : touristOtpSending ? 'Sending OTP...' : touristOtpSent ? 'Resend OTP' : 'Verify Email'}
+                  </button>
+                </div>
+
+                {touristOtpError && (
+                  <p className="text-[11px] text-red-600 font-medium mt-1.5 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {touristOtpError}
+                  </p>
+                )}
+
+                {touristOtpSuccess && (
+                  <p className="text-[11px] text-emerald-700 font-medium mt-1.5 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    {touristOtpSuccess}
+                  </p>
+                )}
+
+                {touristOtpSent && !touristEmailVerified && (
+                  <div className="mt-2.5 p-3.5 bg-emerald-50/80 border border-emerald-300 rounded-2xl space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-bold text-emerald-950">
+                        Enter Verification OTP sent to {formData.email}
+                      </p>
+                      <span className="text-[10px] text-emerald-700 font-semibold">10 min validity</span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={touristOtpCode}
+                        onChange={(e) => setTouristOtpCode(e.target.value.replace(/\D/g, ''))}
+                        placeholder="••••••"
+                        className="flex-1 bg-white border border-emerald-400 rounded-xl px-3 py-2 text-center font-mono font-bold text-sm tracking-widest text-emerald-950 focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifyTouristEmailOtp}
+                        disabled={touristOtpSending || touristOtpCode.length < 4}
+                        className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
+                      >
+                        {touristOtpSending ? 'Checking...' : 'Confirm'}
+                      </button>
+                    </div>
+
+                    {touristOtpDemo && (
+                      <div className="flex items-center justify-between pt-1 border-t border-emerald-200 text-[10px]">
+                        <span className="font-mono text-emerald-800">Demo Code: {touristOtpDemo}</span>
+                        <button
+                          type="button"
+                          onClick={() => setTouristOtpCode(touristOtpDemo)}
+                          className="text-emerald-700 font-bold underline cursor-pointer"
+                        >
+                          Auto-Fill
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="sm:col-span-2">
@@ -978,6 +1303,13 @@ export default function TouristRegister({ onRegisterSuccess }) {
               </span>
             </div>
           </div>
+
+          {error && (
+            <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-xs flex items-center space-x-2 shadow-xs">
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+              <span>{error}</span>
+            </div>
+          )}
 
           <button
             type="submit"
