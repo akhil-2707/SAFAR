@@ -7,7 +7,13 @@ import {
   Share2, MapPin, X, BatteryCharging, Battery, Radar, UserCheck, ShieldAlert
 } from 'lucide-react';
 
-export default function OfflineGhostMeshModal({ isOpen, onClose, tourist, isRedZoneTriggered = false }) {
+export default function OfflineGhostMeshModal({ 
+  isOpen, 
+  onClose, 
+  tourist, 
+  isRedZoneTriggered = false,
+  onOpenPermissions 
+}) {
   const [activeTab, setActiveTab] = useState('mesh'); // 'mesh' | 'solo_beacon'
   
   // Mesh Relay State
@@ -160,6 +166,28 @@ export default function OfflineGhostMeshModal({ isOpen, onClose, tourist, isRedZ
             <p className="text-xs font-bold leading-tight">
               🚨 <span className="font-black text-red-700">Restricted Red Zone Breach Detected:</span> Ghost-Mesh Relay was auto-engaged to maintain emergency telemetry over offline peer-to-peer radio channels.
             </p>
+          </div>
+        )}
+
+        {/* Hardware Lifeline Warning Banner if permissions not granted */}
+        {typeof localStorage !== 'undefined' && localStorage.getItem('safar_device_permissions') !== 'granted' && (
+          <div className="bg-amber-50 border border-amber-300 rounded-2xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-amber-950 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+              <div className="text-xs">
+                <span className="font-bold block text-amber-900">⚠️ Hardware Lifeline Restricted:</span>
+                <span className="text-[11px] text-amber-800">Location, Camera & Bluetooth permissions not verified. Relay is operating in uncalibrated mode.</span>
+              </div>
+            </div>
+            {onOpenPermissions && (
+              <button
+                type="button"
+                onClick={onOpenPermissions}
+                className="w-full sm:w-auto px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-xl text-xs font-black shadow-xs transition cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+              >
+                <span>⚡ 1-Tap Emergency Override</span>
+              </button>
+            )}
           </div>
         )}
 

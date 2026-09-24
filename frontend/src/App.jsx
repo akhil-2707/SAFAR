@@ -46,6 +46,7 @@ import PackageVerification from './pages/authority/PackageVerification';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
+import GhostMeshPermissionModal from './components/GhostMeshPermissionModal';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
@@ -57,6 +58,7 @@ export default function App() {
     }
   });
   const [showMeshModal, setShowMeshModal] = useState(false);
+
 
   // Authenticated user recovered from localStorage or initialized as null
   const [currentUser, setCurrentUser] = useState(() => {
@@ -533,6 +535,23 @@ function AppContent({
 }) {
   const location = useLocation();
 
+  // Device Lifeline & Safety Permissions State (GPS, Camera, Storage, BLE)
+  const [showPermissionModal, setShowPermissionModal] = useState(() => {
+    try {
+      return !localStorage.getItem('safar_device_permissions');
+    } catch {
+      return true;
+    }
+  });
+  const [isEmergencyOverride, setIsEmergencyOverride] = useState(false);
+  const [devicePermissionStatus, setDevicePermissionStatus] = useState(() => {
+    try {
+      return localStorage.getItem('safar_device_permissions') || 'pending';
+    } catch {
+      return 'pending';
+    }
+  });
+
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col justify-between" style={{ background: '#F2F2F7', color: '#1C1C1E', fontFamily: "'Inter', -apple-system, 'SF Pro Display', sans-serif" }}>
       
@@ -544,6 +563,28 @@ function AppContent({
         }} />
       )}
 
+      {/* Fallback Warning Banner if user skipped or dismissed safety permissions */}
+      {devicePermissionStatus === 'dismissed' && (
+        <div className="bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-xs font-semibold text-amber-950 flex flex-wrap items-center justify-between gap-2 relative z-30 backdrop-blur-md">
+          <div className="flex items-center gap-2">
+            <span className="text-base shrink-0">⚠️</span>
+            <span>
+              <strong>Offline Lifeline Inactive:</strong> Ghost-Mesh dead-zone beacons & 112 GPS auto-dispatch need hardware permissions.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setIsEmergencyOverride(true);
+              setShowPermissionModal(true);
+            }}
+            className="px-3 py-1 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5 shrink-0"
+          >
+            <span>⚡ Enable Lifeline Now</span>
+          </button>
+        </div>
+      )}
+
       {/* Navbar */}
       <Navbar
         currentUser={currentUser}
@@ -551,7 +592,28 @@ function AppContent({
         notifications={notifications}
         onMarkRead={handleMarkRead}
         onOpenMeshModal={() => setShowMeshModal(true)}
+        onOpenPermissionsModal={() => {
+          setIsEmergencyOverride(false);
+          setShowPermissionModal(true);
+        }}
+        permissionStatus={devicePermissionStatus}
         onShowLoader={() => setShowPatrioticLoader(true)}
+      />
+
+      {/* S.A.F.A.R. Device Safety Lifeline Permissions Modal (Location, Camera, Storage, BLE) */}
+      <GhostMeshPermissionModal
+        isOpen={showPermissionModal}
+        isEmergencyOverride={isEmergencyOverride}
+        onClose={() => {
+          setShowPermissionModal(false);
+          setIsEmergencyOverride(false);
+          setDevicePermissionStatus(localStorage.getItem('safar_device_permissions') || 'dismissed');
+        }}
+        onGranted={() => {
+          setDevicePermissionStatus('granted');
+          setShowPermissionModal(false);
+          setIsEmergencyOverride(false);
+        }}
       />
 
       {/* Offline Ghost-Mesh Rescue Modal Simulator */}
@@ -559,6 +621,10 @@ function AppContent({
         isOpen={showMeshModal}
         onClose={() => setShowMeshModal(false)}
         tourist={touristProfile}
+        onOpenPermissions={() => {
+          setIsEmergencyOverride(true);
+          setShowPermissionModal(true);
+        }}
       />
 
       {/* Bottom Dock — iPhone-style tab navigation for tourists */}

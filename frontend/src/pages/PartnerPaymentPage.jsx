@@ -4,7 +4,7 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { 
   CreditCard, ShieldCheck, CheckCircle2, AlertTriangle, Building2, 
   Sparkles, ArrowLeft, ArrowRight, RefreshCw, Check, Download, Info, Leaf,
-  QrCode, Smartphone, AtSign, ShieldAlert, XCircle, RotateCcw, Camera, ScanLine, Store
+  QrCode, Smartphone, AtSign, ShieldAlert, XCircle, RotateCcw, Camera, ScanLine, Store, Zap
 } from 'lucide-react';
 import SafarLogo from '../components/SafarLogo';
 import PaymentQR from '../components/payment/PaymentQR';

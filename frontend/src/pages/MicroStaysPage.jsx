@@ -1,5 +1,5 @@
 import { 
-  Building2, Clock, ShieldCheck, Sparkles, MapPin, Luggage, 
+  Building2, Clock, ShieldCheck, Sparkles, MapPin, 
   CheckCircle2, ArrowRight, Zap, QrCode, Percent, Coffee, Wifi, 
   ShowerHead, Flame, Compass, ChevronRight, AlertCircle, Award, PlusCircle,
   Smartphone, Key, Check, LogOut
@@ -21,11 +21,10 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
     return 'Ayodhya';
   };
 
-  const [activeTab, setActiveTab] = useState('MICRO_STAYS'); // MICRO_STAYS, CLOAKROOM, SPILLOVER
+  const [activeTab, setActiveTab] = useState('MICRO_STAYS'); // MICRO_STAYS, SPILLOVER
   const [selectedCity, setSelectedCity] = useState(getCityFromTourist(tourist));
   const [duration, setDuration] = useState('4h');
   const [hotels, setHotels] = useState([]);
-  const [cloakrooms, setCloakrooms] = useState([]);
   const [spilloverDeals, setSpilloverDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showHotelOnboardModal, setShowHotelOnboardModal] = useState(false);
@@ -36,10 +35,6 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
   // Booking states
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [bookingSuccess, setBookingSuccess] = useState(null);
-  const [selectedCloakroom, setSelectedCloakroom] = useState(null);
-  const [cloakroomSuccess, setCloakroomSuccess] = useState(null);
-  const [bagCount, setBagCount] = useState(2);
-  const [cloakHours, setCloakHours] = useState(6);
 
   useEffect(() => {
     if (tourist) {
@@ -74,7 +69,6 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
       const data = await res.json();
       if (data.success) {
         setHotels(data.hotels);
-        setCloakrooms(data.cloakrooms);
       }
 
       const resSpill = await fetch('/api/hotels/spillover-deals');
@@ -106,28 +100,6 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
       const data = await res.json();
       if (data.success) {
         setBookingSuccess(data.booking);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleBookCloakroom = async (cloak) => {
-    try {
-      const res = await fetch('/api/hotels/book-cloakroom', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cloakroomId: cloak.id,
-          touristId: tourist?.touristId || 'TID-1035',
-          touristName: tourist?.fullName || 'Verified Tourist',
-          bagCount,
-          pickupHours: cloakHours
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setCloakroomSuccess(data.record);
       }
     } catch (err) {
       console.error(err);
@@ -269,7 +241,6 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
         <div className="flex items-center gap-2 pt-2 border-t border-gray-200/70 flex-wrap">
           {[
             { id: 'MICRO_STAYS', label: '2–4 Hr Smart Day Stays', icon: Building2, desc: 'Shower, rest & recharge' },
-            { id: 'CLOAKROOM', label: 'Bag-Free Cloakroom Lockers', icon: Luggage, desc: 'Digital QR baggage vault' },
             { id: 'SPILLOVER', label: 'Hotspot Spillover Flash Deals', icon: Percent, desc: '50% off satellite homestays' }
           ].map((t) => {
             const active = activeTab === t.id;
@@ -429,85 +400,7 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
         </div>
       )}
 
-      {/* TAB 2: DIGITAL CLOAKROOM MESH */}
-      {activeTab === 'CLOAKROOM' && (
-        <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-white border border-emerald-200/80 apple-card space-y-2">
-            <div className="flex items-center space-x-2 text-emerald-800">
-              <Luggage className="w-6 h-6 text-emerald-600" />
-              <h2 className="text-lg font-black">Bag-Free City Tourism Mesh</h2>
-            </div>
-            <p className="text-xs text-gray-600 max-w-3xl leading-relaxed">
-              Leave your heavy luggage at smart verified cloakroom pods near railway stations, airports, or major temple gates. Enjoy temple darshan or heritage walks completely bag-free, backed by SHA-256 digital security tokens.
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {cloakrooms.map((c) => (
-              <div
-                key={c.id}
-                className="bg-white/95 rounded-3xl border border-gray-200/80 p-6 shadow-md hover:shadow-xl transition-all space-y-5 flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="p-2.5 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      <Luggage className="w-6 h-6" />
-                    </span>
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase">
-                      {c.capacityAvailable} Lockers Free
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base font-black text-gray-900">{c.name}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{c.location}</p>
-                  </div>
-
-                  <div className="bg-gray-50 p-3 rounded-2xl border border-gray-200 space-y-1.5 text-xs font-medium text-gray-600">
-                    <div className="flex justify-between">
-                      <span>Rate:</span>
-                      <span className="font-bold text-gray-900">₹{c.ratePerHour}/hr per bag</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Operating Hours:</span>
-                      <span className="text-gray-900">{c.operatingHours}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Security Standard:</span>
-                      <span className="text-emerald-700 font-bold">{c.securityLevel}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-3 pt-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-gray-600">Bags:</span>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => setBagCount(Math.max(1, bagCount - 1))}
-                        className="w-6 h-6 rounded-lg bg-gray-200 font-bold hover:bg-gray-300"
-                      >-</button>
-                      <span className="font-bold font-mono">{bagCount}</span>
-                      <button
-                        onClick={() => setBagCount(bagCount + 1)}
-                        className="w-6 h-6 rounded-lg bg-gray-200 font-bold hover:bg-gray-300"
-                      >+</button>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => handleBookCloakroom(c)}
-                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5"
-                  >
-                    <QrCode className="w-4 h-4" />
-                    <span>Generate Digital QR Locker Pass</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* TAB 3: SPILLOVER SATELLITE DEALS (Feature 2) */}
       {activeTab === 'SPILLOVER' && (
@@ -603,38 +496,7 @@ export default function MicroStaysPage({ tourist, sugamyaMode }) {
         </div>
       )}
 
-      {/* Confirmation Modal for Cloakroom */}
-      {cloakroomSuccess && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 border border-emerald-300"
-          >
-            <div className="flex items-center space-x-3 text-emerald-700 font-black text-lg">
-              <CheckCircle2 className="w-7 h-7 text-emerald-600" />
-              <span>Luggage Locked Safely!</span>
-            </div>
-            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs space-y-2 font-mono text-gray-800">
-              <div className="text-emerald-900 font-bold text-sm">{cloakroomSuccess.cloakroomName}</div>
-              <div>Digital Claim Token: <strong className="text-blue-700 text-base">{cloakroomSuccess.claimToken}</strong></div>
-              <div>Pickup Security OTP: <strong className="text-red-600 text-base">{cloakroomSuccess.otp}</strong></div>
-              <div>Bags: <strong>{cloakroomSuccess.bagCount} Bag(s)</strong></div>
-              <div>Estimated Pickup Time: <strong>{cloakroomSuccess.expectedPickup}</strong></div>
-              <div className="text-emerald-800 font-bold">Total Cost: ₹{cloakroomSuccess.totalCost} INR</div>
-            </div>
-            <p className="text-[11px] text-gray-500 italic">
-              💡 Show this Digital Claim Token & OTP at the locker kiosk during pickup. Enjoy your city tour bag-free!
-            </p>
-            <button
-              onClick={() => setCloakroomSuccess(null)}
-              className="w-full py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md"
-            >
-              Got It / Close Token
-            </button>
-          </motion.div>
-        </div>
-      )}
+
 
       {/* HOTEL ONBOARD MODAL */}
       <HotelOnboardModal
