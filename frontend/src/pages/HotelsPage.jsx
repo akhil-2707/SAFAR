@@ -178,24 +178,34 @@ export default function HotelsPage({ tourist }) {
     }
   };
 
-  const circuits = ['ALL', 'Ayodhya', 'Katra', 'Agra', 'Varanasi', 'Cherrapunji'];
+  const circuits = ['ALL', 'Ayodhya', 'Katra', 'Agra', 'Varanasi', 'Jaipur', 'Guwahati', 'Cherrapunji'];
 
   const filteredStays = stays.filter((stay) => {
+    const sName = (stay?.name || '').toLowerCase();
+    const sCity = (stay?.city || stay?.location || '').toLowerCase();
+    const sCategory = (stay?.category || stay?.type || '').toLowerCase();
+    const sLocation = (stay?.location || '').toLowerCase();
+    const sQuery = (searchQuery || '').toLowerCase();
+    const sCircuit = (selectedCircuit || 'ALL').toLowerCase();
+
     const matchesSearch = 
-      stay.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      stay.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      stay.category.toLowerCase().includes(searchQuery.toLowerCase());
+      !sQuery ||
+      sName.includes(sQuery) ||
+      sCity.includes(sQuery) ||
+      sLocation.includes(sQuery) ||
+      sCategory.includes(sQuery);
 
     const matchesCircuit = 
-      selectedCircuit === 'ALL' || 
-      stay.city.toLowerCase().includes(selectedCircuit.toLowerCase());
+      sCircuit === 'all' || 
+      sCity.includes(sCircuit) ||
+      sLocation.includes(sCircuit);
 
     const matchesType = 
       selectedType === 'ALL' || 
-      stay.type === selectedType;
+      stay?.type === selectedType;
 
     const matchesPrice = 
-      !stay.estimatedPricePerNight || 
+      !stay?.estimatedPricePerNight || 
       stay.estimatedPricePerNight <= maxPrice;
 
     return matchesSearch && matchesCircuit && matchesType && matchesPrice;
@@ -487,7 +497,7 @@ export default function HotelsPage({ tourist }) {
                       </h3>
                       <p className="text-xs font-semibold text-slate-500 flex items-center gap-1 mt-1">
                         <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span>{stay.city}, {stay.state}</span>
+                        <span>{stay?.city || stay?.location || 'Verified Gateway'}{stay?.state ? `, ${stay.state}` : ''}</span>
                       </p>
                     </div>
 
@@ -553,7 +563,7 @@ export default function HotelsPage({ tourist }) {
                       <span>⚡ 1-Tap Fast Check-In</span>
                     </button>
                     <Link
-                      to={`/trip-planner?dest=${encodeURIComponent(stay.city)}`}
+                      to={`/trip-planner?dest=${encodeURIComponent(stay?.city || stay?.location || selectedCity || 'Ayodhya')}`}
                       className="w-full sm:w-auto py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 transition-all flex items-center justify-center space-x-1.5"
                     >
                       <span>Plan Trip</span>
