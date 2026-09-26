@@ -14,7 +14,7 @@ const GI_BENCHMARKS = {
     applicationNumber: 46,
     certificateNumber: 87,
     registeredProprietor: 'Tahafuz Artisans Cooperative Society Ltd. & J&K Handicrafts Dept.',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/46',
+    officialRegistryUrl: '/gi-registry/46',
     expectedFiberMicron: '12.5 - 15.0 microns (Changthangi Goat undercoat)',
     weavingMethod: 'Traditional wooden charkha spinning & Handloom pit-loom',
     authenticIndicators: [
@@ -41,7 +41,7 @@ const GI_BENCHMARKS = {
     applicationNumber: 23,
     certificateNumber: 34,
     registeredProprietor: 'Human Welfare Association & Banaras Bunkar Samiti',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/23',
+    officialRegistryUrl: '/gi-registry/23',
     expectedFiberMicron: 'Pure Mulberry Silk 20/22 denier with electroplated silver zari',
     weavingMethod: 'Handloom jacquard pit-loom with wooden Naksha draw-loom',
     authenticIndicators: [
@@ -68,7 +68,7 @@ const GI_BENCHMARKS = {
     applicationNumber: 418,
     certificateNumber: 201,
     registeredProprietor: 'Moradabad Brass Art Ware Manufacturers & Exporters Assoc.',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/418',
+    officialRegistryUrl: '/gi-registry/418',
     expectedFiberMicron: 'Virgin Bell-Metal Brass Alloy (Cu 60% : Zn 40%)',
     weavingMethod: 'Hand-sand casting & Manual chisel Kalamkari engraving',
     authenticIndicators: [
@@ -95,7 +95,7 @@ const GI_BENCHMARKS = {
     applicationNumber: 49,
     certificateNumber: 67,
     registeredProprietor: 'Channapatna Crafts Park Artisans Guild & KSTDC',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/49',
+    officialRegistryUrl: '/gi-registry/49',
     expectedFiberMicron: 'Sustainably Harvested Wrightia Tinctoria (Ivory Wood)',
     weavingMethod: 'Power/Hand lathe turning with Talipot palm leaf lac polishing',
     authenticIndicators: [
@@ -122,7 +122,7 @@ const GI_BENCHMARKS = {
     applicationNumber: 36,
     certificateNumber: 51,
     registeredProprietor: 'Rajasthan Small Industries Corp. & Jaipur Blue Pottery Guild',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/36',
+    officialRegistryUrl: '/gi-registry/36',
     expectedFiberMicron: 'Quartz stone powder, Fuller’s earth, natural gum & glass frit',
     weavingMethod: 'Clay-free dough pressing, sun-drying & manual oxide brushwork',
     authenticIndicators: [

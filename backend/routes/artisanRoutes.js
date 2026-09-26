@@ -17,7 +17,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 46,
     certificateNumber: 87,
     registeredProprietor: 'Tahafuz Artisans Cooperative Society Ltd. & Directorate of Handicrafts J&K',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/46',
+    officialRegistryUrl: '/gi-registry/46',
     lat: 34.0837,
     lng: 74.7973,
     craftHeritageYears: 180,
@@ -43,7 +43,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 23,
     certificateNumber: 34,
     registeredProprietor: 'Human Welfare Association & Banaras Bunkar Samiti',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/23',
+    officialRegistryUrl: '/gi-registry/23',
     lat: 25.3176,
     lng: 82.9739,
     craftHeritageYears: 95,
@@ -69,7 +69,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 418,
     certificateNumber: 201,
     registeredProprietor: 'Moradabad Brass Art Ware Manufacturers & Exporters Assoc.',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/418',
+    officialRegistryUrl: '/gi-registry/418',
     lat: 28.8386,
     lng: 78.7733,
     craftHeritageYears: 65,
@@ -95,7 +95,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 55,
     certificateNumber: 88,
     registeredProprietor: 'Assam Science Technology & Environment Council & Sualkuchi Guild',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/55',
+    officialRegistryUrl: '/gi-registry/55',
     lat: 26.1764,
     lng: 91.5724,
     craftHeritageYears: 120,
@@ -121,7 +121,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 36,
     certificateNumber: 51,
     registeredProprietor: 'Rajasthan Small Industries Corp. & Jaipur Blue Pottery Guild',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/36',
+    officialRegistryUrl: '/gi-registry/36',
     lat: 26.9124,
     lng: 75.7873,
     craftHeritageYears: 75,
@@ -147,7 +147,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 49,
     certificateNumber: 67,
     registeredProprietor: 'Channapatna Crafts Park Artisans Guild & KSTDC',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/49',
+    officialRegistryUrl: '/gi-registry/49',
     lat: 12.6518,
     lng: 77.2089,
     craftHeritageYears: 200,
@@ -173,7 +173,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 138,
     certificateNumber: 112,
     registeredProprietor: 'Salem Silk Handloom Weavers Cooperative Production Society',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/138',
+    officialRegistryUrl: '/gi-registry/138',
     lat: 11.6643,
     lng: 78.1460,
     craftHeritageYears: 110,
@@ -199,7 +199,7 @@ const OFFICIAL_GOVT_GI_ARTISANS = [
     applicationNumber: 19,
     certificateNumber: 22,
     registeredProprietor: 'Pochampally Handloom Weavers’ Cooperative Society Ltd.',
-    officialRegistryUrl: 'https://search.ipindia.gov.in/GIRPublic/Application/Details/19',
+    officialRegistryUrl: '/gi-registry/19',
     lat: 17.3457,
     lng: 78.8142,
     craftHeritageYears: 85,
@@ -224,11 +224,14 @@ function getArtisans() {
     OFFICIAL_GOVT_GI_ARTISANS.forEach(art => dbStore.insert('artisans', { ...art }));
     return dbStore.get('artisans');
   }
-  // Synchronize dataset updates (e.g. image URLs) into dbStore
+  // Synchronize dataset updates (e.g. image URLs and officialRegistryUrl) into dbStore
   OFFICIAL_GOVT_GI_ARTISANS.forEach(art => {
     const existing = current.find(c => c.id === art.id);
-    if (existing && existing.image !== art.image) {
-      existing.image = art.image;
+    if (existing) {
+      if (existing.image !== art.image) {
+        existing.image = art.image;
+      }
+      existing.officialRegistryUrl = art.officialRegistryUrl;
     }
   });
   return current;
@@ -269,6 +272,33 @@ router.get('/verify/:id', (req, res) => {
       isCryptographicallyValid: true,
       governingAuthority: 'DPIIT National GI Registry'
     }
+  });
+});
+
+// 2b. GET /api/artisans/registry/:idOrAppNumber - Fetch official GI record
+router.get('/registry/:idOrAppNumber', (req, res) => {
+  const artisans = getArtisans();
+  const idOrApp = req.params.idOrAppNumber;
+  const num = parseInt(idOrApp, 10);
+  const artisan = artisans.find(a => 
+    a.id === idOrApp || 
+    (num && a.applicationNumber === num) || 
+    a.giTagNumber?.toLowerCase() === idOrApp.toLowerCase()
+  );
+
+  if (!artisan) {
+    return res.json({
+      success: true,
+      found: false,
+      message: 'Record not explicitly registered in local cache, fallback to statutory defaults.'
+    });
+  }
+
+  res.json({
+    success: true,
+    found: true,
+    artisan,
+    officialRegistryUrl: `/gi-registry/${artisan.applicationNumber || artisan.id}`
   });
 });
 
@@ -327,7 +357,7 @@ router.post('/', (req, res) => {
       applicationNumber: applicationNumber || Math.floor(Math.random() * 500) + 1,
       certificateNumber: certificateNumber || Math.floor(Math.random() * 200) + 1,
       registeredProprietor: registeredProprietor || `${name} Guild / Cooperative`,
-      officialRegistryUrl: `https://search.ipindia.gov.in/GIRPublic/Application/Details/${applicationNumber || 1}`,
+      officialRegistryUrl: `/gi-registry/${applicationNumber || 1}`,
       lat: 25.0 + Math.random() * 5,
       lng: 78.0 + Math.random() * 5,
       craftHeritageYears: Number(craftHeritageYears) || 50,

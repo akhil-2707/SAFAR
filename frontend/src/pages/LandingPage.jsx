@@ -156,8 +156,9 @@ export default function LandingPage({ onScenarioTrigger, onSwitchUser, currentUs
 
             {/* Badge */}
             <motion.div variants={fadeInUp} custom={0.1}
-              className="inline-flex flex-wrap items-center justify-center gap-1.5 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-2xl sm:rounded-full text-[10px] sm:text-xs font-bold shadow-lg max-w-[95vw] text-center"
+              className="inline-flex flex-wrap items-center justify-center gap-1.5 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-2xl sm:rounded-full text-[10px] sm:text-xs font-bold shadow-lg max-w-[95vw] text-center !mt-[47px]"
               style={{
+                marginTop: 'calc(2rem + 15px)',
                 background: 'rgba(255,255,255,0.92)',
                 border: '1.5px solid rgba(249,115,22,0.35)',
                 backdropFilter: 'blur(10px)',

@@ -43,6 +43,7 @@ import MyBookings from './pages/tourist/MyBookings';
 import PartnerDashboard from './pages/partner/PartnerDashboard';
 import PartnerRegisterPage from './pages/partner/PartnerRegisterPage';
 import PackageVerification from './pages/authority/PackageVerification';
+import GIRegistryInspectorPage from './pages/GIRegistryInspectorPage';
 
 import PatrioticLoader from './components/PatrioticLoader';
 import OfflineGhostMeshModal from './components/OfflineGhostMeshModal';
@@ -52,9 +53,14 @@ import ErrorBoundary from './components/ErrorBoundary';
 export default function App() {
   const [showPatrioticLoader, setShowPatrioticLoader] = useState(() => {
     try {
-      return !sessionStorage.getItem('safar_loader_shown');
+      // Immediately bypass loading screen on GI registry inspection routes
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('/gi-registry') || path.includes('/girpublic')) {
+        return false;
+      }
+      return !sessionStorage.getItem('safar_loader_shown') && !localStorage.getItem('safar_loader_shown');
     } catch {
-      return true;
+      return false;
     }
   });
   const [showMeshModal, setShowMeshModal] = useState(false);
@@ -570,7 +576,10 @@ function AppContent({
       {/* Patriotic Indian Flag Animated Loading Screen */}
       {showPatrioticLoader && (
         <PatrioticLoader onLoadingComplete={() => {
-          try { sessionStorage.setItem('safar_loader_shown', 'true'); } catch {}
+          try {
+            sessionStorage.setItem('safar_loader_shown', 'true');
+            localStorage.setItem('safar_loader_shown', 'true');
+          } catch {}
           setShowPatrioticLoader(false);
         }} />
       )}
@@ -900,6 +909,11 @@ function AppContent({
                     </RequireAuth>
                   }
                 />
+                {/* Official GI Registry (DPIIT / Intellectual Property India Inspector) */}
+                <Route path="/gi-registry" element={<GIRegistryInspectorPage />} />
+                <Route path="/gi-registry/:appId" element={<GIRegistryInspectorPage />} />
+                <Route path="/GIRPublic/Application/Details/:appId" element={<GIRegistryInspectorPage />} />
+                <Route path="/GIRPublic/*" element={<GIRegistryInspectorPage />} />
                 <Route path="/plan" element={<Navigate to="/trip-planner" replace />} />
 
                 {/* Green Rewards & Partner Payment */}
