@@ -110,7 +110,9 @@ export default function TouristRegister({ onRegisterSuccess }) {
       if (!data.success) throw new Error(data.error || 'Failed to dispatch verification OTP');
       setTouristOtpSent(true);
       setTouristOtpDemo(data.demoOtp || '');
-      setTouristOtpSuccess('Verification OTP sent to your Gmail inbox!');
+      setTouristOtpSuccess(data.sentRealEmail 
+        ? `✓ Real OTP sent to your Gmail (${formData.email})! Please check your Inbox or Spam folder.` 
+        : 'OTP generated! (Demo fallback code available below)');
     } catch (err) {
       setTouristOtpError(err.message);
     } finally {
@@ -161,7 +163,9 @@ export default function TouristRegister({ onRegisterSuccess }) {
       if (!data.success) throw new Error(data.error || 'Failed to dispatch verification OTP');
       setOfficerOtpSent(true);
       setOfficerOtpDemo(data.demoOtp || '');
-      setOfficerOtpSuccess('Verification OTP sent to your official email!');
+      setOfficerOtpSuccess(data.sentRealEmail
+        ? `✓ Real OTP sent to your official email (${authorityForm.email})! Please check your Inbox or Spam folder.`
+        : 'OTP generated! (Demo fallback code available below)');
     } catch (err) {
       setOfficerOtpError(err.message);
     } finally {

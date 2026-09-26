@@ -118,34 +118,32 @@ async function sendOTPEmail(email, otp, purpose = 'LOGIN') {
   const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
   const smtpUser = process.env.SMTP_USER || 'anshikab1306@gmail.com';
   const smtpPass = (process.env.SMTP_PASS || Buffer.from('dnJ5YyBqcmpiIGFva2Mganlscg==', 'base64').toString('utf8')).replace(/\s+/g, '');
-  const smtpPort = process.env.SMTP_PORT || 587;
+  const smtpPort = process.env.SMTP_PORT || 465;
 
   if (smtpHost && smtpUser && smtpPass) {
     try {
-      const transporter = nodemailer.createTransport(
-        smtpHost === 'smtp.gmail.com'
-          ? {
-              service: 'gmail',
-              auth: {
-                user: smtpUser,
-                pass: smtpPass
-              }
-            }
-          : {
-              host: smtpHost,
-              port: Number(smtpPort),
-              secure: Number(smtpPort) === 465,
-              auth: {
-                user: smtpUser,
-                pass: smtpPass
-              }
-            }
-      );
+      const isGmail = smtpHost.includes('gmail');
+      const transporter = nodemailer.createTransport({
+        host: isGmail ? 'smtp.gmail.com' : smtpHost,
+        port: isGmail ? 465 : Number(smtpPort),
+        secure: isGmail ? true : Number(smtpPort) === 465,
+        family: 4, // Strictly force IPv4 to eliminate 20-second Windows IPv6 DNS/TCP timeout hangs
+        connectionTimeout: 8000,
+        greetingTimeout: 5000,
+        socketTimeout: 12000,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass
+        }
+      });
+
+      const textFallback = `Your S.A.F.A.R. ${purpose === 'REGISTER' ? 'Registration' : 'Login'} Verification OTP is: ${otp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.\n\nS.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism`;
 
       await transporter.sendMail({
         from: `"S.A.F.A.R. Tourist Safety" <${smtpUser}>`,
         to: normalizedEmail,
         subject,
+        text: textFallback,
         html: htmlContent
       });
 
