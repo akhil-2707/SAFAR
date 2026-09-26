@@ -47,7 +47,7 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
         '6h': Number(formData.rate6h),
         fullDay: Number(formData.rateFullDay)
       },
-      amenities: ['Air-Conditioned Day Room', 'High-Speed Wi-Fi', 'Luggage Cloakroom', 'Shower Station', 'Sugamya Accessible Ramps']
+      amenities: ['Air-Conditioned Day Room', 'High-Speed Wi-Fi', 'Luggage Storage', 'Shower Station', 'Sugamya Accessible Ramps']
     };
 
     try {
@@ -76,13 +76,13 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-4 pt-2 sm:pt-4 bg-black/60 backdrop-blur-md overflow-y-auto">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: -15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        exit={{ opacity: 0, scale: 0.95, y: -15 }}
         transition={SPRING}
-        className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-6"
+        className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-2 sm:my-3"
       >
         <div className="px-6 py-5 bg-gradient-to-r from-blue-700 to-indigo-800 text-white flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -90,7 +90,7 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
               <Building className="w-5 h-5 text-amber-300" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold tracking-tight">Partner Your Stay or Cloakroom</h3>
+              <h3 className="text-base font-extrabold tracking-tight">Partner Your Stay</h3>
               <p className="text-xs text-white/80">Smart Transit Pod & Micro-Stay Onboarding</p>
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function HotelOnboardModal({ isOpen, onClose, onHotelAdded }) {
             {isSubmitting ? (
               <span>Registering Stay Partner to Live Database...</span>
             ) : (
-              <span>✓ Onboard Stay / Cloakroom to S.A.F.A.R.</span>
+              <span>✓ Onboard Stay to S.A.F.A.R.</span>
             )}
           </button>
         </form>
