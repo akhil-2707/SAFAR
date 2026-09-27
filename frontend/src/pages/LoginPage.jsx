@@ -514,7 +514,7 @@ export default function LoginPage({ onLoginSuccess }) {
                         {demoOtp && (
                           <div className="flex items-center justify-between pt-1.5 border-t border-purple-200/80">
                             <span className="font-mono font-bold text-xs text-purple-800">
-                              Demo Fallback: {demoOtp}
+                              ⚡ Instant OTP: {demoOtp}
                             </span>
                             <button
                               type="button"
@@ -676,7 +676,7 @@ export default function LoginPage({ onLoginSuccess }) {
                         {demoOtp && (
                           <div className="flex items-center justify-between pt-1.5 border-t border-emerald-200/80">
                             <span className="font-mono font-bold text-xs text-emerald-800">
-                              Demo Fallback: {demoOtp}
+                              ⚡ Instant OTP: {demoOtp}
                             </span>
                             <button
                               type="button"

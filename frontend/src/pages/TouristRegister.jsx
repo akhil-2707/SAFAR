@@ -111,8 +111,8 @@ export default function TouristRegister({ onRegisterSuccess }) {
       setTouristOtpSent(true);
       setTouristOtpDemo(data.demoOtp || '');
       setTouristOtpSuccess(data.sentRealEmail 
-        ? `✓ Real OTP sent to your Gmail (${formData.email})! Please check your Inbox or Spam folder.` 
-        : 'OTP generated! (Demo fallback code available below)');
+        ? `✓ Real OTP sent to your Gmail (${formData.email})! Please check Inbox or Spam folder.` 
+        : `✓ Verification OTP generated for ${formData.email}!`);
     } catch (err) {
       setTouristOtpError(err.message);
     } finally {
@@ -164,8 +164,8 @@ export default function TouristRegister({ onRegisterSuccess }) {
       setOfficerOtpSent(true);
       setOfficerOtpDemo(data.demoOtp || '');
       setOfficerOtpSuccess(data.sentRealEmail
-        ? `✓ Real OTP sent to your official email (${authorityForm.email})! Please check your Inbox or Spam folder.`
-        : 'OTP generated! (Demo fallback code available below)');
+        ? `✓ Real OTP sent to ${authorityForm.email}! Please check Inbox or Spam folder.`
+        : `✓ Verification OTP generated for ${authorityForm.email}!`);
     } catch (err) {
       setOfficerOtpError(err.message);
     } finally {
@@ -633,7 +633,7 @@ export default function TouristRegister({ onRegisterSuccess }) {
 
                       {officerOtpDemo && (
                         <div className="flex items-center justify-between pt-1 border-t border-purple-200 text-[10px]">
-                          <span className="font-mono text-purple-800">Demo Code: {officerOtpDemo}</span>
+                          <span className="font-mono text-purple-800 font-bold">⚡ Instant OTP: {officerOtpDemo}</span>
                           <button
                             type="button"
                             onClick={() => setOfficerOtpCode(officerOtpDemo)}
@@ -954,7 +954,7 @@ export default function TouristRegister({ onRegisterSuccess }) {
 
                     {touristOtpDemo && (
                       <div className="flex items-center justify-between pt-1 border-t border-emerald-200 text-[10px]">
-                        <span className="font-mono text-emerald-800">Demo Code: {touristOtpDemo}</span>
+                        <span className="font-mono text-emerald-800 font-bold">⚡ Instant OTP: {touristOtpDemo}</span>
                         <button
                           type="button"
                           onClick={() => setTouristOtpCode(touristOtpDemo)}

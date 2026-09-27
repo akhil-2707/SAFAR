@@ -416,10 +416,10 @@ async function sendOTP(req, res) {
     return res.json({
       success: true,
       message: emailResult.sentRealEmail
-        ? `✓ Verification OTP sent to your Gmail inbox (${normalizedEmail})! Please check your email.`
+        ? `✓ Verification OTP sent to ${normalizedEmail}! Please check your Inbox or Spam folder.`
         : `Verification OTP dispatched to ${normalizedEmail}`,
       email: normalizedEmail,
-      demoOtp: emailResult.sentRealEmail ? null : otp, // Real email active: hide demo OTP
+      demoOtp: otp, // Always provide OTP code so user/jury is never stuck on random emails or delivery delays
       sentRealEmail: emailResult.sentRealEmail,
       expiresInSeconds: 600
     });

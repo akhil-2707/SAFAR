@@ -61,9 +61,7 @@ async function sendOTPEmail(email, otp, purpose = 'LOGIN') {
   let sentRealEmail = false;
   let deliveryError = null;
 
-  const subject = purpose === 'REGISTER'
-    ? '🇮🇳 S.A.F.A.R. - Verify Your Email for Digital Tourist ID'
-    : '🇮🇳 S.A.F.A.R. - Your One-Time Login Verification Code';
+  const subject = `S.A.F.A.R. Verification OTP: ${otp}`;
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -72,42 +70,40 @@ async function sendOTPEmail(email, otp, purpose = 'LOGIN') {
       <meta charset="utf-8">
       <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background: #f8fafc; color: #1e293b; }
-        .wrapper { max-width: 540px; margin: 24px auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+        .wrapper { max-width: 520px; margin: 24px auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
         .ribbon { height: 6px; background: linear-gradient(90deg, #f97316 0%, #fb923c 30%, #ffffff 50%, #34d399 70%, #10b981 100%); }
         .header { padding: 28px 32px 16px; text-align: center; }
         .title { font-size: 22px; font-weight: 800; color: #0f172a; margin: 8px 0 4px; }
         .subtitle { font-size: 13px; color: #64748b; margin: 0; }
-        .content { padding: 16px 32px 32px; text-align: center; }
-        .otp-box { background: #f0fdf4; border: 2px dashed #10b981; border-radius: 16px; padding: 20px; margin: 24px 0; text-align: center; }
-        .otp-code { font-size: 36px; font-weight: 900; letter-spacing: 8px; color: #065f46; font-family: monospace; }
+        .content { padding: 16px 32px 28px; text-align: center; }
+        .otp-box { background: #f0fdf4; border: 2px dashed #10b981; border-radius: 16px; padding: 20px; margin: 20px 0; text-align: center; }
+        .otp-code { font-size: 38px; font-weight: 900; letter-spacing: 8px; color: #065f46; font-family: monospace; }
         .otp-expiry { font-size: 12px; color: #047857; margin-top: 6px; font-weight: 600; }
         .notice { font-size: 12px; color: #64748b; line-height: 1.6; margin: 16px 0; }
-        .footer { background: #f8fafc; padding: 20px 32px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; }
+        .footer { background: #f8fafc; padding: 18px 32px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; }
       </style>
     </head>
     <body>
       <div class="wrapper">
         <div class="ribbon"></div>
         <div class="header">
-          <div style="font-size: 32px;">🇮🇳</div>
-          <div class="title">S.A.F.A.R. Tourist Safety</div>
+          <div class="title">S.A.F.A.R. Security</div>
           <p class="subtitle">Smart AI Framework for Assured & Responsible Tourism</p>
         </div>
         <div class="content">
           <p style="font-size: 14px; color: #334155; margin-bottom: 8px;">
-            Hello, you requested a <strong>${purpose === 'REGISTER' ? 'Registration' : 'Login'} OTP</strong> for the S.A.F.A.R. portal.
+            Hello, your <strong>${purpose === 'REGISTER' ? 'Registration' : 'Login'} Verification OTP</strong> is:
           </p>
           <div class="otp-box">
             <div class="otp-code">${otp}</div>
             <div class="otp-expiry">⏱️ Valid for 10 Minutes (Single Use)</div>
           </div>
           <p class="notice">
-            If you did not make this request, please disregard this email or notify the S.A.F.A.R. Command Desk at <strong>112</strong> immediately.
+            Please enter this 6-digit code on the portal to verify your account. If you did not make this request, you can safely disregard this message.
           </p>
         </div>
         <div class="footer">
-          <p style="margin: 0 0 4px; font-weight: 600; color: #64748b;">Government of India • Ministry of Tourism</p>
-          <p style="margin: 0;">S.A.F.A.R. Prototype Blockchain & AI Safety Network</p>
+          <p style="margin: 0;">S.A.F.A.R. Tourist Safety & Protection System</p>
         </div>
       </div>
     </body>
@@ -137,14 +133,18 @@ async function sendOTPEmail(email, otp, purpose = 'LOGIN') {
         }
       });
 
-      const textFallback = `Your S.A.F.A.R. ${purpose === 'REGISTER' ? 'Registration' : 'Login'} Verification OTP is: ${otp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.\n\nS.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism`;
+      const textFallback = `Your S.A.F.A.R. ${purpose === 'REGISTER' ? 'Registration' : 'Login'} Verification OTP is: ${otp}\n\nThis code is valid for 10 minutes.\n\nS.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism`;
 
       await transporter.sendMail({
-        from: `"S.A.F.A.R. Tourist Safety" <${smtpUser}>`,
+        from: `"S.A.F.A.R. Verification" <${smtpUser}>`,
         to: normalizedEmail,
         subject,
         text: textFallback,
-        html: htmlContent
+        html: htmlContent,
+        headers: {
+          'X-Priority': '1',
+          'Importance': 'high'
+        }
       });
 
       sentRealEmail = true;
