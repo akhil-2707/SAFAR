@@ -144,9 +144,11 @@ async function sendViaHttpApi(normalizedEmail, otp, purpose, subject, htmlConten
         return { success: true, provider: 'Brevo HTTP' };
       } else {
         console.warn(`[BREVO API WARNING] Brevo response:`, data);
+        return { success: false, error: `Brevo API: ${data.message || JSON.stringify(data)}` };
       }
     } catch (err) {
       console.warn(`[BREVO API WARNING] Failed to send via Brevo (${err.message})`);
+      return { success: false, error: `Brevo Network: ${err.message}` };
     }
   }
 
@@ -174,13 +176,15 @@ async function sendViaHttpApi(normalizedEmail, otp, purpose, subject, htmlConten
         return { success: true, provider: 'Resend HTTP' };
       } else {
         console.warn(`[RESEND API WARNING] Resend response:`, data);
+        return { success: false, error: `Resend API: ${data.message || JSON.stringify(data)}` };
       }
     } catch (err) {
       console.warn(`[RESEND API WARNING] Failed to send via Resend (${err.message})`);
+      return { success: false, error: `Resend Network: ${err.message}` };
     }
   }
 
-  return { success: false };
+  return { success: false, error: 'No HTTP email API key (BREVO_API_KEY) found in environment' };
 }
 
   // First priority: Cloud HTTP REST API (Brevo / Resend over HTTPS port 443 - works on Render)
@@ -188,6 +192,7 @@ async function sendViaHttpApi(normalizedEmail, otp, purpose, subject, htmlConten
   if (httpResult.success) {
     sentRealEmail = true;
   } else {
+    deliveryError = httpResult.error;
     // Second priority: SMTP transport fallback (works on localhost / non-blocked networks)
     const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
     const smtpUser = process.env.SMTP_USER || 'anshikab1306@gmail.com';

@@ -421,6 +421,8 @@ async function sendOTP(req, res) {
       email: normalizedEmail,
       demoOtp: otp, // Always provide OTP code so user/jury is never stuck on random emails or delivery delays
       sentRealEmail: emailResult.sentRealEmail,
+      deliveryError: emailResult.deliveryError || null,
+      provider: emailResult.sentRealEmail ? (process.env.BREVO_API_KEY ? 'Brevo HTTP' : 'SMTP') : null,
       expiresInSeconds: 600
     });
   } catch (err) {
