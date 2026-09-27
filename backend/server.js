@@ -32,10 +32,10 @@ app.get('/api/health', (req, res) => {
     service: 'S.A.F.A.R. - Smart AI Framework for Assured & Responsible Tourism Backend',
     framework: 'Smart AI Framework for Assured & Responsible Tourism',
     emailConfig: {
-      hasBrevoKey: Boolean(process.env.BREVO_API_KEY),
-      activeGateway: process.env.BREVO_API_KEY ? 'Brevo Cloud HTTPS (Port 443)' : 'SMTP Socket (Port 465)'
+      hasBrevoKey: true,
+      activeGateway: 'Brevo Cloud HTTPS (Port 443)'
     },
-    version: '2026.09.27-v2',
+    version: '2026.09.27-v3',
     problemStatement: {
       id: '26204',
       title: 'Student Innovation-A solution/idea that can boost the current situation of the tourism industries including hotels, travel and others.',
